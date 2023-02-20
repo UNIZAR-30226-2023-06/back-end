@@ -51,5 +51,6 @@ def index(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Not authenticated")
         #TODO: return something when not authenticated
     else:
+        #TODO: return something when authenticated
         #returns the token
         return {"token": token}
