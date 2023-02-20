@@ -1,10 +1,19 @@
+import os
+from dotenv import load_dotenv
+
+KEYS = ["PGUSER", "PGPASSWD", "PGPORT", "PGHOST", "PGDB", "JWT_SECRET"]
+
+load_dotenv()
+
+config = {key: os.getenv(key) for key in KEYS}
+
+JWT_SECRET = config['JWT_SECRET']
+
 postgresql = {
-    'pguser' : 'postgres',
-    'pgpasswd' : 'catangames',
-    'pgport' : 5432,
-    'pghost' : 'proyecto-software.cmnar1lihjng.eu-west-3.rds.amazonaws.com',
-    'pgdb' : 'ps_db'
+
+    'pguser' : config['PGUSER'],
+    'pgpasswd' : config['PGPASSWD'],
+    'pgport' : config['PGPORT'],
+    'pghost' : config['PGHOST'],
+    'pgdb' : config['PGDB']
 }
-# SERVER = "proyecto-software.cmnar1lihjng.eu-west-3.rds.amazonaws.com:5432"
-# DATABASE = "ps_db"
-# PASSWORD = "catangames"

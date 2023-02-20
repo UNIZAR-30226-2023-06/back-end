@@ -1,3 +1,4 @@
 #!/bin/bash
 
-uvicorn main:app --reload
+#local network from other computers can access the server
+uvicorn main:app --reload --host
