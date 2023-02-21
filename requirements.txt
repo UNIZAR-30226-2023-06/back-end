@@ -6,3 +6,4 @@ Werkzeug==2.2.3
 psycopg2-binary==2.9.5
 python-multipart==0.0.5
 pyjwt==2.6.0
+sqlalchemy==2.0.4

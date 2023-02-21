@@ -38,11 +38,13 @@ from schemas.user import UserCreate
 @router.post("/register", tags=["auth"])
 def register(user: str = Depends(UserCreate)):
 # def register(token: str = Depends(oauth2_scheme), user: str, email: str, password: str):
-    print(session.query(User).filter_by(email=user.email).first())
-    hashed_password = generate_password_hash(user.password, method='sha256')
-    new_user = User(username=user.name, email=user.email, password=hashed_password)
-    session.add(new_user)
-    session.commit()
-    user_dict = {"id": new_user.id, "username": user.name, "email": user.email}
-    token = jwt.encode(user_dict, JWT_SECRET)
-    return {"access_token": token, "token_type": "bearer"}
+    if session.query(User).filter_by(email=user.email).first() is None:
+        hashed_password = generate_password_hash(user.password.get_secret_value(), method='sha256')
+        new_user = User(username=user.name, email=user.email, password=hashed_password)
+        session.add(new_user)
+        session.commit()
+        user_dict = {"id": new_user.id, "username": user.name, "email": user.email}
+        token = jwt.encode(user_dict, JWT_SECRET)
+        return {"access_token": token, "token_type": "bearer"}
+    else:
+        raise HTTPException(status_code=400, detail="Email already exists")
