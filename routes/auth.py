@@ -1,17 +1,24 @@
 import jwt
 
 from fastapi import APIRouter, Depends, HTTPException
-from flask import session
 from models.user import User
 from local_settings import  JWT_SECRET
 from utils import OAuth2EmailPasswordRequestForm
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from fastapi.security import OAuth2PasswordBearer
 
+from db import get_engine_from_settings
+from sqlalchemy.orm import sessionmaker
+
 
 router = APIRouter()
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+engine = get_engine_from_settings()
+Session = sessionmaker(bind=engine)
+session = Session()
 
 @router.post("/login", tags=["auth"])
 def login(form_data: OAuth2EmailPasswordRequestForm = Depends()):
@@ -31,10 +38,11 @@ from schemas.user import UserCreate
 @router.post("/register", tags=["auth"])
 def register(user: str = Depends(UserCreate)):
 # def register(token: str = Depends(oauth2_scheme), user: str, email: str, password: str):
+    print(session.query(User).filter_by(email=user.email).first())
     hashed_password = generate_password_hash(user.password, method='sha256')
     new_user = User(username=user.name, email=user.email, password=hashed_password)
     session.add(new_user)
     session.commit()
-    user_dict = {"id": user.id, "username": user.name, "email": user.email}
+    user_dict = {"id": new_user.id, "username": user.name, "email": user.email}
     token = jwt.encode(user_dict, JWT_SECRET)
     return {"access_token": token, "token_type": "bearer"}

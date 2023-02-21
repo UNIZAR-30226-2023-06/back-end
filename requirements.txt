@@ -1,0 +1,8 @@
+uvicorn==0.20.0
+fastapi==0.92.0
+python-dotenv==0.21.1
+pydantic[email]
+Werkzeug==2.2.3
+psycopg2-binary==2.9.5
+python-multipart==0.0.5
+pyjwt==2.6.0
