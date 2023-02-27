@@ -1,6 +1,7 @@
 from typing import Optional
 from fastapi.param_functions import Form
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 
 class OAuth2EmailPasswordRequestForm(OAuth2PasswordRequestForm):
     def __init__(
@@ -17,3 +18,4 @@ class OAuth2EmailPasswordRequestForm(OAuth2PasswordRequestForm):
     @property
     def email(self):
         return self.username
+
