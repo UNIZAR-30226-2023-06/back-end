@@ -2,10 +2,20 @@ import random
 
 import cartas
 import construcciones
+import jugador
 
 class Partida:
     def __init__(self, num_jugadores, turno, fase_turno, codigo, jugadores,
-                 partida_empezada, tablero, chat):
+                 partida_empezada, tablero, chat, hay_ladron, tiempo_turno):
+
+        # Código de la sala de juego
+        self.codigo = codigo
+
+        # Un array de datos de tipo "Jugador"
+        self.jugadores = jugadores
+
+        self.num_jugadores = num_jugadores
+
         # El turno: cuál de los 4 jugadores tiene la prioridad
         self.turno = turno
 
@@ -13,13 +23,8 @@ class Partida:
         # negociación y compra
         self.fase_turno = fase_turno
 
-        # Código de la sala de juego
-        self.codigo = codigo
-
-        self.num_jugadores = num_jugadores
-
-        # Un array de datos de tipo "Jugador"
-        self.jugadores = jugadores
+        # Duración de un turno en segundos
+        self.tiempo_turno = tiempo_turno
 
         # Booleano que indica si la partida ha sido empezada, es decir, los
         # jugadores han elegido color, se ha determinado el orden de los turnos,
@@ -32,6 +37,21 @@ class Partida:
         # sea necesario
         self.chat = chat
 
+        # Una de las opciones de configuración de una partida es si se juega con
+        # ladrón o no
+        self.hay_ladron = hay_ladron
+
+    ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
+
+    # Añade un nuevo jugador a la partida. Devuelve true si todo ha ido bien o
+    # false si la partida ya está llena.
+    def anadir_jugador(self, id_jugador):
+        for i in range(self.num_jugadores):
+            if self.jugadores[i] == None:
+                self.jugadores[i] = jugador.nuevo_jugador(id_jugador)
+                return True
+        return False
+
     # Obtenemos el índice del jugador en la lista de jugadores con id igual al
     # pasado por parámetro.
     def i_jugador(self, id):
@@ -41,6 +61,10 @@ class Partida:
                 return c
             else:
                 c += 1
+
+    ##########################################################################
+
+    ################# FUNCIONES SOBRE LA GESTIÓN DE RECURSOS #################
 
     # El jugador 1 roba un recurso aleatorio al jugador 2
     def robar_recursos(self, id_jugador1, id_jugador2):
@@ -80,21 +104,6 @@ class Partida:
             recursos = {0,0,0,0,0}
 
             j.sumar_recursos(recursos)
-    
-    def mover_ladron(self, id_jugador):
-        # Obtenemos del frontend la posición a la que el jugador quiere mover
-        # el ladrón
-
-        # Movemos el ladrón a la posición indicada en el tablero
-
-        # Obtenemos los jugadores a los que el jugador que ha movido el ladrón
-        # puede robar
-
-        # Indicamos al frontend dichos usuarios para que el jugador seleccione
-        # uno
-        id_jugador_robado = 0
-
-        self.robar_recursos(id_jugador, id_jugador_robado)
     
     def usar_carta_desarrollo(self, id_jugador, tipo_carta):
         self.sub_carta_desarrollo(tipo_carta)
@@ -145,13 +154,48 @@ class Partida:
         self.jugadores[j].restar_recursos(recursos_1)
         self.jugadores[j].sumar_recursos(recursos_2)
     
+    ##########################################################################
+    
+    ################# FUNCIONES SOBRE LA GESTIÓN DEL LADRÓN #################
+
+    def mover_ladron(self, id_jugador):
+        # Obtenemos del frontend la posición a la que el jugador quiere mover
+        # el ladrón
+
+        # Movemos el ladrón a la posición indicada en el tablero
+
+        # Obtenemos los jugadores a los que el jugador que ha movido el ladrón
+        # puede robar
+
+        # Indicamos al frontend dichos usuarios para que el jugador seleccione
+        # uno
+        id_jugador_robado = 0
+
+        self.robar_recursos(id_jugador, id_jugador_robado)
+    
+    # especificamos si queremos que haya un ladrón en la partida
+    def set_ladron(self, hay_ladron):
+        self.hay_ladron = hay_ladron
+    
+    ##########################################################################
+    
+    ################ FUNCIONES SOBRE LA GESTIÓN DE LOS TURNOS ################
+    
     # Se pasa a la siguiente fase del turno actual, y se pasa al siguiente turno
     # si el actual ya ha acabado
     def avanzar_fase(self):
         self.fase_turno = (self.fase_turno + 1)%4
         if self.fase_turno == 0:
             self.turno = (self.turno + 1)%4
+
+    # Establecemos el tiempo de duración de los turnos en segundos
+    def set_tiempo_turno(self, tiempo_turno):
+        self.tiempo_turno = tiempo_turno
     
+    ##########################################################################
+    
+    ############ FUNCIONES SOBRE LA GESTIÓN DE LAS CONSTRUCCIONES ############
+
     def comprar(self, id_jugador, tipo_construccion):
         if tipo_construccion == construcciones.CARRETERA:
             self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0})
@@ -194,6 +238,10 @@ class Partida:
             # informo a frontend de la carta robada
 
             self.jugadores[self.i_jugador(id_jugador)].add_carta_desarrollo(carta_robada)
+
+    ##########################################################################
+
+    ########## FUNCIONES SOBRE LA GESTIÓN DE LOS PUNTOS DE VICTORIA ##########
 
     # Comprueba si un jugador ha ganado, si es así devolverá su id, si no,
     # devolverá -1
@@ -263,6 +311,10 @@ class Partida:
                 jugador.otorgar_bono_caballeros()
                 self.jugadores[indice_poseedor_bono_actual].quitar_bono_caballeros()
     
+    ##########################################################################
+
+    ########### FUNCIONES SOBRE LA GESTIÓN DEL ELO DE LOS JUGADORES ###########
+    
     def repartir_elo(self):
         ranking = {{},{},{},{}}
 
@@ -308,14 +360,17 @@ class Partida:
             # Resto 50 de elo al jugador j
             jugadores = {}
 
+    ##########################################################################
+
 # Crea un instancia inicializada de una partida y la devuelve
-def nueva_partida(configuracion, jugadores):
+def nueva_partida():
     codigo = obtener_codigo_libre()
-    num_jugadores = configuracion.num_jugadores
     # tablero = Tablero.nuevo_tablero()
     tablero = None
 
-    partida = Partida(num_jugadores, 0, 0, codigo, jugadores, False, tablero, {})
+    partida = Partida(4, 0, 0, codigo, {None, None, None, None}, False, tablero,
+                      {}, True, 30)
+    
     return partida
 
 # Busca en la base de datos un código que no esté siendo utilizado por ninguna
