@@ -371,7 +371,7 @@ def nueva_partida():
     partida = Partida(4, 0, 0, codigo, {None, None, None, None}, False, tablero,
                       {}, True, 30)
     
-    return partida
+    return partida, codigo
 
 # Busca en la base de datos un código que no esté siendo utilizado por ninguna
 # partida y lo devuelve
