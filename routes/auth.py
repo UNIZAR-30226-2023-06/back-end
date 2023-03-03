@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from models.user import User
 from local_settings import  JWT_SECRET
 from utils import OAuth2EmailPasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from fastapi.security import OAuth2PasswordBearer
@@ -21,8 +22,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 @router.post("/login", tags=["auth"])
-def login(form_data: OAuth2EmailPasswordRequestForm = Depends()):
-    user = session.query(User).filter_by(email=form_data.email).first()
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = session.query(User).filter_by(email=form_data.username).first() # we use from_data.username as email because we are using OAuth2EmailPasswordRequestForm
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email")
     if not check_password_hash(user.password, form_data.password):
