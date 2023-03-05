@@ -8,7 +8,7 @@ from routes.auth import router as auth_router
 app = FastAPI()
 
 origins = [
-  "https://localhost:3000" # reacts'
+  "*" # reacts'
 ]
 
 app.add_middleware(
