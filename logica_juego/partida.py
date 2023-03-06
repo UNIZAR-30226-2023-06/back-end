@@ -3,10 +3,12 @@ import random
 import cartas
 import construcciones
 import jugador
+import errores
 
 class Partida:
     def __init__(self, num_jugadores, turno, fase_turno, codigo, jugadores,
-                 partida_empezada, tablero, chat, hay_ladron, tiempo_turno):
+                 partida_empezada, tablero, chat, hay_ladron, tiempo_turno,
+                 num_jugadores_activos, jugadores_seleccionados):
 
         # Código de la sala de juego
         self.codigo = codigo
@@ -15,6 +17,8 @@ class Partida:
         self.jugadores = jugadores
 
         self.num_jugadores = num_jugadores
+
+        self.num_jugadores_activos = num_jugadores_activos
 
         # El turno: cuál de los 4 jugadores tiene la prioridad
         self.turno = turno
@@ -31,6 +35,11 @@ class Partida:
         # y cada jugador ha colocado sus dos primeras aldeas y carreteras
         self.partida_empezada = partida_empezada
 
+        # Booleano que indica si ya se han establecido los jugadores de la
+        # partida y se le ha dado a comenzar la partida (aún no se han colocado
+        # las construcciones iniciales)
+        self.jugadores_seleccionados = jugadores_seleccionados
+
         self.tablero = tablero
 
         # El chat es un array de strings, puede que este atributo al final no
@@ -44,13 +53,41 @@ class Partida:
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
     # Añade un nuevo jugador a la partida. Devuelve true si todo ha ido bien o
-    # false si la partida ya está llena.
+    # false si la partida ya está llena o si ya ha comenzado.
     def anadir_jugador(self, id_jugador):
+        if self.jugadores_seleccionados:
+            return errores.PARTIDA_COMENZADA
         for i in range(self.num_jugadores):
             if self.jugadores[i] == None:
                 self.jugadores[i] = jugador.nuevo_jugador(id_jugador)
-                return True
-        return False
+                self.num_jugadores_activos = self.num_jugadores_activos + 1
+                return errores.PARTIDA_LLENA
+        return errores.SIN_ERRORES
+    
+    # Resta un jugador al contador de jugadores en la partida. Si la partida
+    # aún no ha empezado, lo elimina por completo. Si sí ha empezado simplemente
+    # lleva la cuenta de que hay un juagor activo menos, pero cuenta como que
+    # el jugador sigue formando parte de la partida.
+    def restar_jugador(self, id_jugador):
+        if not self.partida_empezada:
+            for i in range(self.num_jugadores):
+                if self.jugadores[i] == id_jugador:
+
+                    # Elimino al jugador del registro 
+                    self.jugadores[i] = None
+
+                    # Reorganizao la lista de jugadores
+                    for j in range(i+1, self.num_jugadores + 1):
+                        if j == self.num_jugadores:
+                            self.jugadores[j-1] = None
+                        else:
+                            self.jugadores[j-1] = self.jugadores[j]
+
+                    self.num_jugadores_activos = self.num_jugadores_activos - 1
+
+                    break
+        
+        self.num_jugadores_activos = self.num_jugadores_activos - 1
 
     # Obtenemos el índice del jugador en la lista de jugadores con id igual al
     # pasado por parámetro.
@@ -61,6 +98,11 @@ class Partida:
                 return c
             else:
                 c += 1
+    
+    # Devuelve el número de jugadores en la partida
+    def get_num_jugadores_activos(self):
+        return self.num_jugadores_activos
+    
 
     ##########################################################################
 
@@ -362,6 +404,15 @@ class Partida:
 
     ##########################################################################
 
+    ############################# OTRAS FUNCIONES #############################
+
+    # Devuelve true si la partida está en curso, es decir, se ha iniciado la
+    # partida y los jugadores ya han colocado sus construcciones iniciales
+    def get_partida_empezada(self):
+        return self.partida_empezada
+
+    ###########################################################################
+
 # Crea un instancia inicializada de una partida y la devuelve
 def nueva_partida():
     codigo = obtener_codigo_libre()
@@ -369,7 +420,7 @@ def nueva_partida():
     tablero = None
 
     partida = Partida(4, 0, 0, codigo, {None, None, None, None}, False, tablero,
-                      {}, True, 30)
+                      {}, True, 30, 0, False)
     
     return partida, codigo
 
