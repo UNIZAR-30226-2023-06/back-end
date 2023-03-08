@@ -3,7 +3,7 @@ import cartas
 
 class Jugador:
     def __init__(self, id, puntos_victoria, color, mano, caballeros_usados,
-                 tiene_bono_carreteras, tiene_bono_caballeros):
+                 tiene_bono_carreteras, tiene_bono_caballeros, esta_preparado):
         # identificador del jugador
         self.id = id
 
@@ -16,6 +16,8 @@ class Jugador:
 
         self.tiene_bono_carreteras = tiene_bono_carreteras
         self.tiene_bono_caballeros = tiene_bono_caballeros
+
+        self.esta_preparado = esta_preparado
 
     def get_id(self):
         return self.id
@@ -81,11 +83,18 @@ class Jugador:
         cantidad_robada = self.mano.get_recurso(recurso)
         self.mano.sub_recurso(recurso, cantidad_robada)
         return cantidad_robada
+    
+    def set_preparado(self):
+        self.esta_preparado = True
+
+    def get_preparado(self):
+        return self.esta_preparado
 
 def nuevo_jugador(id):
     mano_inicial = mano.nueva_mano()
 
-    jugador = Jugador(id, 0, Color.NO_ASIGNADO, mano_inicial, 0, False, False)
+    jugador = Jugador(id, 0, Color.NO_ASIGNADO, mano_inicial, 0, False, False,
+                      False)
     return jugador
 
 class Color:

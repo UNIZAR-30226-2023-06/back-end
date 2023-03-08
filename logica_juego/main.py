@@ -1,6 +1,8 @@
 import multiprocessing
 import time
 
+from enum import Enum
+
 import partida
 
 # Diccionario que guarda qué partidas hay en curso actualmente con una relación
@@ -8,6 +10,8 @@ import partida
 partidas_en_curso = {
 
 }
+
+################ GESTIÓN DE PARTIDAS (EMPEZARLAS Y TERMINARLAS) ################
 
 # Función a la que se llama cuando el jugador con id=id_jugador crea una nueva
 # sala de juego. Devuelve el código de la partida.
@@ -61,5 +65,106 @@ def limpiador(codigo_partida):
     if partidas_en_curso[codigo_partida].get_num_jugadores_activos() <= 0:
         del partidas_en_curso[codigo_partida]
 
-# Código para hacer pruebas
-nueva_partida(16990141)
+######################## GESTIÓN DE BÚSQUEDA DE PARTIDA ########################
+
+jugadores_buscando_partida = {
+
+}
+
+# Función a la que se llama cuando el jugador con id=id_jugador quiere buscar
+# partida.
+def buscar_partida(id_jugador):
+    # Si el jugador ya está buscando partida, no hacemos nada.
+    if id_jugador in jugadores_buscando_partida:
+        return
+
+    # Si no, añadimos el jugador a la lista de jugadores buscando partida.
+    # TODO: el valor que se le debe asignar a cada jugador es su ELO
+    jugadores_buscando_partida[id_jugador] = 1000
+
+# Cada 5 segundos el buscador revisa si hay jugadores buscando partida y si los
+# hay, los empareja según su ELO.
+def init_buscador():
+    # El sentido en el que se van a buscar los jugadores va a alternar entre
+    # ascendente y descendente según su ELO.
+    class Sentido(Enum):
+        ASCENDENTE = 1
+        DESCENDENTE = 2
+    
+    sentido = Sentido.ASCENDENTE
+
+    while(True):
+        # Alternamos el sentido de búsqueda en cada iteración.
+        if sentido == Sentido.ASCENDENTE:
+            sentido = Sentido.DESCENDENTE
+        else:
+            sentido = Sentido.ASCENDENTE
+
+        # Obtengo todos los jugadores buscando partida y los ordeno de menor a mayor
+        # según su ELO.
+        jugadores = list(jugadores_buscando_partida.items())
+        jugadores.sort(key=lambda x: x[1])
+
+        # Si hay menos de 4 jugadores buscando partida, esperamos 5 segundos y
+        # volvemos a comprobar.
+        if len(jugadores) < 4:
+            time.sleep(5)
+            continue
+
+        # Si hay 4 o más jugadores buscando partida, los emparejamos según el
+        # sentido de búsqueda que toca.
+        if sentido == Sentido.ASCENDENTE:
+            # Emparejamos los jugadores de menor a mayor ELO.
+            for i in range(0, len(jugadores - (len(jugadores)%4)), 4):
+                # Creamos una nueva partida con el primer jugador de la pareja
+                # y le añadimos el resto de jugadores.
+                codigo_partida = nueva_partida(jugadores[i][0])
+                unirse_a_partida(jugadores[i+1][0], codigo_partida)
+                unirse_a_partida(jugadores[i+2][0], codigo_partida)
+                unirse_a_partida(jugadores[i+3][0], codigo_partida)
+
+                # Eliminamos los jugadores de la lista de jugadores buscando
+                # partida.
+                del jugadores_buscando_partida[jugadores[i][0]]
+                del jugadores_buscando_partida[jugadores[i+1][0]]
+                del jugadores_buscando_partida[jugadores[i+2][0]]
+                del jugadores_buscando_partida[jugadores[i+3][0]]
+        else:
+            # Emparejamos los jugadores de mayor a menor ELO.
+            for i in range(len(jugadores) - 1, 3, -4):
+                # Creamos una nueva partida con el primer jugador de la pareja
+                # y le añadimos el resto de jugadores.
+                codigo_partida = nueva_partida(jugadores[i][0])
+                unirse_a_partida(jugadores[i-1][0], codigo_partida)
+                unirse_a_partida(jugadores[i-2][0], codigo_partida)
+                unirse_a_partida(jugadores[i-3][0], codigo_partida)
+
+                # Eliminamos los jugadores de la lista de jugadores buscando
+                # partida.
+                del jugadores_buscando_partida[jugadores[i][0]]
+                del jugadores_buscando_partida[jugadores[i-1][0]]
+                del jugadores_buscando_partida[jugadores[i-2][0]]
+                del jugadores_buscando_partida[jugadores[i-3][0]]
+        time.sleep(5)
+
+######################### GESTIÓN DE INICIO DE PARTIDA #########################
+
+# Función a la que se llama cuando el jugador con id=id_jugador quiere empezar
+# la partida con código=codigo_partida.
+def empezar_partida(id_jugador, codigo_partida):
+    # Indico en la partida que el jugador con id "id_jugador" quiere empezar
+    # la partida.
+    todos_listos = partidas_en_curso[codigo_partida].jugador_listo(id_jugador)
+
+    # Si todos los jugadores están listos, se avisa a todos los jugadores de
+    # la partida de que la partida va a empezar.
+    if todos_listos:
+        for jugador in partidas_en_curso[codigo_partida].get_jugadores():
+            # TODO: avisar a los jugadores de que la partida va a empezar
+            return True
+    
+    return False
+
+##################################### MAIN #####################################
+
+init_buscador()
