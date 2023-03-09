@@ -1,9 +1,14 @@
+import jwt
+from db import get_engine_from_settings
 from utils import *
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware # https://fastapi.tiangolo.com/tutorial/cors/
 
 from routes.auth import router as auth_router
+from routes.friends import router as friends_router
+from local_settings import JWT_SECRET
+from sqlalchemy.orm import sessionmaker
 
 app = FastAPI()
 
@@ -19,7 +24,6 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-# session = get_session()
 
 from routes.auth import oauth2_scheme
 @app.post("/")
@@ -32,5 +36,5 @@ def index(token: str = Depends(oauth2_scheme)):
         #returns the token
         return {"token": token}
 
-
 app.include_router(auth_router)
+app.include_router(friends_router)
