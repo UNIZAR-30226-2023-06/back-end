@@ -34,7 +34,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
     token = jwt.encode(user_dict, JWT_SECRET)
 
-    return {"access_token": token, "token_type": "bearer"}
+    return {"access_token": token, "token_type": "bearer", "detail": "Logged in successfully"}
 
 from schemas.user import UserBase, UserCreate
 @router.post("/register", tags=["auth"])
@@ -52,6 +52,6 @@ def register(user: str = Depends(UserCreate)):
         session.commit()
         user_dict = {"id": new_user.id, "username": user.name, "email": user.email}
         token = jwt.encode(user_dict, JWT_SECRET)
-        return {"access_token": token, "token_type": "bearer"}
+        return {"access_token": token, "token_type": "bearer", "detail": "User created"}
     else:
         raise HTTPException(status_code=400, detail="Email already exists")
