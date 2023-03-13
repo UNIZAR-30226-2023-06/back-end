@@ -112,3 +112,24 @@ def get_friends(token: str = Depends(oauth2_scheme)):
         for friend in friends:
             friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)]})
         return {"friends": friends_list}
+    
+#route for deleting a friend
+@router.post("/delete_friend", tags=["friends"])
+def delete_friend(friend_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the friend_id exists in the database
+        if session.query(User).filter(User.id == friend_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #delete the friend request from the database (both ways)
+            session.query(Befriends).filter(Befriends.user_id == user_id, Befriends.friend_id == friend_id).delete()
+            session.query(Befriends).filter(Befriends.user_id == friend_id, Befriends.friend_id == user_id).delete()
+            session.commit()
+            return {"message": "Friend with id " + str(friend_id) + " deleted"}
+        
