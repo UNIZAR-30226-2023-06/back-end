@@ -133,3 +133,4 @@ def delete_friend(friend_id: int, token: str = Depends(oauth2_scheme)):
             session.commit()
             return {"message": "Friend with id " + str(friend_id) + " deleted"}
         
+
