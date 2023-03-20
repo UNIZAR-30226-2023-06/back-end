@@ -107,5 +107,24 @@ def change_password(new_password: str, token: str = Depends(oauth2_scheme)):
             user_dict = {"id": new_user.id, "username": new_user.username, "email": new_user.email}
             token = jwt.encode(user_dict, JWT_SECRET)
             return {"access_token": token, "token_type": "bearer", "detail": "Password changed successfully"}
+        
+#delete a user from the database
+@router.delete("/delete-user", tags=["user_settings"])
+def delete_user(token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #delete the user from the database
+            session.query(User).filter(User.id == user_id).delete()
+            session.commit()
+            return {"detail": "User deleted successfully"}
     
         
