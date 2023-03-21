@@ -6,7 +6,7 @@ from models.user import User
 from local_settings import  JWT_SECRET
 from utils import OAuth2EmailPasswordRequestForm
 from fastapi.security import OAuth2PasswordRequestForm
-
+from schemas.user import UserBase, UserCreate, UserLogin
 from werkzeug.security import generate_password_hash, check_password_hash
 from fastapi.security import OAuth2PasswordBearer
 
@@ -23,8 +23,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 @router.post("/login", tags=["auth"])
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = session.query(User).filter_by(email=form_data.username).first() # we use from_data.username as email because we are using OAuth2EmailPasswordRequestForm
+def login(form_data: OAuth2PasswordRequestForm = Depends(UserLogin)):
+    user = session.query(User).filter_by(email=form_data.email).first() # we use from_data.username as email because we are using OAuth2EmailPasswordRequestForm
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email")
     if not check_password_hash(user.password, form_data.password):
@@ -36,7 +36,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
     return {"access_token": token, "token_type": "bearer", "detail": "Logged in successfully"}
 
-from schemas.user import UserBase, UserCreate
+
 @router.post("/register", tags=["auth"])
 def register(user: str = Depends(UserCreate)):
 # def register(token: str = Depends(oauth2_scheme), user: str, email: str, password: str):

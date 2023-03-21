@@ -21,3 +21,7 @@ class UserCreate(UserBase):
     selected_piece_skin: str = 'default'
     saved_music: str = 'default'
     elo: int = 500
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
