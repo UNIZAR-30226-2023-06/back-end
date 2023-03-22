@@ -2,6 +2,7 @@ import random
 import jwt
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import SecretStr
 from models.user import User
 from local_settings import  JWT_SECRET
 from utils import OAuth2EmailPasswordRequestForm
@@ -16,7 +17,7 @@ from sqlalchemy.orm import sessionmaker
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 engine = get_engine_from_settings()
 Session = sessionmaker(bind=engine)
@@ -38,19 +39,19 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 from schemas.user import UserBase, UserCreate
 @router.post("/register", tags=["auth"])
-def register(user: OAuth2PasswordRequestForm = Depends(UserCreate)):
+def register(username: str, email: str, password: SecretStr):
 # def register(token: str = Depends(oauth2_scheme), user: str, email: str, password: str):
-    if session.query(User).filter_by(email=user.email).first() is None:
+    if session.query(User).filter_by(email=email).first() is None:
         # generates a random 4 digit number to use as id. If that number is already in use, it will generate another one
         user_id = random.randint(1000, 9999)
         while session.query(User).filter_by(id=user_id).first() is not None:
             user_id = random.randint(1000, 9999)
 
-        hashed_password = generate_password_hash(user.password.get_secret_value(), method='sha256')
-        new_user = User(id=user_id, username=user.name, email=user.email, password=hashed_password)
+        hashed_password = generate_password_hash(password.get_secret_value(), method='sha256')
+        new_user = User(id=user_id, username=username, email=email, password=hashed_password)
         session.add(new_user)
         session.commit()
-        user_dict = {"id": new_user.id, "username": user.name, "email": user.email}
+        user_dict = {"id": new_user.id, "username": username, "email": email}
         token = jwt.encode(user_dict, JWT_SECRET)
         return {"access_token": token, "token_type": "bearer", "detail": "User created"}
     else:
