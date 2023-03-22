@@ -126,5 +126,85 @@ def delete_user(token: str = Depends(oauth2_scheme)):
             session.query(User).filter(User.id == user_id).delete()
             session.commit()
             return {"detail": "User deleted successfully"}
-    
+
+#!##################################################
+#! A partir de aquí las funciones están sin probar #
+#!##################################################
+
+#add an amount of coins to a user's balance
+@router.post("/add-coins", tags=["user_settings"])
+def add_coins(amount: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #add the coins to the user's balance
+            user = session.query(User).filter(User.id == user_id).first()
+            user.coins += amount
+            session.commit()
+            return {"detail": "Coins added successfully"}
         
+#remove an amount of coins from a user's balance
+@router.post("/remove-coins", tags=["user_settings"])
+def remove_coins(amount: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #remove the coins from the user's balance
+            user = session.query(User).filter(User.id == user_id).first()
+            user.coins -= amount
+            session.commit()
+            return {"detail": "Coins removed successfully"}
+
+#route for modifying a user's selected grid skin
+@router.post("/change-grid-skin", tags=["user_settings"])
+def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #update the grid skin in the database
+            session.query(User).filter(User.id == user_id).update({User.selected_grid_skin: new_grid_skin})
+            session.commit()
+            return {"detail": "Grid skin changed successfully to " + new_grid_skin}
+        
+#route for modifying a user's selected pieces skin
+@router.post("/change-pieces-skin", tags=["user_settings"])
+def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #update the pieces skin in the database
+            session.query(User).filter(User.id == user_id).update({User.selected_pieces_skin: new_pieces_skin})
+            session.commit()
+            return {"detail": "Pieces skin changed successfully to " + new_pieces_skin}
