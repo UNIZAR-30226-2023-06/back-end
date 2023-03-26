@@ -17,7 +17,7 @@ from sqlalchemy.orm import sessionmaker
 
 router = APIRouter()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 engine = get_engine_from_settings()
 Session = sessionmaker(bind=engine)
