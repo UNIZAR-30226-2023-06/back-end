@@ -29,7 +29,7 @@ def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
             #add the friend request to the database
             session.add(Befriends(request_status=False, user_id=user_id, friend_id=friend_id))
             session.commit()
-            return {"message": "Friend request sent to user with id " + str(friend_id)}
+            return {"detail": "Friend request sent to user with id " + str(friend_id)}
         
 #route for accepting a friend request
 @router.post("/accept_friend_request", tags=["friends"])
@@ -50,7 +50,7 @@ def accept_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)
             #update the friend request in the database
             session.query(Befriends).filter(Befriends.user_id == requester_id, Befriends.friend_id == user_id).update({Befriends.request_status: True})
             session.commit()
-            return {"message": "Friend request accepted from user with id " + str(requester_id)}
+            return {"detail": "Friend request accepted from user with id " + str(requester_id)}
         
 #route for rejecting a friend request
 @router.post("/reject_friend_request", tags=["friends"])
@@ -71,7 +71,7 @@ def reject_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)
             #delete the friend request from the database
             session.query(Befriends).filter(Befriends.user_id == requester_id, Befriends.friend_id == user_id).delete()
             session.commit()
-            return {"message": "Friend request rejected from user with id " + str(requester_id)}
+            return {"detail": "Friend request rejected from user with id " + str(requester_id)}
         
 #route for getting all friend requests
 @router.put("/get_friend_requests", tags=["friends"])
@@ -91,7 +91,7 @@ def get_friend_requests(token: str = Depends(oauth2_scheme)):
         friend_requests_list = []
         for friend_request in friend_requests:
             friend_requests_list.append({"requester_id": friend_request.user_id, "requester_name": friend_request_usernames[friend_requests.index(friend_request)]})
-        return {"friend_requests": friend_requests_list}
+        return {"friend_requests": friend_requests_list, "detail": "Friend requests retrieved"}
     
 #route for getting all friends
 @router.put("/get_friends", tags=["friends"])
@@ -111,7 +111,7 @@ def get_friends(token: str = Depends(oauth2_scheme)):
         friends_list = []
         for friend in friends:
             friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)]})
-        return {"friends": friends_list}
+        return {"friends": friends_list, "detail": "Friend list retrieved successfully"}
     
 #route for deleting a friend
 @router.post("/delete_friend", tags=["friends"])
@@ -131,6 +131,6 @@ def delete_friend(friend_id: int, token: str = Depends(oauth2_scheme)):
             session.query(Befriends).filter(Befriends.user_id == user_id, Befriends.friend_id == friend_id).delete()
             session.query(Befriends).filter(Befriends.user_id == friend_id, Befriends.friend_id == user_id).delete()
             session.commit()
-            return {"message": "Friend with id " + str(friend_id) + " deleted"}
+            return {"detail": "Friend with id " + str(friend_id) + " deleted"}
         
 
