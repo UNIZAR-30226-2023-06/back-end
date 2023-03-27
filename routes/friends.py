@@ -115,16 +115,17 @@ def get_friends(token: str = Depends(oauth2_scheme)):
         friends.extend(session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.request_status == True).all())
 
         #gets the username of all the users who are friends
-        friend_usernames = [session.query(User).filter(User.id == friend.friend_id).first().username for friend in friends if friend.friend_id != user_id]
-        friend_usernames.extend([session.query(User).filter(User.id == friend.user_id).first().username for friend in friends if friend.user_id != user_id])
+        friend_usernames = [session.query(User).filter(User.id == friend.friend_id).first() for friend in friends if friend.friend_id != user_id]
+        friend_usernames.extend([session.query(User).filter(User.id == friend.user_id).first() for friend in friends if friend.user_id != user_id])
         #create a list of dictionaries with the friends
         friends_list = []
         for friend in friends:
             if(friend.friend_id == user_id):
-                friends_list.append({"friend_id": friend.user_id, "friend_name": friend_usernames[friends.index(friend)]})
+                friends_list.append({"friend_id": friend.user_id, "friend_name": friend_usernames[friends.index(friend)].username, "friend_photo" : friend_usernames[friends.index(friend)].profile_picture})
             else:
-                friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)]})
-        return {"friends": friends_list, "detail": "Friend list retrieved successfully"}
+                friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)].username, "friend_photo" : friend_usernames[friends.index(friend)].profile_picture})
+        number_of_friends = len(friends_list)
+        return {"friends": friends_list, "number_of_friends": number_of_friends, "detail": "Friend list retrieved successfully"}
     
 #route for deleting a friend
 @router.post("/delete_friend", tags=["friends"])

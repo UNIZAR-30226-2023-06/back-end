@@ -208,3 +208,22 @@ def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)
             session.query(User).filter(User.id == user_id).update({User.selected_pieces_skin: new_pieces_skin})
             session.commit()
             return {"detail": "Pieces skin changed successfully to " + new_pieces_skin}
+        
+    #route for changing a user's profile picture
+@router.post("/change-profile-picture", tags=["user_settings"])
+def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #update the profile picture in the database
+            session.query(User).filter(User.id == user_id).update({User.profile_picture: new_profile_picture})
+            session.commit()
+            return {"detail": "Profile picture changed successfully to " + new_profile_picture}
