@@ -92,11 +92,11 @@ def get_friend_requests(token: str = Depends(oauth2_scheme)):
         #get all friend requests from the database
         friend_requests = session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.request_status == False).all()
         #gets the username of all the users who sent the friend requests
-        friend_request_usernames = [session.query(User).filter(User.id == friend_request.user_id).first().username for friend_request in friend_requests]
+        friend_request_usernames = [session.query(User).filter(User.id == friend_request.user_id).first() for friend_request in friend_requests]
         #create a list of dictionaries with the friend requests
         friend_requests_list = []
         for friend_request in friend_requests:
-            friend_requests_list.append({"requester_id": friend_request.user_id, "requester_name": friend_request_usernames[friend_requests.index(friend_request)]})
+            friend_requests_list.append({"requester_id": friend_request.user_id, "requester_name": friend_request_usernames[friend_requests.index(friend_request)].username, "requester_profile_picture": friend_request_usernames[friend_requests.index(friend_request)].profile_picture})
         number_of_friend_requests = len(friend_requests_list)
         return {"friend_requests": friend_requests_list, "number_of_requests": number_of_friend_requests, "detail": "Friend requests retrieved"}
     

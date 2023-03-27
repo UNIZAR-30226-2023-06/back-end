@@ -27,19 +27,6 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-
-from routes.auth import oauth2_scheme
-@app.post("/")
-def index(token: str = Depends(oauth2_scheme)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-        #TODO: return something when not authenticated
-    else:
-        #TODO: return something when authenticated
-        #returns the token
-        return {"token": token}
-
-
 app.include_router(auth_router)
 app.include_router(friends_router)
 app.include_router(user_settings_router)
