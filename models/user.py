@@ -28,14 +28,14 @@ class Befriends(Base):
     friend_id = Column(Integer, primary_key=True)
 
 class Has_Board_Skin(Base):
-    __tablename__ = 'has_board_skin'
+    __tablename__ = 'has_board_skins'
 
     # user_ id and board_skin_id are the primary keys and foreign keys
     user_id = Column(Integer, primary_key=True)
     board_skin_id = Column(Integer, primary_key=True)
 
 class Has_Pieces_Skin(Base):
-    __tablename__ = 'has_pieces_skin'
+    __tablename__ = 'has_piece_skins'
 
     # user_ id and pieces_skin_id are the primary keys and foreign keys
     user_id = Column(Integer, primary_key=True)

@@ -3,7 +3,7 @@ import jwt
 
 from werkzeug.security import generate_password_hash
 from fastapi import APIRouter, Depends, HTTPException
-from models.user import User
+from models.user import Has_Board_Skin, Has_Pieces_Skin, User
 from local_settings import  JWT_SECRET
 
 from routes.auth import oauth2_scheme
@@ -123,6 +123,14 @@ def delete_user(token: str = Depends(oauth2_scheme)):
             raise HTTPException(status_code=404, detail="User not found")
         else:
             #delete the user from the database
+            #first, delete all the user appearances in the befriends table
+            session.query(Befriends).filter(Befriends.user_id == user_id).delete()
+            session.query(Befriends).filter(Befriends.friend_id == user_id).delete()
+            #then, delete all the user appearances in has_board_skin table
+            session.query(Has_Board_Skin).filter(Has_Board_Skin.user_id == user_id).delete()
+            #then, delete all the user appearancdes in the has_piece_skin table
+            session.query(Has_Pieces_Skin).filter(Has_Pieces_Skin.user_id == user_id).delete()
+            #finally, delete the user from the user table
             session.query(User).filter(User.id == user_id).delete()
             session.commit()
             return {"detail": "User deleted successfully"}
