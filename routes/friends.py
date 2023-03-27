@@ -96,7 +96,7 @@ def get_friend_requests(token: str = Depends(oauth2_scheme)):
         #create a list of dictionaries with the friend requests
         friend_requests_list = []
         for friend_request in friend_requests:
-            friend_requests_list.append({"requester_id": friend_request.user_id, "requester_name": friend_request_usernames[friend_requests.index(friend_request)].username, "requester_profile_picture": friend_request_usernames[friend_requests.index(friend_request)].profile_picture})
+            friend_requests_list.append({"requester_id": friend_request.user_id, "requester_name": friend_request_usernames[friend_requests.index(friend_request)].username, "profile_picture": friend_request_usernames[friend_requests.index(friend_request)].profile_picture})
         number_of_friend_requests = len(friend_requests_list)
         return {"friend_requests": friend_requests_list, "number_of_requests": number_of_friend_requests, "detail": "Friend requests retrieved"}
     
@@ -121,9 +121,9 @@ def get_friends(token: str = Depends(oauth2_scheme)):
         friends_list = []
         for friend in friends:
             if(friend.friend_id == user_id):
-                friends_list.append({"friend_id": friend.user_id, "friend_name": friend_usernames[friends.index(friend)].username, "friend_photo" : friend_usernames[friends.index(friend)].profile_picture})
+                friends_list.append({"friend_id": friend.user_id, "friend_name": friend_usernames[friends.index(friend)].username, "profile_picture" : friend_usernames[friends.index(friend)].profile_picture})
             else:
-                friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)].username, "friend_photo" : friend_usernames[friends.index(friend)].profile_picture})
+                friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)].username, "profile_picture" : friend_usernames[friends.index(friend)].profile_picture})
         number_of_friends = len(friends_list)
         return {"friends": friends_list, "number_of_friends": number_of_friends, "detail": "Friend list retrieved successfully"}
     
