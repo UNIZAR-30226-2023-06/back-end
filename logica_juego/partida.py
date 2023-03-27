@@ -103,6 +103,16 @@ class Partida:
     def get_num_jugadores_activos(self):
         return self.num_jugadores_activos
     
+    # Indico que el jugador con id "id_jugador" está listo para empezar y
+    # devuelvo True si todos los jugadores están listos
+    def jugador_listo(self, id_jugador):
+        self.jugadores[self.i_jugador(id_jugador)].set_preparado()
+
+        for j in self.jugadores:
+            if not j.get_preparado():
+                return False
+        
+        return True
 
     ##########################################################################
 
