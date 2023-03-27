@@ -25,6 +25,12 @@ def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
         #search whether the friend_id exists in the database
         if session.query(User).filter(User.id == friend_id).first() is None:
             raise HTTPException(status_code=404, detail="User not found")
+        #search whether the friend request already exists
+        elif session.query(Befriends).filter(Befriends.user_id == user_id, Befriends.friend_id == friend_id).first() is not None:
+            raise HTTPException(status_code=409, detail="Friend request already exists")
+        #search whether the friend request already exists
+        elif session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.friend_id == user_id).first() is not None:
+            raise HTTPException(status_code=409, detail="Friend request already exists")
         else:
             #add the friend request to the database
             session.add(Befriends(request_status=False, user_id=user_id, friend_id=friend_id))
@@ -103,14 +109,20 @@ def get_friends(token: str = Depends(oauth2_scheme)):
         decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         #get the user id from the token
         user_id = decoded_token['id']
-        #get all friends from the database (both ways)
-        friends = session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.request_status == True).all() + session.query(Befriends).filter(Befriends.user_id == user_id, Befriends.request_status == True).all()
+        #get all friends from the database (the friend can be either the user who has sent the friend request or the user who has received the friend request)
+        friends = session.query(Befriends).filter(Befriends.user_id == user_id, Befriends.request_status == True).all()
+        friends.extend(session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.request_status == True).all())
+
         #gets the username of all the users who are friends
-        friend_usernames = [session.query(User).filter(User.id == friend.friend_id).first().username for friend in friends]
+        friend_usernames = [session.query(User).filter(User.id == friend.friend_id).first().username for friend in friends if friend.friend_id != user_id]
+        friend_usernames.extend([session.query(User).filter(User.id == friend.user_id).first().username for friend in friends if friend.user_id != user_id])
         #create a list of dictionaries with the friends
         friends_list = []
         for friend in friends:
-            friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)]})
+            if(friend.friend_id == user_id):
+                friends_list.append({"friend_id": friend.user_id, "friend_name": friend_usernames[friends.index(friend)]})
+            else:
+                friends_list.append({"friend_id": friend.friend_id, "friend_name": friend_usernames[friends.index(friend)]})
         return {"friends": friends_list, "detail": "Friend list retrieved successfully"}
     
 #route for deleting a friend
