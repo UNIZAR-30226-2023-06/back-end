@@ -15,6 +15,7 @@ class User(Base):
     selected_pieces_skin = Column(String, default='default')
     saved_music = Column(String, default='default')
     elo = Column(Integer, default=500)
+    profile_picture = Column(String, default='default')
  
 
 # ! AÚN FALTA PROBARLAS Y VER SI FUNCIONAN

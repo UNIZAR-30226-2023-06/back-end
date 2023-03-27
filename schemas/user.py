@@ -10,6 +10,7 @@ class UserBase(BaseModel):
     selected_piece_skin: str | None
     saved_music: str | None
     elo: int | None
+    profile_picture: str | None
 
 
 class UserCreate(UserBase):
@@ -21,6 +22,7 @@ class UserCreate(UserBase):
     selected_piece_skin: str = 'default'
     saved_music: str = 'default'
     elo: int = 500
+    profile_picture: str = 'default'
 
 class UserLogin(BaseModel):
     email: EmailStr
