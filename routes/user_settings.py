@@ -157,7 +157,8 @@ def add_coins(amount: int, token: str = Depends(oauth2_scheme)):
             user = session.query(User).filter(User.id == user_id).first()
             user.coins += amount
             session.commit()
-            return {"detail": "Coins added successfully"}
+            new_amount = user.coins
+            return {"coins": new_amount, "detail": "Coins added successfully"}
         
 #remove an amount of coins from a user's balance
 @router.post("/remove-coins", tags=["user_settings"])
@@ -175,9 +176,12 @@ def remove_coins(amount: int, token: str = Depends(oauth2_scheme)):
         else:
             #remove the coins from the user's balance
             user = session.query(User).filter(User.id == user_id).first()
+            if user.coins < amount:
+                raise HTTPException(status_code=400, detail="Not enough coins")
             user.coins -= amount
+            new_amount = user.coins
             session.commit()
-            return {"detail": "Coins removed successfully"}
+            return {"coins": new_amount, "detail": "Coins removed successfully"}
 
 #route for modifying a user's selected grid skin
 @router.post("/change-grid-skin", tags=["user_settings"])
