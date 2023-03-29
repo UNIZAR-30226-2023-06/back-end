@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from local_settings import postgresql as settings
 
 def get_engine(user, passwd, host, port, db):
-    url = f"postgresql://{user}:{passwd}@{host}:{port}/{db}"
+    url = f"postgresql://{user}:{passwd}@{host}:{port}"
     engine = create_engine(url, pool_size=50, echo=False)
     return engine
 

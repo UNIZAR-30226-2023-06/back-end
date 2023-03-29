@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String
 
 Base = declarative_base()
 
@@ -13,7 +13,8 @@ class User(Base):
     coins = Column(Integer, default=0)
     selected_grid_skin = Column(String, default='default')
     selected_pieces_skin = Column(String, default='default')
-    saved_music = Column(String, default='default')
+    is_banned = Column(Boolean, default=False)
+    profile_picture = Column(String, default='default')
     elo = Column(Integer, default=500)
     profile_picture = Column(String, default='default')
  

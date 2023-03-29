@@ -8,7 +8,8 @@ class UserBase(BaseModel):
     coins: int | None
     selected_grid_skin: str | None
     selected_piece_skin: str | None
-    saved_music: str | None
+    is_banned: bool | None
+    profile_picture: str | None
     elo: int | None
     profile_picture: str | None
 
@@ -20,10 +21,11 @@ class UserCreate(UserBase):
     coins: int = 0
     selected_grid_skin: str = 'default'
     selected_piece_skin: str = 'default'
-    saved_music: str = 'default'
+    is_banned: bool = False
+    profile_picture: str = 'default'
     elo: int = 500
     profile_picture: str = 'default'
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str 
