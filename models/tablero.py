@@ -19,7 +19,7 @@ class Board_Skins(Base):
     description = Column(String)
 
 class Pieces_Skins(Base):
-    __tablename__ = 'pieces_skins'
+    __tablename__ = 'piece_skins'
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     image = Column(String)
