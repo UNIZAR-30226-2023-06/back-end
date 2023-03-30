@@ -24,7 +24,8 @@ CREATE TABLE board_skins
    id            INTEGER PRIMARY KEY,
    name          VARCHAR        NOT NULL,
    description   VARCHAR        NOT NULL,
-   image         VARCHAR        NOT NULL
+   image         VARCHAR        NOT NULL,
+   price        INTEGER        NOT NULL
 );
 
 CREATE TABLE piece_skins
@@ -32,7 +33,8 @@ CREATE TABLE piece_skins
    id            INTEGER PRIMARY KEY,
    name          VARCHAR        NOT NULL,
    image         VARCHAR        NOT NULL,
-   description   VARCHAR        NOT NULL
+   description   VARCHAR        NOT NULL,
+   price        INTEGER        NOT NULL
 );
 
 CREATE TABLE befriends

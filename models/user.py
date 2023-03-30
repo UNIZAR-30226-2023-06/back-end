@@ -22,7 +22,7 @@ class User(Base):
 # ! AÚN FALTA PROBARLAS Y VER SI FUNCIONAN
 
 class Befriends(Base):
-    __tablename__ = 'befriends'
+    __tablename__ = 'befriends' 
 
     request_status = Column(String)
     user_id = Column(Integer, primary_key=True)

@@ -1,5 +1,6 @@
 import re
 import jwt
+from sqlalchemy import inspect
 from db import get_engine_from_settings
 from models.user import User
 from utils import *
@@ -7,8 +8,9 @@ from utils import *
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware # https://fastapi.tiangolo.com/tutorial/cors/
 
-from routes.auth import router as auth_router
+from routes.auth import router as auth_router, engine
 from routes.friends import router as friends_router
+from routes.game_board import router as game_board_router
 from routes.user_settings import router as user_settings_router
 from local_settings import JWT_SECRET
 from sqlalchemy.orm import sessionmaker
@@ -27,6 +29,24 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
+from models.user import Base as UserBase
+from models.tablero import Base as BoardBase
+from insert_users import poblarTodo
+
+if not inspect(engine).has_table('users') and not inspect(engine).has_table('board_skins'):
+  print("Database not created, creating...")
+  UserBase.metadata.create_all(bind=engine)
+  BoardBase.metadata.create_all(bind=engine)
+  print("Database created successfully")
+  # ask for the user if he wants to insert some users
+  opt = input("Do you want to insert some users? (y/n): ")
+  if opt == 'y':
+    poblarTodo()
+    print("Users inserted successfully")
+  else:
+    print("No users inserted")
+
 app.include_router(auth_router)
-app.include_router(friends_router)
+app.include_router(game_board_router)
 app.include_router(user_settings_router)
+app.include_router(friends_router)

@@ -1,3 +1,4 @@
+
 import random
 
 from models.tablero import Board_Skins, Pieces_Skins
@@ -7,6 +8,7 @@ from werkzeug.security import generate_password_hash
 
 from db import get_engine_from_settings
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
 
 engine = get_engine_from_settings()
 Session = sessionmaker(bind=engine)
@@ -32,26 +34,28 @@ def insertUsers(num):
 
 def insertBoardSkins(num):
     for i in range(num):
-        skin_id = random.randint(1000, 9999)
+        skin_id = i
         while session.query(Board_Skins).filter_by(id=skin_id).first() is not None:
-            skin_id = random.randint(1000, 9999)
+            skin_id += 1
         skin_name = "skin"+str(i)
         skin_image = "skin"+str(i)+".png"
         skin_description = "skin"+str(i)+" description"
-        new_skin = Board_Skins(id=skin_id, name=skin_name, image=skin_image, description=skin_description)
+        price = random.randint(50, 200)
+        new_skin = Board_Skins(id=skin_id, name=skin_name, image=skin_image, description=skin_description, price=price)
         session.add(new_skin)
         session.commit()
         print("Skin created: " + skin_name + "image: " + skin_image + "description: "  + skin_description)
 
 def insertPiecesSkins(num):
     for i in range(num):
-        skin_id = random.randint(1000, 9999)
+        skin_id = i
         while session.query(Pieces_Skins).filter_by(id=skin_id).first() is not None:
-            skin_id = random.randint(1000, 9999)
+            skin_id += 1
         skin_name = "skin"+str(i)
         skin_image = "skin"+str(i)+".png"
         skin_description = "skin"+str(i)+" description"
-        new_skin = Pieces_Skins(id=skin_id, name=skin_name, image=skin_image, description=skin_description)
+        price = random.randint(50, 200)
+        new_skin = Pieces_Skins(id=skin_id, name=skin_name, image=skin_image, description=skin_description, price=price)
         session.add(new_skin)
         session.commit()
         print("Skin created: " + skin_name + "image: " + skin_image + "description: "  + skin_description)
@@ -77,8 +81,18 @@ def insertFriends():
     new_Friendship = Befriends(request_status=True, user_id=user2.id, friend_id=user4.id)
     session.commit()
 
-if __name__ == "__main__":
+
+def poblarTodo():
     insertUsers(10)
     insertBoardSkins(5)
+
+    # Reiniciar la secuencia de autoincremento
+    session.execute(text("ALTER SEQUENCE public.board_skins_id_seq RESTART WITH 5;"))
+
     insertPiecesSkins(5)
+    #alter table pieces_skins AUTO_INCREMENT = 5;
+    session.execute(text("ALTER SEQUENCE public.piece_skins_id_seq RESTART WITH 5;"))
     insertFriends()
+
+if __name__ == "__main__":
+    poblarTodo()

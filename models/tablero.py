@@ -8,22 +8,24 @@ Base = declarative_base()
 
 class Tablero(Base):
     __tablename__ = 'tableros'
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     board_distribution = Column(String)
 
 class Board_Skins(Base):
     __tablename__ = 'board_skins'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+    name = Column(String, unique=True)
     image = Column(String)
     description = Column(String)
+    price = Column(Integer)
 
 class Pieces_Skins(Base):
     __tablename__ = 'piece_skins'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     image = Column(String)
     description = Column(String)
+    price = Column(Integer)
 
 
 # ! #######################################################################
