@@ -3,7 +3,7 @@ import jwt
 
 from werkzeug.security import generate_password_hash
 from fastapi import APIRouter, Depends, HTTPException
-from models.tablero import Board_Skins
+from models.tablero import Board_Skins, Pieces_Skins
 from models.user import Has_Board_Skin, Has_Pieces_Skin, User
 from local_settings import  JWT_SECRET
 
@@ -221,7 +221,12 @@ def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)
         #search whether the user exists in the database
         if session.query(User).filter(User.id == user_id).first() is None:
             raise HTTPException(status_code=404, detail="User not found")
+        elif session.query(Pieces_Skins).filter(Pieces_Skins.name == new_pieces_skin).first() is None:
+            raise HTTPException(status_code=404, detail="Pieces skin not found")
         else:
+            skin = session.query(Pieces_Skins).filter(Pieces_Skins.name == new_pieces_skin).first()
+            if session.query(Has_Pieces_Skin).filter(Has_Pieces_Skin.user_id == user_id, Has_Pieces_Skin.pieces_skin_id == skin.id).first() is None:
+                raise HTTPException(status_code=404, detail="User does not own this skin")
             #update the pieces skin in the database
             session.query(User).filter(User.id == user_id).update({User.selected_pieces_skin: new_pieces_skin})
             session.commit()
