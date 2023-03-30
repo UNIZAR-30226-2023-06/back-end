@@ -24,7 +24,7 @@ class User(Base):
 class Befriends(Base):
     __tablename__ = 'befriends' 
 
-    request_status = Column(String)
+    request_status = Column(Boolean, default=False)
     user_id = Column(Integer, primary_key=True)
     friend_id = Column(Integer, primary_key=True)
 

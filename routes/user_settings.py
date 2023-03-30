@@ -3,6 +3,7 @@ import jwt
 
 from werkzeug.security import generate_password_hash
 from fastapi import APIRouter, Depends, HTTPException
+from models.tablero import Board_Skins
 from models.user import Has_Board_Skin, Has_Pieces_Skin, User
 from local_settings import  JWT_SECRET
 
@@ -196,7 +197,12 @@ def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
         #search whether the user exists in the database
         if session.query(User).filter(User.id == user_id).first() is None:
             raise HTTPException(status_code=404, detail="User not found")
+        elif session.query(Board_Skins).filter(Board_Skins.name == new_grid_skin).first() is None:
+            raise HTTPException(status_code=404, detail="Grid skin not found")
         else:
+            skin = session.query(Board_Skins).filter(Board_Skins.name == new_grid_skin).first()
+            if session.query(Has_Board_Skin).filter(Has_Board_Skin.user_id == user_id, Has_Board_Skin.board_skin_id == skin.id).first() is None:
+                raise HTTPException(status_code=404, detail="User does not own this skin")
             #update the grid skin in the database
             session.query(User).filter(User.id == user_id).update({User.selected_grid_skin: new_grid_skin})
             session.commit()
@@ -239,3 +245,26 @@ def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2
             session.query(User).filter(User.id == user_id).update({User.profile_picture: new_profile_picture})
             session.commit()
             return {"detail": "Profile picture changed successfully to " + new_profile_picture}
+        
+#route for listing a user's owned board skins
+@router.get("/list-board-skins", tags=["user_settings"])
+def list_board_skins(token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #get the user's owned board skins
+            user = session.query(User).filter(User.id == user_id).first()
+            board_skins_ids = session.query(Has_Board_Skin).filter(Has_Board_Skin.user_id == user.id).all()
+            board_skins = []
+            for board_skin_id in board_skins_ids:
+                board_skin = session.query(Board_Skins).filter(Board_Skins.id == board_skin_id.board_skin_id).first()
+                board_skins.append(board_skin.name)
+            return {"board_skins": board_skins, "detail": "Board skins listed successfully"}
