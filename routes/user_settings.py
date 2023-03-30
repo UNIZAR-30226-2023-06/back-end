@@ -246,25 +246,3 @@ def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2
             session.commit()
             return {"detail": "Profile picture changed successfully to " + new_profile_picture}
         
-#route for listing a user's owned board skins
-@router.get("/list-board-skins", tags=["user_settings"])
-def list_board_skins(token: str = Depends(oauth2_scheme)):
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    else:
-        #decode the token
-        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        #get the user id from the token
-        user_id = decoded_token['id']
-        #search whether the user exists in the database
-        if session.query(User).filter(User.id == user_id).first() is None:
-            raise HTTPException(status_code=404, detail="User not found")
-        else:
-            #get the user's owned board skins
-            user = session.query(User).filter(User.id == user_id).first()
-            board_skins_ids = session.query(Has_Board_Skin).filter(Has_Board_Skin.user_id == user.id).all()
-            board_skins = []
-            for board_skin_id in board_skins_ids:
-                board_skin = session.query(Board_Skins).filter(Board_Skins.id == board_skin_id.board_skin_id).first()
-                board_skins.append(board_skin.name)
-            return {"board_skins": board_skins, "detail": "Board skins listed successfully"}
