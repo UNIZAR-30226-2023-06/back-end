@@ -3,8 +3,8 @@ import jwt
 
 from werkzeug.security import generate_password_hash
 from fastapi import APIRouter, Depends, HTTPException
-from models.tablero import Board_Skins, Pieces_Skins
-from models.user import Has_Board_Skin, Has_Pieces_Skin, User
+from models.tablero import Board_Skins, Pieces_Skins, Profile_Pictures
+from models.user import Has_Board_Skin, Has_Pieces_Skin, Has_Profile_Picture, User
 from local_settings import  JWT_SECRET
 
 from routes.auth import oauth2_scheme
@@ -206,7 +206,7 @@ def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
             #update the grid skin in the database
             session.query(User).filter(User.id == user_id).update({User.selected_grid_skin: new_grid_skin})
             session.commit()
-            return {"detail": "Grid skin changed successfully to " + new_grid_skin}
+            return {"detail": "Grid skin changed successfully"}
         
 #route for modifying a user's selected pieces skin
 @router.post("/change-pieces-skin", tags=["user_settings"])
@@ -230,7 +230,7 @@ def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)
             #update the pieces skin in the database
             session.query(User).filter(User.id == user_id).update({User.selected_pieces_skin: new_pieces_skin})
             session.commit()
-            return {"detail": "Pieces skin changed successfully to " + new_pieces_skin}
+            return {"detail": "Pieces skin changed successfully"}
         
     #route for changing a user's profile picture
 @router.post("/change-profile-picture", tags=["user_settings"])
@@ -245,9 +245,14 @@ def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2
         #search whether the user exists in the database
         if session.query(User).filter(User.id == user_id).first() is None:
             raise HTTPException(status_code=404, detail="User not found")
+        elif session.query(Profile_Pictures).filter(Profile_Pictures.name == new_profile_picture).first() is None:
+            raise HTTPException(status_code=404, detail="Profile picture not found")
         else:
             #update the profile picture in the database
+            skin = session.query(Profile_Pictures).filter(Profile_Pictures.name == new_profile_picture).first()
+            if session.query(Has_Profile_Picture).filter(Has_Profile_Picture.user_id == user_id, Has_Profile_Picture.profile_picture_id == skin.id).first() is None:
+                raise HTTPException(status_code=404, detail="User does not own this profile picture")
             session.query(User).filter(User.id == user_id).update({User.profile_picture: new_profile_picture})
             session.commit()
-            return {"detail": "Profile picture changed successfully to " + new_profile_picture}
+            return {"detail": "Profile picture changed successfully"}
         

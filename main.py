@@ -29,7 +29,7 @@ from models.user import Base as UserBase
 from models.tablero import Base as BoardBase
 from insert_users import poblarTodo
 
-if not inspect(engine).has_table('users') and not inspect(engine).has_table('board_skins'):
+if not inspect(engine).has_table('users') and not inspect(engine).has_table('profile_pictures'):
   print("Database not created, creating...")
   UserBase.metadata.create_all(bind=engine)
   BoardBase.metadata.create_all(bind=engine)

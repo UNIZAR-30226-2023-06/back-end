@@ -27,5 +27,12 @@ class Pieces_Skins(Base):
     description = Column(String)
     price = Column(Integer)
 
+class Profile_Pictures(Base):
+    __tablename__ = 'profile_pictures'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, unique=True)
+    image = Column(String)
+    description = Column(String)
+    price = Column(Integer)
 
 # ! #######################################################################
