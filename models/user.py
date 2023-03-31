@@ -42,4 +42,11 @@ class Has_Pieces_Skin(Base):
     user_id = Column(Integer, primary_key=True)
     pieces_skin_id = Column(Integer, primary_key=True)
 
+class Has_Profile_Picture(Base):
+    __tablename__ = 'has_profile_pictures'
+
+    # user_ id and profile_picture_id are the primary keys and foreign keys
+    user_id = Column(Integer, primary_key=True)
+    profile_picture_id = Column(Integer, primary_key=True)
+
 # ! #######################################################################

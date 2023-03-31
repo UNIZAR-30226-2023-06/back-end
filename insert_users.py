@@ -1,8 +1,8 @@
 
 import random
 
-from models.tablero import Board_Skins, Pieces_Skins
-from models.user import Befriends, User
+from models.tablero import Board_Skins, Pieces_Skins, Profile_Pictures
+from models.user import Befriends, Has_Profile_Picture, User
 
 from werkzeug.security import generate_password_hash
 
@@ -81,6 +81,26 @@ def insertFriends():
     new_Friendship = Befriends(request_status=True, user_id=user2.id, friend_id=user4.id)
     session.commit()
 
+def insertProfilePictures(num):
+    profile_pic_default = Profile_Pictures(name="default", image="default.png", description="default description", price=0)
+    session.add(profile_pic_default)
+    session.commit()
+    #add this picture to all users
+    users = session.query(User).all()
+    for user in users:
+        has_profile_pic = Has_Profile_Picture(user_id=user.id, profile_picture_id=profile_pic_default.id)
+        session.add(has_profile_pic)
+        session.commit()
+    for i in range(num):
+        skin_name = "skin"+str(i)
+        skin_image = "skin"+str(i)+".png"
+        skin_description = "skin"+str(i)+" description"
+        price = random.randint(50, 200)
+        new_skin = Profile_Pictures(name=skin_name, image=skin_image, description=skin_description, price=price)
+        session.add(new_skin)
+        session.commit()
+        print("Skin created: " + skin_name + "image: " + skin_image + "description: "  + skin_description)
+    
 
 def poblarTodo():
     insertUsers(10)
@@ -93,6 +113,7 @@ def poblarTodo():
     #alter table pieces_skins AUTO_INCREMENT = 5;
     session.execute(text("ALTER SEQUENCE public.piece_skins_id_seq RESTART WITH 5;"))
     insertFriends()
-
+    insertProfilePictures(5)
+    
 if __name__ == "__main__":
     poblarTodo()
