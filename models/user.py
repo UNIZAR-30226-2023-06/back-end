@@ -19,8 +19,6 @@ class User(Base):
     profile_picture = Column(String, default='default')
  
 
-# ! AÚN FALTA PROBARLAS Y VER SI FUNCIONAN
-
 class Befriends(Base):
     __tablename__ = 'befriends' 
 
@@ -49,4 +47,3 @@ class Has_Profile_Picture(Base):
     user_id = Column(Integer, primary_key=True)
     profile_picture_id = Column(Integer, primary_key=True)
 
-# ! #######################################################################

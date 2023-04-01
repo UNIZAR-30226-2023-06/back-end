@@ -2,8 +2,8 @@ import jwt
 
 from werkzeug.security import generate_password_hash
 from fastapi import APIRouter, Depends, HTTPException
-from models.tablero import Board_Skins, Pieces_Skins
-from models.user import Has_Board_Skin, Has_Pieces_Skin, User
+from models.tablero import Board_Skins, Pieces_Skins, Profile_Pictures
+from models.user import Has_Board_Skin, Has_Pieces_Skin, Has_Profile_Picture, User
 from local_settings import  JWT_SECRET
 
 from routes.auth import oauth2_scheme
@@ -11,7 +11,7 @@ from routes.auth import session
 
 from models.user import User, Befriends
 from routes.auth import session
-from schemas.board import CreateBoardSkin
+from schemas.board import CreateBoardSkin, CreatePieceSkin, CreateProfilePicture
 
 router = APIRouter()
 
@@ -80,9 +80,18 @@ def list_board_skins(token: str = Depends(oauth2_scheme)):
                 board_skins.append(board_skin.name)
             return {"board_skins": board_skins, "detail": "Board skins listed successfully"}
 
+#route for listing all the board skins
+@router.get("/list-all-board-skins", tags=["board"])
+def list_all_board_skins():
+    board_skins = session.query(Board_Skins).all()
+    board_skins_list = []
+    for board_skin in board_skins:
+        board_skins_list.append(board_skin.name)
+    return {"board_skins": board_skins_list, "detail": "Board skins listed successfully"}
+
 #create a piece skin
 @router.post("/add_piece_skin", tags=["pieces"])
-def add_piece_skin(piece_skin : str = Depends(CreateBoardSkin)):
+def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
     if session.query(Pieces_Skins).filter_by(name=piece_skin.name).first():
         raise HTTPException(status_code=400, detail="Piece skin already exists")
     new_skin = Pieces_Skins(name=piece_skin.name, image=piece_skin.image, description=piece_skin.description, price=piece_skin.price)
@@ -147,3 +156,88 @@ def list_piece_skins(token: str = Depends(oauth2_scheme)):
                 piece_skins.append(piece_skin.name)
             return {"piece_skins": piece_skins, "detail": "Piece skins listed successfully"}
         
+
+#route for listing all the piece skins
+@router.get("/list-all-piece-skins", tags=["pieces"])
+def list_all_piece_skins():
+    piece_skins = session.query(Pieces_Skins).all()
+    piece_skins_list = []
+    for piece_skin in piece_skins:
+        piece_skins_list.append(piece_skin.name)
+    return {"piece_skins": piece_skins_list, "detail": "Piece skins listed successfully"}
+
+#route for adding a new profile picture
+@router.post("/add_profile_picture", tags=["profile pictures"])
+def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
+    if session.query(Profile_Pictures).filter_by(name=profile_picture.name).first():
+        raise HTTPException(status_code=400, detail="Profile picture already exists")
+    new_picture = Profile_Pictures(name=profile_picture.name, image=profile_picture.image, description=profile_picture.description, price=profile_picture.price)
+    session.add(new_picture)
+    session.commit()
+    return {"detail": "Profile picture created successfully"}
+
+#route for buying a profile picture
+@router.post("/buy_profile_picture", tags=["profile pictures"])
+def buy_profile_picture(profile_picture_name : str , token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="authenticated")
+    elif not session.query(Profile_Pictures).filter_by(name=profile_picture_name).first():
+        raise HTTPException(status_code=400, detail="Profile picture doesn't exist")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        user = session.query(User).filter(User.id == user_id).first()
+        profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.name == profile_picture_name).first()
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        #check whether the user already has the profile picture
+        if session.query(Has_Profile_Picture).filter(Has_Profile_Picture.user_id == user_id, Has_Profile_Picture.profile_picture_id == profile_picture.id).first():
+            raise HTTPException(status_code=400, detail="User already has this profile picture")
+        
+        #check whether the user has enough money
+        if user.coins < profile_picture.price:
+            raise HTTPException(status_code=400, detail="Not enough money")
+        
+        #add the profile picture to the user and subtract the price from the user's coins
+        user.coins -= profile_picture.price
+        has_profile_picture = Has_Profile_Picture(user_id=user_id, profile_picture_id=profile_picture.id)
+        session.add(has_profile_picture)
+        session.query(User).filter(User.id == user_id).update({User.coins: user.coins})
+        session.commit()
+        return {"detail": "Profile picture bought successfully"}
+    
+#route for listing a user's owned profile pictures
+@router.get("/list-profile-pictures", tags=["profile pictures"])
+def list_profile_pictures(token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    else:
+        #decode the token
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        #get the user id from the token
+        user_id = decoded_token['id']
+        #search whether the user exists in the database
+        if session.query(User).filter(User.id == user_id).first() is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        else:
+            #get the user's owned profile pictures
+            user = session.query(User).filter(User.id == user_id).first()
+            profile_pictures_ids = session.query(Has_Profile_Picture).filter(Has_Profile_Picture.user_id == user.id).all()
+            profile_pictures = []
+            for profile_picture_id in profile_pictures_ids:
+                profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.id == profile_picture_id.profile_picture_id).first()
+                profile_pictures.append(profile_picture.name)
+            return {"profile_pictures": profile_pictures, "detail": "Profile pictures listed successfully"}
+        
+#route for listing all the profile pictures
+@router.get("/list-all-profile-pictures", tags=["profile pictures"])
+def list_all_profile_pictures():
+    profile_pictures = session.query(Profile_Pictures).all()
+    profile_pictures_list = []
+    for profile_picture in profile_pictures:
+        profile_pictures_list.append(profile_picture.name)
+    return {"profile_pictures": profile_pictures_list, "detail": "Profile pictures listed successfully"}
