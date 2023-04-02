@@ -15,6 +15,8 @@ from schemas.board import CreateBoardSkin, CreatePieceSkin, CreateProfilePicture
 
 router = APIRouter()
 
+
+
 @router.post("/add_board_skin", tags=["board"])
 def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
     if session.query(Board_Skins).filter_by(name=board_skin.name).first():
@@ -23,6 +25,17 @@ def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
     session.add(new_skin)
     session.commit()
     return {"detail": "Board skin created successfully"}
+
+# route for deleting a board skin from the database's Board_Skins table
+@router.delete("/delete-board-skin", tags=["board"])
+def delete_board_skin(board_skin_name : str):
+    board_skin = session.query(Board_Skins).filter(Board_Skins.name == board_skin_name).first()
+    if board_skin is None:
+        raise HTTPException(status_code=404, detail="Board skin not found")
+    else:
+        session.delete(board_skin)
+        session.commit()
+        return {"detail": "Board skin deleted successfully"}
 
 @router.post("/buy_board_skin", tags=["board"])
 def buy_board_skin(board_skin_name : str , token: str = Depends(oauth2_scheme)):
@@ -89,6 +102,7 @@ def list_all_board_skins():
         board_skins_list.append(board_skin.name)
     return {"board_skins": board_skins_list, "detail": "Board skins listed successfully"}
 
+
 #create a piece skin
 @router.post("/add_piece_skin", tags=["pieces"])
 def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
@@ -98,6 +112,17 @@ def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
     session.add(new_skin)
     session.commit()
     return {"detail": "Piece skin created successfully"}
+
+#route for deleting a piece skin from the database's Pieces_Skins table
+@router.delete("/delete-piece-skin", tags=["pieces"])
+def delete_piece_skin(piece_skin_name : str):
+    piece_skin = session.query(Pieces_Skins).filter(Pieces_Skins.name == piece_skin_name).first()
+    if piece_skin is None:
+        raise HTTPException(status_code=404, detail="Piece skin not found")
+    else:
+        session.delete(piece_skin)
+        session.commit()
+        return {"detail": "Piece skin deleted successfully"}
 
 #buy a piece skin
 @router.post("/buy_piece_skin", tags=["pieces"])
@@ -166,6 +191,7 @@ def list_all_piece_skins():
         piece_skins_list.append(piece_skin.name)
     return {"piece_skins": piece_skins_list, "detail": "Piece skins listed successfully"}
 
+
 #route for adding a new profile picture
 @router.post("/add_profile_picture", tags=["profile pictures"])
 def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
@@ -175,6 +201,17 @@ def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
     session.add(new_picture)
     session.commit()
     return {"detail": "Profile picture created successfully"}
+
+#route for deleting a profile picture from the database's Profile_Pictures table
+@router.delete("/delete-profile-picture", tags=["profile pictures"])
+def delete_profile_picture(profile_picture_name : str):
+    profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.name == profile_picture_name).first()
+    if profile_picture is None:
+        raise HTTPException(status_code=404, detail="Profile picture not found")
+    else:
+        session.delete(profile_picture)
+        session.commit()
+        return {"detail": "Profile picture deleted successfully"}
 
 #route for buying a profile picture
 @router.post("/buy_profile_picture", tags=["profile pictures"])

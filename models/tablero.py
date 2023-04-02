@@ -4,8 +4,6 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 
 
-# ! AÚN FALTA PROBARLAS Y VER SI FUNCIONAN
-
 class Tablero(Base):
     __tablename__ = 'tableros'
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
@@ -34,5 +32,3 @@ class Profile_Pictures(Base):
     image = Column(String)
     description = Column(String)
     price = Column(Integer)
-
-# ! #######################################################################
