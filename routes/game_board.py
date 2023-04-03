@@ -16,7 +16,7 @@ from schemas.board import CreateBoardSkin, CreatePieceSkin, CreateProfilePicture
 router = APIRouter()
 
 
-
+############################################### BOARD SKINS #########################################################
 @router.post("/add_board_skin", tags=["board"])
 def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
     if session.query(Board_Skins).filter_by(name=board_skin.name).first():
@@ -102,6 +102,19 @@ def list_all_board_skins():
         board_skins_list.append(board_skin.name)
     return {"board_skins": board_skins_list, "detail": "Board skins listed successfully"}
 
+#route for getting a board skin data
+@router.get("/get-board-skin", tags=["board"])
+def get_board_skin(board_skin_name : str):
+    board_skin = session.query(Board_Skins).filter(Board_Skins.name == board_skin_name).first()
+    if board_skin is None:
+        raise HTTPException(status_code=404, detail="Board skin not found")
+    else:
+        return {"board_skin": board_skin.name, "image": board_skin.image, "description": board_skin.description, "price": board_skin.price, "detail": "Board skin data listed successfully"}
+##########################################################################################################################
+
+
+
+############################################### PROFILE PICTURES #########################################################
 
 #create a piece skin
 @router.post("/add_piece_skin", tags=["pieces"])
@@ -191,6 +204,19 @@ def list_all_piece_skins():
         piece_skins_list.append(piece_skin.name)
     return {"piece_skins": piece_skins_list, "detail": "Piece skins listed successfully"}
 
+#route for getting a piece skin's data
+@router.get("/get-piece-skin", tags=["pieces"])
+def get_piece_skin(piece_skin_name : str):
+    piece_skin = session.query(Pieces_Skins).filter(Pieces_Skins.name == piece_skin_name).first()
+    if piece_skin is None:
+        raise HTTPException(status_code=404, detail="Piece skin not found")
+    else:
+        return {"id": piece_skin.id, "piece_skin": piece_skin.name, "image": piece_skin.image, "description": piece_skin.description, "price": piece_skin.price, "detail": "Piece skin data listed successfully"}
+
+##########################################################################################################################
+
+
+############################################### PROFILE PICTURES #########################################################
 
 #route for adding a new profile picture
 @router.post("/add_profile_picture", tags=["profile pictures"])
@@ -278,3 +304,14 @@ def list_all_profile_pictures():
     for profile_picture in profile_pictures:
         profile_pictures_list.append(profile_picture.name)
     return {"profile_pictures": profile_pictures_list, "detail": "Profile pictures listed successfully"}
+
+#route for getting a profile picture's data
+@router.get("/get-profile-picture", tags=["profile pictures"])
+def get_profile_picture(profile_picture_name : str):
+    profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.name == profile_picture_name).first()
+    if profile_picture is None:
+        raise HTTPException(status_code=404, detail="Profile picture not found")
+    else:
+        return {"id": profile_picture.id, "profile_picture": profile_picture.name, "image": profile_picture.image, "description": profile_picture.description, "price": profile_picture.price, "detail": "Profile picture data listed successfully"}
+
+##########################################################################################################################
