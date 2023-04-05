@@ -1,11 +1,12 @@
 import random
 
-from .constants import Resource
+from .constants import Resource, Cards
 
 # Representación de la mano de un jugador, es decir, qué cartas tiene, qué
 # recursos y cartas de desarrollo
 class Mano:
-    def __init__(self, cartas_desarrollo, arcilla, madera, trigo, piedra, oveja):
+    def __init__(self, cartas_desarrollo : Cards, arcilla : int,
+                  madera : int, trigo : int, piedra : int, oveja : int):
         self.cartas_desarrollo = cartas_desarrollo
 
         self.arcilla = arcilla
