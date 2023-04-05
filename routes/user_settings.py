@@ -136,10 +136,6 @@ def delete_user(token: str = Depends(oauth2_scheme)):
             session.commit()
             return {"detail": "User deleted successfully"}
 
-#!##################################################
-#! A partir de aquí las funciones están sin probar #
-#!##################################################
-
 #add an amount of coins to a user's balance
 @router.post("/add-coins", tags=["user_settings"])
 def add_coins(amount: int, token: str = Depends(oauth2_scheme)):

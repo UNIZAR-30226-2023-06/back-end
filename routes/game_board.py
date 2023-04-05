@@ -109,7 +109,7 @@ def get_board_skin(board_skin_name : str):
     if board_skin is None:
         raise HTTPException(status_code=404, detail="Board skin not found")
     else:
-        return {"board_skin": board_skin.name, "image": board_skin.image, "description": board_skin.description, "price": board_skin.price, "detail": "Board skin data listed successfully"}
+        return {"id": board_skin.id, "board_skin": board_skin.name, "image": board_skin.image, "description": board_skin.description, "price": board_skin.price, "detail": "Board skin data listed successfully"}
 ##########################################################################################################################
 
 
