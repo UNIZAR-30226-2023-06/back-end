@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import SecretStr
 from models.user import User
 from local_settings import  JWT_SECRET
-from utils import OAuth2EmailPasswordRequestForm
 from fastapi.security import OAuth2PasswordRequestForm
 
 from werkzeug.security import generate_password_hash, check_password_hash

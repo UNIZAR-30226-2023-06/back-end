@@ -1,9 +1,19 @@
-import mano
+from .mano import Mano
 import cartas
 
+from .board import Color
+
+# class Color:
+#     NO_ASIGNADO = 0
+#     ROJO = 1
+#     AMARILLO = 2
+#     BLANCO = 3
+#     AZUL = 4
+
+
 class Jugador:
-    def __init__(self, id, puntos_victoria, color, mano, caballeros_usados,
-                 tiene_bono_carreteras, tiene_bono_caballeros, esta_preparado):
+    def __init__(self, id : int, puntos_victoria : int, color : Color, mano : Mano, caballeros_usados : int,
+                 tiene_bono_carreteras : bool, tiene_bono_caballeros : bool, esta_preparado : bool):
         # identificador del jugador
         self.id = id
 
@@ -90,17 +100,11 @@ class Jugador:
     def get_preparado(self):
         return self.esta_preparado
 
-def nuevo_jugador(id):
+def nuevo_jugador(id : int, color : Color):
     mano_inicial = mano.nueva_mano()
 
-    jugador = Jugador(id, 0, Color.NO_ASIGNADO, mano_inicial, 0, False, False,
+    jugador = Jugador(id, 0, color, mano_inicial, 0, False, False,
                       False)
     return jugador
 
-class Color:
-    NO_ASIGNADO = 0
-    ROJO = 1
-    AMARILLO = 2
-    BLANCO = 3
-    AZUL = 4
 

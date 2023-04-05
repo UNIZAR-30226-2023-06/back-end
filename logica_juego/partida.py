@@ -1,9 +1,11 @@
 import random
 
-import cartas
-import construcciones
+# import cartas
+# import construcciones
 import jugador
-import errores
+# import errores
+
+from .constants import Errors, Color, Cards, Building, Resource
 
 class Partida:
     def __init__(self, num_jugadores, turno, fase_turno, codigo, jugadores,
@@ -56,13 +58,13 @@ class Partida:
     # false si la partida ya está llena o si ya ha comenzado.
     def anadir_jugador(self, id_jugador):
         if self.jugadores_seleccionados:
-            return errores.PARTIDA_COMENZADA
+            return Errors.GAME_STARTED
         for i in range(self.num_jugadores):
             if self.jugadores[i] == None:
                 self.jugadores[i] = jugador.nuevo_jugador(id_jugador)
                 self.num_jugadores_activos = self.num_jugadores_activos + 1
-                return errores.PARTIDA_LLENA
-        return errores.SIN_ERRORES
+                return Errors.GAME_FULL
+        return Errors.NO_ERROR
     
     # Resta un jugador al contador de jugadores en la partida. Si la partida
     # aún no ha empezado, lo elimina por completo. Si sí ha empezado simplemente
@@ -160,26 +162,26 @@ class Partida:
     def usar_carta_desarrollo(self, id_jugador, tipo_carta):
         self.sub_carta_desarrollo(tipo_carta)
 
-        if tipo_carta == cartas.CABALLERO:
+        if tipo_carta == Cards.KNIGHT:
             self.mover_ladron(id_jugador)
             self.jugadores[self.i_jugador(id_jugador)].add_caballero()
             self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
 
-        elif tipo_carta == cartas.PROGRESO_INVENTO:
+        elif tipo_carta == Cards.INVENTION_PROGRESS:
             # Obtenemos del frontend qué 2 recursos quiere obtener el jugador
             recursos = {0,0,0,0,0}
             self.jugadores[self.i_jugador(id_jugador)].sumar_recursos(recursos)
 
-        elif tipo_carta == cartas.PROGRESO_CARRETERAS:
+        elif tipo_carta == Cards.ROAD_PROGRESS:
             # Obtenemos del frontend dónde quiere construir el jugador las carreteras
             coordenadas_1 = 0
             coordenadas_2 = 0
 
             # Indicamos al tablero dónde construimos las carreteras
 
-        elif tipo_carta == cartas.PROGRESO_MONOPOLIO:
+        elif tipo_carta == Cards.MONOPOLY_PROGRESS:
             # Obtenemos del frontend qué recurso quiere robar el jugador
-            tipo_recurso = cartas.ARCILLA
+            tipo_recurso = Resource.CLAY
 
             recursos = {0,0,0,0,0}
 
@@ -249,7 +251,7 @@ class Partida:
     ############ FUNCIONES SOBRE LA GESTIÓN DE LAS CONSTRUCCIONES ############
 
     def comprar(self, id_jugador, tipo_construccion):
-        if tipo_construccion == construcciones.CARRETERA:
+        if tipo_construccion == Building.ROAD:
             self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0})
 
             # Pregunto al frontend dónde quiere el jugador colocar la construcción
@@ -260,7 +262,7 @@ class Partida:
 
             self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
 
-        elif tipo_construccion == construcciones.POBLADO:
+        elif tipo_construccion == Building.VILLAGE:
             self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,1,0,1})
 
             # Pregunto al frontend dónde quiere el jugador colocar la construcción
@@ -271,7 +273,7 @@ class Partida:
 
             self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
 
-        elif tipo_construccion == construcciones.CIUDAD:
+        elif tipo_construccion == Building.CITY:
             self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,0,3,2})
 
             # Pregunto al frontend dónde quiere el jugador colocar la construcción
@@ -282,10 +284,10 @@ class Partida:
 
             self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
 
-        elif tipo_construccion == construcciones.CARTA_DESARROLLO:
+        elif tipo_construccion == Building.DEV_CARD:
             self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,1,1,1})
 
-            carta_robada = cartas.random_carta_desarrollo()
+            carta_robada = Cards.pick_random_card()
 
             # informo a frontend de la carta robada
 

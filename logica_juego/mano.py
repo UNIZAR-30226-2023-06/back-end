@@ -1,6 +1,6 @@
 import random
 
-import cartas
+from .constants import Resource
 
 # Representación de la mano de un jugador, es decir, qué cartas tiene, qué
 # recursos y cartas de desarrollo
@@ -34,28 +34,28 @@ class Mano:
         return self.trigo
 
     def get_recurso(self, tipo_recurso):
-        if tipo_recurso == cartas.ARCILLA:
+        if tipo_recurso == Resource.CLAY:
             return self.arcilla
-        elif tipo_recurso == cartas.MADERA:
+        elif tipo_recurso == Resource.WOOD:
             return self.madera
-        elif tipo_recurso == cartas.OVEJA:
+        elif tipo_recurso == Resource.SHEEP:
             return self.oveja
-        elif tipo_recurso == cartas.PIEDRA:
+        elif tipo_recurso == Resource.STONE:
             return self.piedra
-        elif tipo_recurso == cartas.TRIGO:
+        elif tipo_recurso == Resource.WHEAT:
             return self.trigo
     
     # add para cada atributo
     def add_recurso(self, tipo_recurso, cantidad=1):
-        if tipo_recurso == cartas.ARCILLA:
+        if tipo_recurso == Resource.CLAY:
             self.arcilla += cantidad
-        elif tipo_recurso == cartas.MADERA:
+        elif tipo_recurso == Resource.WOOD:
             self.arcilla += cantidad
-        elif tipo_recurso == cartas.OVEJA:
+        elif tipo_recurso == Resource:
             self.arcilla += cantidad
-        elif tipo_recurso == cartas.PIEDRA:
+        elif tipo_recurso == Resource.STONE:
             self.arcilla += cantidad
-        elif tipo_recurso == cartas.TRIGO:
+        elif tipo_recurso == Resource.WHEAT:
             self.arcilla += cantidad
     
     def add_carta_desarrollo(self, tipo_carta):
@@ -66,15 +66,15 @@ class Mano:
     
     # sub para cada atributo
     def sub_recurso(self, tipo_recurso, cantidad=1):
-        if tipo_recurso == cartas.ARCILLA:
+        if tipo_recurso == Resource.CLAY:
             self.arcilla -= cantidad
-        elif tipo_recurso == cartas.MADERA:
+        elif tipo_recurso == Resource.WOOD:
             self.arcilla -= cantidad
-        elif tipo_recurso == cartas.OVEJA:
+        elif tipo_recurso == Resource:
             self.arcilla -= cantidad
-        elif tipo_recurso == cartas.PIEDRA:
+        elif tipo_recurso == Resource.STONE:
             self.arcilla -= cantidad
-        elif tipo_recurso == cartas.TRIGO:
+        elif tipo_recurso == Resource.WHEAT:
             self.arcilla -= cantidad
     
     def num_total_recursos(self):
