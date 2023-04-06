@@ -1,8 +1,8 @@
-from .mano import Mano
-import cartas
+from .mano import Mano, nueva_mano
+#import cartas
 
 from .board import Color
-
+from .constants import Resource
 # class Color:
 #     NO_ASIGNADO = 0
 #     ROJO = 1
@@ -61,18 +61,18 @@ class Jugador:
         return self.mano.extraer_recurso_aleatorio()
     
     def sumar_recursos(self, recursos):
-        self.mano.add_recurso(cartas.ARCILLA, recursos[0])
-        self.mano.add_recurso(cartas.MADERA, recursos[1])
-        self.mano.add_recurso(cartas.OVEJA, recursos[2])
-        self.mano.add_recurso(cartas.PIEDRA, recursos[3])
-        self.mano.add_recurso(cartas.TRIGO, recursos[4])
+        self.mano.add_recurso(Resource.CLAY, recursos[0])
+        self.mano.add_recurso(Resource.WOOD, recursos[1])
+        self.mano.add_recurso(Resource.SHEEP, recursos[2])
+        self.mano.add_recurso(Resource.STONE, recursos[3])
+        self.mano.add_recurso(Resource.WHEAT, recursos[4])
     
     def restar_recursos(self, recursos):
-        self.mano.sub_recurso(cartas.ARCILLA, recursos[0])
-        self.mano.sub_recurso(cartas.MADERA, recursos[1])
-        self.mano.sub_recurso(cartas.OVEJA, recursos[2])
-        self.mano.sub_recurso(cartas.PIEDRA, recursos[3])
-        self.mano.sub_recurso(cartas.TRIGO, recursos[4])
+        self.mano.sub_recurso(Resource.CLAY, recursos[0])
+        self.mano.sub_recurso(Resource.WOOD, recursos[1])
+        self.mano.sub_recurso(Resource.SHEEP, recursos[2])
+        self.mano.sub_recurso(Resource.STONE, recursos[3])
+        self.mano.sub_recurso(Resource.WHEAT, recursos[4])
     
     def add_caballero(self):
         self.caballeros_usados += 1
@@ -101,7 +101,7 @@ class Jugador:
         return self.esta_preparado
 
 def nuevo_jugador(id : int, color : Color):
-    mano_inicial = mano.nueva_mano()
+    mano_inicial = nueva_mano()
 
     jugador = Jugador(id, 0, color, mano_inicial, 0, False, False,
                       False)

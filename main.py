@@ -3,7 +3,6 @@ import jwt
 from sqlalchemy import inspect
 from db import get_engine_from_settings
 from models.user import User
-from utils import *
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware # https://fastapi.tiangolo.com/tutorial/cors/
@@ -12,6 +11,7 @@ from routes.auth import router as auth_router, engine
 from routes.friends import router as friends_router
 from routes.game_board import router as game_board_router
 from routes.user_settings import router as user_settings_router
+from routes.game_lobby import router as game_lobby_router
 from local_settings import JWT_SECRET
 from sqlalchemy.orm import sessionmaker
 
@@ -46,3 +46,4 @@ app.include_router(auth_router)
 app.include_router(game_board_router)
 app.include_router(user_settings_router)
 app.include_router(friends_router)
+app.include_router(game_lobby_router)
