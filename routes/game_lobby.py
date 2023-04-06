@@ -20,27 +20,34 @@ from logica_juego.mano import Mano
 
 router = APIRouter()
 
-Lobbys : Lobby = []
+Lobbies : Lobby = []
 
 # Create a new lobby
 @router.post("/create-lobby", tags=["Lobby"])
 def create_Lobby():
     lobby = Lobby()
-    Lobbys.append(lobby)
+    Lobbies.append(lobby)
     return {"lobby_id": lobby.id, "detail": "Lobby created"}
 
 #delete a lobby
 @router.delete("/delete-lobby", tags=["Lobby"])
 def delete_Lobby(lobby_id: int):
-    for lobby in Lobbys:
+    for lobby in Lobbies:
         if lobby.id == lobby_id:
-            Lobbys.remove(lobby)
+            Lobbies.remove(lobby)
             return {"detail": "Lobby deleted"}
     return {"detail": "Lobby not found"}
 
-@router.get("/get-lobbys", tags=["Lobby"])
-def get_Lobbys():
-    return Lobbys
+@router.get("/get-all-lobbies", tags=["Lobby"])
+def get_Lobbies():
+    return Lobbies
+
+@router.get("/get-lobby-from-id", tags=["Lobby"])
+def get_Lobby_From_Id(lobby_id: int):
+    for lobby in Lobbies:
+        if lobby.id == lobby_id:
+            return lobby
+    return {"detail": "Lobby not found"}
 
 # Join a lobby
 @router.post("/join-lobby", tags=["Lobby"])
@@ -57,7 +64,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="User not found")
     
     # check whether the user is alredy in other lobby
-    for l in Lobbys:
+    for l in Lobbies:
         players = l.get_Players()
         for j in players:
             if j.id == user.id:
@@ -65,7 +72,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
 
     # Search for the lobby
     lobby : Lobby = None
-    for l in Lobbys:
+    for l in Lobbies:
         if l.id == lobby_id:
             lobby = l
             break
@@ -105,7 +112,7 @@ def leave_Lobby(token: str = Depends(oauth2_scheme)):
     
     # Search for the lobby
     lobby : Lobby = None
-    for l in Lobbys:
+    for l in Lobbies:
         players = l.get_Players()
         for j in players:
             if j.id == user.id:
@@ -118,3 +125,4 @@ def leave_Lobby(token: str = Depends(oauth2_scheme)):
     else:
         lobby.remove_Player(user.id)
         return {"num_players":len(lobby.players),  "detail": "Lobby left"}
+
