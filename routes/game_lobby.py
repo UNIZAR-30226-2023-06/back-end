@@ -18,9 +18,11 @@ from logica_juego.jugador import Jugador
 from logica_juego.constants import Color, Cards
 from logica_juego.mano import Mano
 
+from logica_juego.matchmaking import *
+
 router = APIRouter()
 
-Lobbies : Lobby = []
+# Lobbies : Lobby = []
 
 # Create a new lobby
 @router.post("/create-lobby", tags=["Lobby"])
@@ -81,7 +83,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Lobby not found")
     
     # Add the user to the lobby
-    player = Jugador(user.id, 0, None, None, 0, False, False, False)
+    player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False)
 
     # Search whether the user is already in the lobby (some player has the same id)
     players = lobby.get_Players()
@@ -126,3 +128,18 @@ def leave_Lobby(token: str = Depends(oauth2_scheme)):
         lobby.remove_Player(user.id)
         return {"num_players":len(lobby.players),  "detail": "Lobby left"}
 
+# Search for a lobby
+@router.post("/search-lobby", tags=["Lobby"])
+def search_Lobby(token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    pass # TODO

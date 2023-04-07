@@ -8,9 +8,11 @@ class Lobby:
     id = None
     players = [] # list of players in the lobby
     game = Board()
+    game_has_started = False
     is_full = False
     max_Players = None 
     current_Players = 0
+    elo = 0
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
@@ -18,10 +20,15 @@ class Lobby:
         self.is_full = False
         self.max_Players = max_Players
         self.current_Players = len(self.players)
+        self.elo = 0
+        self.players = []
+        # self.game = Board()
 
     def add_Player(self, player : Jugador):
         if len(self.players) < self.max_Players:
             self.players.append(player)
+            #recalculate elo (average of all players in lobby)
+            self.elo = sum([player.elo for player in self.players]) / len(self.players)
             self.current_Players = len(self.players)
             if len(self.players) == self.max_Players:
                 self.is_Full = True
@@ -35,6 +42,8 @@ class Lobby:
         for player in self.players:
             if player.id == player_id:
                 self.players.remove(player)
+                #recalculate elo (average of all players in lobby)
+                self.elo = sum([player.elo for player in self.players]) / len(self.players)
                 self.current_Players = len(self.players)
                 return 0
         return -1 # Player not found

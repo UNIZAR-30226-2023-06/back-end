@@ -12,7 +12,7 @@ from .constants import Resource
 
 
 class Jugador:
-    def __init__(self, id : int, puntos_victoria : int, color : Color, mano : Mano, caballeros_usados : int,
+    def __init__(self, id : int, elo:int, puntos_victoria : int, color : Color, mano : Mano, caballeros_usados : int,
                  tiene_bono_carreteras : bool, tiene_bono_caballeros : bool, esta_preparado : bool):
         # identificador del jugador
         self.id = id
@@ -28,6 +28,7 @@ class Jugador:
         self.tiene_bono_caballeros = tiene_bono_caballeros
 
         self.esta_preparado = esta_preparado
+        self.elo = elo
 
     def get_id(self):
         return self.id
