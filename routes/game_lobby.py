@@ -18,7 +18,7 @@ from logica_juego.jugador import Jugador
 from logica_juego.constants import Color, Cards
 from logica_juego.mano import Mano
 
-from logica_juego.matchmaking import *
+from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar_partida
 
 router = APIRouter()
 
@@ -142,4 +142,7 @@ def search_Lobby(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    pass # TODO
+    player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False)
+    buscar_partida(player)
+
+    return jugadores_buscando_partida

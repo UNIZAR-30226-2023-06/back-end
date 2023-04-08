@@ -1,5 +1,7 @@
 import re
 import jwt
+import multiprocessing
+import threading
 from sqlalchemy import inspect
 from db import get_engine_from_settings
 from models.user import User
@@ -15,6 +17,8 @@ from routes.game_lobby import router as game_lobby_router
 from local_settings import JWT_SECRET
 from sqlalchemy.orm import sessionmaker
 
+from logica_juego.matchmaking import init_buscador
+from logica_juego.matchmaking import jugadores_buscando_partida
 app = FastAPI()
 
 app.add_middleware(
@@ -47,3 +51,6 @@ app.include_router(game_board_router)
 app.include_router(user_settings_router)
 app.include_router(friends_router)
 app.include_router(game_lobby_router)
+
+thread = threading.Thread(target=init_buscador)
+thread.start()

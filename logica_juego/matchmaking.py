@@ -1,4 +1,5 @@
 import multiprocessing
+import threading
 import time
 from logica_juego.jugador import Jugador
 from logica_juego.lobby import Lobby
@@ -83,7 +84,7 @@ def salirse_de_partida(id_jugador, codigo_partida):
         if lobby.id == codigo_partida:
             lobby.remove_Player(id_jugador)
             if len(lobby.players) == 0:
-                Lobbies.remove(lobby)
+                limpiador(codigo_partida)
 
 # El limpiador checkea si una partida en concreto ha sido abandonada y la
 # borra si es el caso. Espera 10 minutos antes de hacer el checkeo.
@@ -92,7 +93,9 @@ def limpiador(codigo_partida):
     for lobby in Lobbies:
         if lobby.id == codigo_partida:
             if len(lobby.players) == 0:
-                Lobbies.remove(lobby)
+                thread = threading.Thread(target=limpiador, args=(codigo_partida,))
+                thread.start()
+                thread.join() # ? Is this necessary?
 
 ######################## GESTIÓN DE BÚSQUEDA DE PARTIDA ########################
 
@@ -101,17 +104,21 @@ jugadores_buscando_partida : Jugador = []
 # Función a la que se llama cuando el jugador con id=id_jugador quiere buscar
 # partida.
 def buscar_partida(jugador : Jugador):
-    # Si el jugador ya está buscando partida, no hacemos nada.
-    if jugador in jugadores_buscando_partida:
-        return -2
 
     user = session.query(User).filter(User.id == jugador.id).first()
     if user is None:
         return -1
+    
+    # Si el jugador ya está buscando partida, no hacemos nada.
+    if jugador in jugadores_buscando_partida:
+        return -2
+
 
     # Si no, añadimos el jugador a la lista de jugadores buscando partida.
     # TODO: el valor que se le debe asignar a cada jugador es su ELO
-    jugadores_buscando_partida[user.id] = user.elo
+    jugadores_buscando_partida.append(Jugador(user.id, user.elo, 0, None, None, 0, False, False, False))
+    print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+    print(jugadores_buscando_partida)
     return 0
 
 # Cada 5 segundos el buscador revisa si hay jugadores buscando partida y si los
@@ -119,6 +126,10 @@ def buscar_partida(jugador : Jugador):
 def init_buscador():
     # El sentido en el que se van a buscar los jugadores va a alternar entre
     # ascendente y descendente según su ELO.
+
+    global jugadores_buscando_partida
+    global Lobbies
+
     class Sentido(Enum):
         ASCENDENTE = 1
         DESCENDENTE = 2
@@ -126,6 +137,7 @@ def init_buscador():
     sentido = Sentido.ASCENDENTE
 
     while(True):
+        print("Estoy vivo\n")
         # Alternamos el sentido de búsqueda en cada iteración.
         if sentido == Sentido.ASCENDENTE:
             sentido = Sentido.DESCENDENTE
@@ -134,20 +146,22 @@ def init_buscador():
 
         # Obtengo todos los jugadores buscando partida y los ordeno de menor a mayor
         # según su ELO.
-        jugadores = list(jugadores_buscando_partida.items())
+        print(jugadores_buscando_partida)
+        jugadores = jugadores_buscando_partida
         jugadores.sort(key=lambda x: x.elo)
 
         # Si hay menos de 4 jugadores buscando partida, esperamos 5 segundos y
         # volvemos a comprobar.
         if len(jugadores) < 4:
-            time.sleep(5)
+            print("No hay suficientes jugadores buscando partida\n")
+            time.sleep(1)
             continue
 
         # Si hay 4 o más jugadores buscando partida, los emparejamos según el
         # sentido de búsqueda que toca.
         if sentido == Sentido.ASCENDENTE:
             # Emparejamos los jugadores de menor a mayor ELO.
-            for i in range(0, len(jugadores - (len(jugadores)%4)), 4):
+            for i in range(0, (len(jugadores) - (len(jugadores)%4)), 4):
                 # Creamos una nueva partida con el primer jugador de la pareja
                 # y le añadimos el resto de jugadores.
                 codigo_partida = nueva_partida(jugadores[i].id)
@@ -177,13 +191,13 @@ def init_buscador():
                     for p in jugadores_buscando_partida:
                         if j.id == p.id:
                             jugadores_buscando_partida.remove(p)
-        time.sleep(5)
+        time.sleep(1)
 
 ######################### GESTIÓN DE INICIO DE PARTIDA #########################
 
 # Función a la que se llama cuando el jugador con id=id_jugador quiere empezar
 # la partida con código=codigo_partida.
-def empezar_partida(id_jugador, codigo_partida):
+def empezar_partida(codigo_partida):
     # Indico en la partida que el jugador con id "id_jugador" quiere empezar
     # la partida.
     lobby : Lobby = None
