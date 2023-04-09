@@ -175,7 +175,7 @@ def init_buscador():
                 jugadores_buscando_partida.remove(jugadores[i+3])
                 jugadores_buscando_partida.remove(jugadores[i+2])
                 jugadores_buscando_partida.remove(jugadores[i+1])
-                jugadores_buscando_partida.remove(jugadores[i])
+                jugadores_buscando_partida.remove(jugadores[i])   
         else:
             # Emparejamos los jugadores de mayor a menor ELO.
             for i in range(len(jugadores) - 1, 3, -4):

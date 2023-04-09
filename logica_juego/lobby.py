@@ -22,6 +22,7 @@ class Lobby:
         self.current_Players = len(self.players)
         self.elo = 0
         self.players = []
+        self.game= Board()
         # self.game = Board()
 
     def add_Player(self, player : Jugador):
