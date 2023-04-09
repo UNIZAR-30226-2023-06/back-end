@@ -26,13 +26,14 @@ def nueva_partida(id_jugador):
     if user is None:
         return -1 # User not found
     lobby = Lobby()
-    
-    res = lobby.add_Player(Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False))
+    player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False)
+    res = lobby.add_Player(player)
     if res == -1:
         return -2 # Lobby is full
 
     # Añado la partida al registro de partidas en curso
     # partidas_en_curso[codigo_partida] = partida
+    Lobbies.append(lobby)
 
     # Devuelvo el código de la partida
     return lobby.id
@@ -154,7 +155,7 @@ def init_buscador():
         # volvemos a comprobar.
         if len(jugadores) < 4:
             print("No hay suficientes jugadores buscando partida\n")
-            time.sleep(1)
+            time.sleep(2)
             continue
 
         # Si hay 4 o más jugadores buscando partida, los emparejamos según el
@@ -171,10 +172,10 @@ def init_buscador():
 
                 # Eliminamos los jugadores de la lista de jugadores buscando
                 # partida.
-                for j in jugadores:
-                    for p in jugadores_buscando_partida:
-                        if j.id == p.id:
-                            jugadores_buscando_partida.remove(p)
+                jugadores_buscando_partida.remove(jugadores[i+3])
+                jugadores_buscando_partida.remove(jugadores[i+2])
+                jugadores_buscando_partida.remove(jugadores[i+1])
+                jugadores_buscando_partida.remove(jugadores[i])
         else:
             # Emparejamos los jugadores de mayor a menor ELO.
             for i in range(len(jugadores) - 1, 3, -4):
@@ -187,11 +188,12 @@ def init_buscador():
 
                 # Eliminamos los jugadores de la lista de jugadores buscando
                 # partida.
-                for j in jugadores:
-                    for p in jugadores_buscando_partida:
-                        if j.id == p.id:
-                            jugadores_buscando_partida.remove(p)
-        time.sleep(1)
+                jugadores_buscando_partida.remove(jugadores[i])
+                jugadores_buscando_partida.remove(jugadores[i-1])
+                jugadores_buscando_partida.remove(jugadores[i-2])
+                jugadores_buscando_partida.remove(jugadores[i-3])
+            
+        time.sleep(2)
 
 ######################### GESTIÓN DE INICIO DE PARTIDA #########################
 
