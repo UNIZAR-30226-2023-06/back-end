@@ -71,5 +71,6 @@ class Lobby:
         #initialize the board
         self.game = Board()
         self.game_has_started = True
+        self.is_full = True
         
         return 0
