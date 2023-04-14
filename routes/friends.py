@@ -31,6 +31,9 @@ def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
         #search whether the friend request already exists
         elif session.query(Befriends).filter(Befriends.friend_id == user_id, Befriends.user_id == friend_id).first() is not None:
             raise HTTPException(status_code=409, detail="Friend request already exists")
+        #check whether the user is trying to add himself as a friend
+        elif user_id == friend_id:
+            raise HTTPException(status_code=409, detail="You cannot add yourself as a friend")
         else:
             #add the friend request to the database
             session.add(Befriends(request_status=False, user_id=user_id, friend_id=friend_id))

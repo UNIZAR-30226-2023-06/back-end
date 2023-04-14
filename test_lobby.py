@@ -3,18 +3,36 @@ from logica_juego.jugador import Jugador
 from logica_juego.constants import Color, Cards
 from logica_juego.mano import Mano
 
-if __name__ == "__main__":
+
+
+
+
+
+def main():
     lobby = Lobby()
     mano = Mano(None, 0, 0, 0, 0, 0)
     player = []
-    player.append(Jugador(0, 0, Color.BLUE, mano, 0, False, False, False))
-    player.append(Jugador(1, 0, Color.GREEN, mano, 0, False, False, False))
-    player.append(Jugador(2, 0, Color.RED, mano, 0, False, False, False))
-    player.append(Jugador(3, 0, Color.YELLOW, mano, 0, False, False, False))
+    player.append(Jugador(0, 0, None, mano, 0, False, False, False, False))
+    player.append(Jugador(1, 0, None, mano, 0, False, False, False, False))
+    player.append(Jugador(2, 0, None, mano, 0, False, False, False, False))
+    player.append(Jugador(3, 0, None, mano, 0, False, False, False, False))
+
+    for player in lobby.players:
+        player.esta_preparado = True
+
 
     for p in player:
         lobby.add_Player(p)
 
-    for p in lobby.players:
-        print(p.id, p.color)
+    lobby.start_Game()
 
+    #print the players in the lobby
+    for p in lobby.players:
+        print(p.color)
+
+    lobby.game.svg("cosa.svg")
+
+
+
+if __name__ == "__main__":
+    main()

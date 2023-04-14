@@ -2,7 +2,7 @@ import random
 
 from .jugador import Color, Jugador
 from .board import Board
-from .mano import Mano
+from .mano import Mano, nueva_mano
 
 class Lobby:
     id = None
@@ -54,3 +54,22 @@ class Lobby:
     
     def is_Full(self):
         return self.is_full
+    
+
+    #it is assumed that the lobby is full and all players are ready
+    def start_Game(self):
+        color = { Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW }
+        #initialize all the player's hands, victory points, etc
+        for player in self.players:
+            player.mano = nueva_mano()
+            player.puntos_victoria = 0
+            player.color = color.pop()
+            player.caballeros_usados = 0
+            player.tiene_bono_carreteras = False
+            player.tiene_bono_caballeros = False
+
+        #initialize the board
+        self.game = Board()
+        self.game_has_started = True
+        
+        return 0

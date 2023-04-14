@@ -8,26 +8,6 @@ from .render import *
 
 from .constants import Color, Building, Resource
 
-# class Color(Enum):
-#   RED = auto()
-#   BLUE = auto()
-#   YELLOW = auto()
-#   GREEN = auto()
-
-# class Resource(Enum):
-#   WOOD = auto()
-#   CLAY = auto()
-#   SHEEP = auto()
-#   STONE = auto()
-#   WHEAT = auto()
-#   DESERT = auto()
-
-
-# class Building(Enum):
-#   VILLAGE = auto()
-#   CITY = auto()
-
-
 class NodeDirection(Enum):
   N = 'N'
   NW = 'NW'

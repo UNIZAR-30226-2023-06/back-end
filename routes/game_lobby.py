@@ -176,4 +176,24 @@ def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
     else:
         return lobby
     
+#start the game
+@router.post("/start-game", tags=["Lobby"])
+def start_Game(lobby_id: int):
+    lobby : Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lobby = l
+        
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    all_players_ready = True
+    for player in Lobby.players:
+        if player.esta_preparado == False:
+            all_players_ready = False
+            break
+    if all_players_ready == False:
+        raise HTTPException(status_code=409, detail="Not all players are ready")
     
+    #start the game
+    lobby.start_Game()
