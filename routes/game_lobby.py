@@ -1,6 +1,7 @@
 import os, sys
 
 import jwt
+import random
 
 from fastapi import APIRouter, Depends, HTTPException
 from logica_juego.board import Board
@@ -208,11 +209,11 @@ def create_Test_Lobby():
 
     LobbyTest : Lobby = Lobby()
 
-    #add players
-    LobbyTest.add_Player(Jugador(1, 1000, 0, None, None, 0, False, False, True))
-    LobbyTest.add_Player(Jugador(2, 699, 0, None, None, 0, False, False, True))
-    LobbyTest.add_Player(Jugador(3, 490, 0, None, None, 0, False, False, True))
-    LobbyTest.add_Player(Jugador(4, 583, 0, None, None, 0, False, False, True))
+    # Añado los jugadores
+    LobbyTest.add_Player(Jugador(1, 1000, 2, None, None, 0, False, False, True))
+    LobbyTest.add_Player(Jugador(2, 1000, 3, None, None, 0, True, False, True))
+    LobbyTest.add_Player(Jugador(3, 1000, 5, None, None, 0, False, False, True))
+    LobbyTest.add_Player(Jugador(4, 1000, 0, None, None, 0, False, True, True))
 
     #start the game
     LobbyTest.start_Game()

@@ -13,6 +13,9 @@ class Lobby:
     max_Players = None 
     current_Players = 0
     elo = 0
+    max_tiempo_turno = 30 #segundos
+    turno = 0
+    fase = 0
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
@@ -23,6 +26,9 @@ class Lobby:
         self.elo = 0
         self.players = []
         self.game= Board()
+        self.max_tiempo_turno = 30
+        self.turno = random.randint(0, 3) # El turno inicial es aleatorio
+        self.fase = 0
         # self.game = Board()
 
     def add_Player(self, player : Jugador):
