@@ -3,6 +3,7 @@ import os, sys
 import jwt
 
 from fastapi import APIRouter, Depends, HTTPException
+from logica_juego.board import Board
 from models.user import User
 from local_settings import  JWT_SECRET
 
@@ -197,3 +198,24 @@ def start_Game(lobby_id: int):
     
     #start the game
     lobby.start_Game()
+
+
+
+
+#create a test lobby
+@router.post("/create-test-lobby", tags=["Debug"])
+def create_Test_Lobby():
+
+    LobbyTest : Lobby = Lobby()
+
+    #add players
+    LobbyTest.add_Player(Jugador(1, 1000, 0, None, None, 0, False, False, True))
+    LobbyTest.add_Player(Jugador(2, 699, 0, None, None, 0, False, False, True))
+    LobbyTest.add_Player(Jugador(3, 490, 0, None, None, 0, False, False, True))
+    LobbyTest.add_Player(Jugador(4, 583, 0, None, None, 0, False, False, True))
+
+    #start the game
+    LobbyTest.start_Game()
+    
+
+    return LobbyTest
