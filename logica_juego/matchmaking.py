@@ -118,7 +118,6 @@ def buscar_partida(jugador : Jugador):
     # Si no, añadimos el jugador a la lista de jugadores buscando partida.
     # TODO: el valor que se le debe asignar a cada jugador es su ELO
     jugadores_buscando_partida.append(Jugador(user.id, user.elo, 0, None, None, 0, False, False, False))
-    print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
     print(jugadores_buscando_partida)
     return 0
 

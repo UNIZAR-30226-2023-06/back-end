@@ -1,5 +1,7 @@
 import random
 
+from logica_juego.partida import Partida
+
 from .jugador import Color, Jugador
 from .board import Board
 from .mano import Mano, nueva_mano
@@ -7,29 +9,21 @@ from .mano import Mano, nueva_mano
 class Lobby:
     id = None
     players = [] # list of players in the lobby
-    game = Board()
+    game = Partida()
     game_has_started = False
     is_full = False
     max_Players = None 
     current_Players = 0
-    elo = 0
-    max_tiempo_turno = 30 #segundos
-    turno = 0
-    fase = 0
+
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
-        self.id = random.randint(1000, 9999)
+        self.id = random.randint(1000, 9999) #TODO: check if id already exists
         self.is_full = False
         self.max_Players = max_Players
         self.current_Players = len(self.players)
-        self.elo = 0
         self.players = []
-        self.game= Board()
-        self.max_tiempo_turno = 30
-        self.turno = random.randint(0, 3) # El turno inicial es aleatorio
-        self.fase = 0
-        # self.game = Board()
+        self.game= Partida()
 
     def add_Player(self, player : Jugador):
         if len(self.players) < self.max_Players:

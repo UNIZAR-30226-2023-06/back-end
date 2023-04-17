@@ -66,7 +66,7 @@ class Hexgrid:
 
   def __init__(self, resources: list[Resource], thief: int | None = None):
     random.shuffle(resources)  # TODO: make copy?
-
+    # TODO: puede no haber ladron
     self.thief = random.randrange(
       1, len(resources) + 1) if thief is None else thief
 
@@ -209,6 +209,29 @@ class Hexgrid:
 
     self.nodes[node_coord] = (color, nbuilding)
 
+  def set_node_color_by_coord(self, node_coord: int, color: Color):
+    """ Sets the color of the node at node_coord.
+
+    Args:
+        node_coord (int): coord
+        color (Color): The color to set for the node.
+
+    Raises:
+        ValueError: If color is None.
+        RuntimeError: If the node already has a color set.
+    """
+    if color is None:
+      raise ValueError("You cant set node color to None")
+
+    (ncolor, nbuilding) = self.nodes[node_coord]
+
+    if ncolor is not None:
+      raise RuntimeError(
+        f"Color already exists in node ({node_coord:x})")
+
+    self.nodes[node_coord] = (color, nbuilding)
+
+
   def set_node_building_by_id(self, tile_identifier: int, direction: NodeDirection, building: Building):
     """ Sets the building on the node adjacent to the tile with the given identifier in the specified direction.
 
@@ -231,6 +254,28 @@ class Hexgrid:
     if nbuilding is not None and nbuilding is Building.CITY:
       raise RuntimeError(
         f"Building at node ({tile_identifier}, {direction}) is already fully upgraded")
+
+    self.nodes[node_coord] = (ncolor, building)
+
+  def set_node_building_by_coord(self, node_coord: int, building: Building):
+    """ Sets the building on the node coord.
+
+    Args:
+        node_coord (int): Coord
+        building (Building): The building to set on the node.
+
+    Raises:
+        ValueError: If building is None.
+        RuntimeError: If the node already has a city building (i.e., Building.CITY).
+    """
+    if building is None:
+      raise ValueError("You cant set node building to None")
+
+    (ncolor, nbuilding) = self.nodes[node_coord]
+
+    if nbuilding is not None and nbuilding is Building.CITY:
+      raise RuntimeError(
+        f"Building at node ({node_coord:x}) is already fully upgraded")
 
     self.nodes[node_coord] = (ncolor, building)
 
@@ -288,6 +333,25 @@ class Hexgrid:
 
     self.edges[edge_coord] = color
 
+  def set_edge_by_coord(self, color: Color, edge_coord: int):
+    """ Sets the color of the edge at edge_coord
+
+    Args:
+        edge_coord (int): Coord
+        color (Color): The color to set for the edge.
+
+    Raises:
+        ValueError: If `color` is `None`.
+        RuntimeError: If the edge already has a color.
+    """
+    if color is None:
+      raise ValueError("You cant set edge color to None")
+
+    if self.edges[edge_coord] is not None:
+      raise RuntimeError(
+        f"Edge ({edge_coord:x}) already has color")
+
+    self.edges[edge_coord] = color
   #######################
   # RESOURCE OPERATIONS #
   #######################
@@ -435,10 +499,10 @@ class Board(Hexgrid):
           nodes_t_tile = hexgrid.nodes_touching_tile(tile_id)
           edges_t_tile = hexgrid.edges_touching_tile(tile_id)
 
-          fnodes_t_tile = [(building2str[b], color2color[c]) for (c, b) in
-                           (self.nodes[coord] for coord in nodes_t_tile)]
+          fnodes_t_tile = [(f"{building2str[b]}_({coord:x})", color2color[c]) for (c, b), coord in
+                           ((self.nodes[coord], coord) for coord in nodes_t_tile)]
 
-          fedges_t_tile = [(color2color[c], ("1" if c is not None else str(coord))) for c, coord in
+          fedges_t_tile = [(color2color[c], ("R" if c is not None else f"{coord:x}")) for c, coord in
                            ((self.edges[coord], coord) for coord in edges_t_tile)]
 
           nodes = [((x + xoff, y + yoff), (b, c)) for (b, c),
@@ -469,11 +533,26 @@ class Board(Hexgrid):
 
       f.write(svg_hexgrid(hexs))
 
-#   def place_town(self, color: Color, position: int) -> bool:
-#     pass
+  def place_town(self, color: Color, position: int) -> bool:
+    try:
+      self.set_node_building_by_coord(position, Building.VILLAGE)
+      self.set_node_color_by_coord(position, color)
+      return True
+    except Exception:
+      return False
+    
 
-#   def upgrade_town(self, color: Color, position: int) -> bool:
-#     pass
+  def upgrade_town(self, position: int) -> bool:
+    try:
+      self.set_node_building_by_coord(position, Building.CITY)
+      return True
+    except Exception:
+      return False
 
-#   def place_road(self, color: Color, posiition: int) -> bool:
-#     pass
+  def place_road(self, color: Color, position: int) -> bool:
+    try:
+      self.set_edge_by_coord(color, position)
+      return True
+    except Exception as e:
+      print(e)
+      return False

@@ -13,7 +13,7 @@ from .constants import Resource
 
 class Jugador:
     def __init__(self, id : int, elo:int, puntos_victoria : int, color : Color, mano : Mano, caballeros_usados : int,
-                 tiene_bono_carreteras : bool, tiene_bono_caballeros : bool, esta_preparado : bool):
+                 tiene_bono_carreteras : bool, tiene_bono_caballeros : bool, esta_preparado : bool, activo : bool):
         # identificador del jugador
         self.id = id
 
@@ -29,6 +29,7 @@ class Jugador:
 
         self.esta_preparado = esta_preparado
         self.elo = elo
+        self.activo = True
 
     def get_id(self):
         return self.id
@@ -90,6 +91,9 @@ class Jugador:
     def sub_carta_desarrollo(self, tipo_carta):
         self.mano.sub_carta_desarrollo(tipo_carta)
     
+    def tiene_carta_desarrollo(self, tipo_carta):
+        return self.mano.tiene_carta_desarrollo(tipo_carta)
+
     def robar_monopolio(self, recurso):
         cantidad_robada = self.mano.get_recurso(recurso)
         self.mano.sub_recurso(recurso, cantidad_robada)

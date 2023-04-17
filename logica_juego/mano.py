@@ -5,7 +5,7 @@ from .constants import Resource, Cards
 # Representación de la mano de un jugador, es decir, qué cartas tiene, qué
 # recursos y cartas de desarrollo
 class Mano:
-    def __init__(self, cartas_desarrollo : Cards, arcilla : int,
+    def __init__(self, cartas_desarrollo : list[Cards], arcilla : int,
                   madera : int, trigo : int, piedra : int, oveja : int):
         self.cartas_desarrollo = cartas_desarrollo
 
@@ -64,6 +64,9 @@ class Mano:
     
     def sub_carta_desarrollo(self, tipo_carta):
         self.cartas_desarrollo.remove(tipo_carta)
+
+    def tiene_carta_desarrollo(self, tipo_carta : Cards):
+        return tipo_carta in self.cartas_desarrollo
     
     # sub para cada atributo
     def sub_recurso(self, tipo_recurso, cantidad=1):
