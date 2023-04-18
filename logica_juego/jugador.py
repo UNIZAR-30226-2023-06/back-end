@@ -70,11 +70,21 @@ class Jugador:
         self.mano.add_recurso(Resource.WHEAT, recursos[4])
     
     def restar_recursos(self, recursos):
-        self.mano.sub_recurso(Resource.CLAY, recursos[0])
-        self.mano.sub_recurso(Resource.WOOD, recursos[1])
-        self.mano.sub_recurso(Resource.SHEEP, recursos[2])
-        self.mano.sub_recurso(Resource.STONE, recursos[3])
-        self.mano.sub_recurso(Resource.WHEAT, recursos[4])
+        #check whether the player has enough resources
+        if self.mano.get_recurso(Resource.CLAY) < recursos[0] and   \
+            self.mano.get_recurso(Resource.WOOD) < recursos[1] and  \
+            self.mano.get_recurso(Resource.SHEEP) < recursos[2] and \
+            self.mano.get_recurso(Resource.STONE) < recursos[3] and \
+            self.mano.get_recurso(Resource.WHEAT) < recursos[4]:
+
+            self.mano.sub_recurso(Resource.CLAY, recursos[0])
+            self.mano.sub_recurso(Resource.WOOD, recursos[1])
+            self.mano.sub_recurso(Resource.SHEEP, recursos[2])
+            self.mano.sub_recurso(Resource.STONE, recursos[3])
+            self.mano.sub_recurso(Resource.WHEAT, recursos[4])
+            return True
+        else:
+            return False
     
     def add_caballero(self):
         self.caballeros_usados += 1

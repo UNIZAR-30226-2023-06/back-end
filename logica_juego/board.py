@@ -556,3 +556,10 @@ class Board(Hexgrid):
     except Exception as e:
       print(e)
       return False
+    
+  def move_thief(self, position: int) -> bool:
+    try:
+      self.thief = self.tile_coord2id(position)
+      return True
+    except Exception:
+      return False

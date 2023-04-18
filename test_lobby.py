@@ -21,15 +21,13 @@ def main():
     # for p in player:
     #     lobby.add_Player(p)
 
-    lobby.start_Game()
-
-    lobby.game.place_town(Color.BLUE, 0x76)
-    lobby.game.upgrade_town(0x76)
+    lobby.game.board.place_town(Color.BLUE, 0x76)
+    lobby.game.board.upgrade_town(0x76)
 
 
-    res = lobby.game.place_road(Color.BLUE, 0x65)
+    res = lobby.game.board.place_road(Color.BLUE, 0x65)
     print(res)
-    lobby.game.svg("cosa.svg")
+    lobby.game.board.svg("cosa.svg")
     
 
 

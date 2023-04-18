@@ -34,9 +34,9 @@ class Partida:
         self.jugadores_seleccionados = jugadores_seleccionados
 
         if tablero is not None:
-            self.tablero = tablero
+            self.board = tablero
         else:
-            self.tablero = Board() # TODO lo del ladron
+            self.board = Board() # TODO lo del ladron
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
@@ -51,18 +51,18 @@ class Partida:
 
     # Obtenemos el índice del jugador en la lista de jugadores con id igual al
     # pasado por parámetro.
-    def i_jugador(self, id: int):
+    def i_jugador(self, id: int) -> int:
         for i, j in enumerate(self.jugadores):
             if j.get_id() == id:
                 return i
     
     # Devuelve el número de jugadores en la partida
-    def get_num_jugadores_activos(self):
+    def get_num_jugadores_activos(self) -> int:
         return self.num_jugadores_activos
     
     # Indico que el jugador con id "id_jugador" está listo para empezar y
     # devuelvo True si todos los jugadores están listos
-    def jugador_listo(self, id_jugador: int):
+    def jugador_listo(self, id_jugador: int) -> bool:
         self.jugadores[self.i_jugador(id_jugador)].set_preparado()
 
         for j in self.jugadores:
@@ -76,6 +76,7 @@ class Partida:
     ################# FUNCIONES SOBRE LA GESTIÓN DE RECURSOS #################
 
     # El jugador 1 roba un recurso aleatorio al jugador 2
+    #TODO: check whether the robbed player has enough resources
     def robar_recursos(self, id_jugador1: int, id_jugador2: int):
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
@@ -85,6 +86,7 @@ class Partida:
     
     # El jugador 1 le da sus x recursos al jugador 2, y viceversa
     # Los recursos se codifican con el formato {arcilla, madera, oveja, piedra, trigo}
+    #TODO: check whether the players have enough resources
     def intercambiar_recursos(self, id_jugador1 : int , recursos_1 : list[int], id_jugador2 : int, recursos_2 : list[int]):
         #recursos_1 = {0,0,0,0,0}
         #recursos_1 = {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
@@ -118,7 +120,7 @@ class Partida:
         
         return dado1, dado2
     
-    def usar_carta_desarrollo(self, id_jugador: int, tipo_carta : Cards):
+    def usar_carta_desarrollo(self, id_jugador: int, tipo_carta : Cards, coords:int | None = None):
         index_jugador = self.i_jugador(id_jugador)
         jugador = self.jugadores[index_jugador]
         
@@ -139,11 +141,10 @@ class Partida:
             self.jugadores[self.i_jugador(id_jugador)].sumar_recursos(recursos)
 
         elif tipo_carta == Cards.ROAD_PROGRESS:
-            # Obtenemos del frontend dónde quiere construir el jugador las carreteras
-            coordenadas_1 = 0
-            coordenadas_2 = 0
-
             # Indicamos al tablero dónde construimos las carreteras
+            if not self.board.place_road(jugador.color, coords):
+                raise Exception("No se puede construir la carretera")
+
 
         elif tipo_carta == Cards.MONOPOLY_PROGRESS:
             # Obtenemos del frontend qué recurso quiere robar el jugador
@@ -162,11 +163,11 @@ class Partida:
 
     # El jugador con el id pasado cambia X cantidad de sus recursos_1 por una
     # unidad del recurso_2
-    def intercambiar_banca(self, id_jugador, tipo_recurso_1, cantidad_recurso, tipo_recurso_2):
-        recursos_1 = {0,0,0,0,0}
+    def intercambiar_banca(self, id_jugador:int, tipo_recurso_1:Resource, cantidad_recurso:int, tipo_recurso_2:Resource):
+        recursos_1 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
         recursos_1[tipo_recurso_1] = cantidad_recurso
 
-        recursos_2 = {0,0,0,0,0}
+        recursos_2 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
         recursos_2[tipo_recurso_2] = 1
 
         j = self.i_jugador(id_jugador)
@@ -178,23 +179,16 @@ class Partida:
     
     ################# FUNCIONES SOBRE LA GESTIÓN DEL LADRÓN #################
 
-    def mover_ladron(self, id_jugador):
-        # Obtenemos del frontend la posición a la que el jugador quiere mover
-        # el ladrón
-
+    def mover_ladron(self, tileCoord:int, id_jugador:int, id_jugador_robado:int):
         # Movemos el ladrón a la posición indicada en el tablero
+        
+        if self.board.move_thief(tileCoord):
+            self.robar_recursos(id_jugador, id_jugador_robado)
+        else:
+            raise Exception("Error: No se ha podido mover el ladrón")
 
-        # Obtenemos los jugadores a los que el jugador que ha movido el ladrón
-        # puede robar
-
-        # Indicamos al frontend dichos usuarios para que el jugador seleccione
-        # uno
-        id_jugador_robado = 0
-
-        self.robar_recursos(id_jugador, id_jugador_robado)
-    
     # especificamos si queremos que haya un ladrón en la partida
-    def set_ladron(self, hay_ladron):
+    def set_ladron(self, hay_ladron:bool):
         self.hay_ladron = hay_ladron
     
     ##########################################################################
@@ -209,70 +203,62 @@ class Partida:
             self.turno = (self.turno + 1)%4
 
     # Establecemos el tiempo de duración de los turnos en segundos
-    def set_tiempo_turno(self, tiempo_turno):
+    def set_tiempo_turno(self, tiempo_turno:int):
         self.tiempo_turno = tiempo_turno
     
     ##########################################################################
     
     ############ FUNCIONES SOBRE LA GESTIÓN DE LAS CONSTRUCCIONES ############
 
-    def comprar(self, id_jugador, tipo_construccion):
+    def comprar(self, id_jugador:int, tipo_construccion:Building, coord:int):
+        player : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if tipo_construccion == Building.ROAD:
-            self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0})
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0}): # Si no tiene los recursos suficientes
+                raise Exception("Error: No tienes los recursos suficientes para construir la carretera")
 
-            # Pregunto al frontend dónde quiere el jugador colocar la construcción
-            coordenadas = 0
-
-            # Indico al tablero que coloque la construcción de dicho tipo
-            # tablero.colocar_carretera(coordenadas)
-
-            self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
+            if self.board.place_road(player.color, coord):
+                self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
+            else:
+                raise Exception("Error: No se ha podido construir la carretera")
 
         elif tipo_construccion == Building.VILLAGE:
-            self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,1,0,1})
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,1,0,1}): # Si no tiene los recursos suficientes
+                raise Exception("Error: No tienes los recursos suficientes para construir el poblado")
 
-            # Pregunto al frontend dónde quiere el jugador colocar la construcción
-            coordenadas = 0
-
-            # Indico al tablero que coloque la construcción de dicho tipo
-            # tablero.colocar_poblado(coordenadas)
-
-            self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+            if self.board.place_village(player.color, coord):
+                self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+            else:
+                raise Exception("Error: No se ha podido construir el poblado")
 
         elif tipo_construccion == Building.CITY:
-            self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,0,3,2})
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,0,3,2}):
+                raise Exception("Error: No tienes los recursos suficientes para construir la ciudad")
 
-            # Pregunto al frontend dónde quiere el jugador colocar la construcción
-            coordenadas = 0
-
-            # Indico al tablero que coloque la construcción de dicho tipo
-            # tablero.colocar_ciudad(coordenadas)
-
-            self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+            if self.board.upgrade_town(coord):
+                self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+            else:
+                raise Exception("Error: No se ha podido construir la ciudad")
 
         elif tipo_construccion == Building.DEV_CARD:
-            self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,1,1,1})
-
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,1,1,1}): # Si no tiene los recursos suficientes
+                raise Exception("Error: No tienes los recursos suficientes para comprar la carta de desarrollo")
             carta_robada = Cards.pick_random_card()
-
-            # informo a frontend de la carta robada
-
             self.jugadores[self.i_jugador(id_jugador)].add_carta_desarrollo(carta_robada)
 
-    ##########################################################################
+    #!#########################################################################
 
     ########## FUNCIONES SOBRE LA GESTIÓN DE LOS PUNTOS DE VICTORIA ##########
 
     # Comprueba si un jugador ha ganado, si es así devolverá su id, si no,
     # devolverá -1
-    def check_ganador(self):
+    def check_ganador(self) -> int:
         for j in self.jugadores:
             if j.get_puntos_victoria() <= 10:
                 return j.get_id()
         return -1
     
     # Checkea si el jugador indicado puede obtener el bono por carreteras
-    def check_bono_carreteras(self, jugador):
+    def check_bono_carreteras(self, jugador:Jugador):
 
         # Comprobamos quién tiene actualmente el bono de las carreteras (si no
         # lo tiene nadie esta variable se queda como -1), se guarda su id
@@ -288,23 +274,21 @@ class Partida:
         if poseeder_bono_actual == -1:
             # consulto en el tablero el número de carreteras consecutivas del
             # jugador "jugador".
-            num_carreteras = random(0,1)
-
-            if num_carreteras >= 5:
+            num_carreteras_jugador = self.board.longest_path(jugador.color)
+            if num_carreteras_jugador >= 5:
                 jugador.otorgar_bono_carreteras()
-        
         else:
             # consulto en el tablero el número de carreteras consecutivas del
             # jugador "jugador" y el jugador que posee el bono actualmente.
-            num_carreteras_jugador = random(0,1)
-            num_carreteras_poseedor_bono = random(0,1)
+            num_carreteras_jugador = self.board.longest_path(jugador.color)
+            num_carreteras_poseedor_bono = self.board.longest_path(self.jugadores[indice_poseedor_bono_actual].color)
             
             if num_carreteras_jugador > num_carreteras_poseedor_bono:
                 jugador.otorgar_bono_carreteras()
                 self.jugadores[indice_poseedor_bono_actual].quitar_bono_carreteras()
     
     # Checkea si el jugador indicado puede obtener el bono por carreteras
-    def check_bono_caballeros(self, jugador):
+    def check_bono_caballeros(self, jugador:Jugador):
 
         # Comprobamos quién tiene actualmente el bono de las caballeros (si no
         # lo tiene nadie esta variable se queda como -1), se guarda su id
@@ -347,17 +331,11 @@ class Partida:
             jugadores_a_descartar = {}
 
             for j in jugadores:
-                # Consulto el elo del jugador en la base de datos
-                elo = random(0,1)
-
-                if elo > max_elo:
-                    max_elo = elo
+                if j.elo > max_elo:
+                    max_elo = j.elo
 
             for j in jugadores:
-                # Consulto el elo del jugador en la base de datos
-                elo = random(0,1)
-
-                if elo == max_elo:
+                if j.elo == max_elo:
                     ranking[i].append(j)
                     jugadores_a_descartar.append(j)
 
@@ -366,20 +344,20 @@ class Partida:
         
         for j in ranking[0]:
             # Sumo 50 de elo al jugador j
-            jugadores = {}
+            j.elo += 50
         
         for j in ranking[1]:
             # Sumo 25 de elo al jugador j
-            jugadores = {}
-        
+            j.elo += 25
+
         for j in ranking[2]:
             # Resto 25 de elo al jugador j
-            jugadores = {}
-        
+            j.elo -= 25
+
         for j in ranking[3]:
             # Resto 50 de elo al jugador j
-            jugadores = {}
-
+            j.elo -= 50
+            
     ##########################################################################
 
 
