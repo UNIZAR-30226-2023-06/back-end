@@ -28,29 +28,24 @@ def testBoard(townCoord, roadCoord, expectedResult, i):
 
 def main():
     
-    #north vertex
-    testBoard(0x76, 0x76, 0x87, 1)
-    testBoard(0x76, 0x65, 0x65, 2)
+    test_params = {(0x76, 0x76, 0x87, 1),
+                   (0x76, 0x65, 0x65, 2),
+                   (0x65, 0x65, 0x76, 3),
+                   (0x65, 0x64, 0x74, 4),
+                   (0x87, 0x76, 0x76, 5), #!
+                   (0x87, 0x86, 0x96, 6),
+                   (0x85, 0x74, 0x74, 7), #!
+                   (0x85, 0x85, 0x96, 8),
+                   (0x74, 0x64, 0x65, 9), #!
+                   (0x74, 0x74, 0x85, 10), 
+                   (0x96, 0x85, 0x85, 11),
+                   (0x96, 0x86, 0x87, 12)} #!
+    
+    #sort test_params by the fourth element of each tuple
+    test_params = sorted(test_params, key=lambda x: x[3])
 
-    #north-east vertex
-    testBoard(0x65, 0x65, 0x76, 3)
-    testBoard(0x65, 0x64, 0x74, 4)
-
-    #north-west vertex
-    testBoard(0x87, 0x76, 0x76, 5)
-    testBoard(0x87, 0x86, 0x96, 6)
-
-    #south vertex
-    testBoard(0x85, 0x74, 0x74, 7)
-    testBoard(0x85, 0x85, 0x96, 8)
-
-    #south-west vertex
-    testBoard(0x74, 0x64, 0x65, 9)
-    testBoard(0x74, 0x74, 0x85, 10)
-
-    #south-east vertex
-    testBoard(0x96, 0x85, 0x85, 11)
-    testBoard(0x96, 0x86, 0x87, 12)
+    for params in test_params:
+        testBoard(params[0], params[1], params[2], params[3])
     
     print("Total errors: ", totalErrors)
 
