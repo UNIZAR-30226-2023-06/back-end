@@ -71,8 +71,8 @@ class Jugador:
     
     def restar_recursos(self, recursos):
         #check whether the player has enough resources
-        if self.mano.get_recurso(Resource.CLAY) < recursos[0] and   \
-            self.mano.get_recurso(Resource.WOOD) < recursos[1] and  \
+        if self.mano.get_recurso(Resource.CLAY) < recursos[0]   and \
+            self.mano.get_recurso(Resource.WOOD) < recursos[1]  and \
             self.mano.get_recurso(Resource.SHEEP) < recursos[2] and \
             self.mano.get_recurso(Resource.STONE) < recursos[3] and \
             self.mano.get_recurso(Resource.WHEAT) < recursos[4]:

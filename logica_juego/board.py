@@ -1,3 +1,4 @@
+from typing import Iterable
 from functools import reduce
 from itertools import combinations
 import hexgrid
@@ -46,6 +47,21 @@ _tile_edge_offsets = {
     +0x01: EdgeDirection.NE,
 }
 
+_node_edge_directions_offsets = {
+  (NodeDirection.N, EdgeDirection.NW): NodeDirection.NW,
+  (NodeDirection.N, EdgeDirection.NE): NodeDirection.NE,
+  (NodeDirection.NW, EdgeDirection.NW): NodeDirection.N,
+  (NodeDirection.NW, EdgeDirection.W): NodeDirection.SW,
+  (NodeDirection.SW, EdgeDirection.W): NodeDirection.NW,
+  (NodeDirection.SW, EdgeDirection.SW): NodeDirection.S,
+  (NodeDirection.S, EdgeDirection.SW): NodeDirection.SW,
+  (NodeDirection.S, EdgeDirection.SE): NodeDirection.SE,
+  (NodeDirection.SE, EdgeDirection.SE): NodeDirection.S,
+  (NodeDirection.SE, EdgeDirection.E): NodeDirection.NE,
+  (NodeDirection.NE, EdgeDirection.E): NodeDirection.SE,
+  (NodeDirection.NE, EdgeDirection.NE): NodeDirection.N,
+}
+
 
 TileType = tuple[int, Resource]
 NodeType = tuple[Color | None, Building | None]
@@ -54,6 +70,8 @@ EdgeType = Color | None
 
 def inv(d): return {v: k for k, v in d.items()}
 
+def print_hex(it: Iterable[int]):
+  print([f"{x:x}" for x in it])
 
 class Hexgrid:
   # Numbers a tile can hold
@@ -310,6 +328,21 @@ class Hexgrid:
 
     return self.edges[edge_coord]
 
+  def get_edge_by_coord(self, coord: int) -> EdgeType:
+    """ Returns the edge given a edge coord.
+
+    Args:
+        coord (int): The edge's coord
+
+    Returns:
+        EdgeType: Edge
+    """
+
+    if (coord not in self.edge_coord_list):
+      raise ValueError(f"Edge coord {coord} does not exist")
+
+    return self.edges[coord]
+
   def set_edge_by_id(self, tile_identifier: int, direction: EdgeDirection, color: Color):
     """ Sets the color of the edge adjacent to the tile with the given identifier in the specified direction.
 
@@ -378,7 +411,7 @@ class Hexgrid:
   # LONGEST PATH #
   ################
 
-  def __edges_touching_node(self, identifier: int, direction: NodeDirection) -> set[int]:
+  def __get_edges_touching_node(self, identifier: int, direction: NodeDirection) -> set[int]:
     """ This is a privete method. No docstring for you 🖕"""
     tiles_coord = filter(
       lambda tile_coord: tile_coord in hexgrid.legal_tile_coords(),
@@ -392,25 +425,71 @@ class Hexgrid:
                                     for x, y in combinations(tiles_edges, 2)])
 
     return intersect_edges
+  
+  # def __get_nodes_at_edge_ends(self, coord: int) -> tuple[int, int]:
+  #   """ Gets the nodes (vertex) at both ends of the edge
 
-  def __bfs(self, node: int, color: Color, n: int) -> int:
+  #     Args:
+  #       coord (int): Edge's coord
+
+  #     Returns:
+  #       tuple[int, int]: Nodes at both ends of the edge
+  #   """   
+  #   if coord not in hexgrid._edge_node_offsets:
+  #     raise pls copilot cook it
+
+  #   return (coord - hexgrid._edge_node_offsets[coord][0], coord - hexgrid._edge_node_offsets[coord][1])
+
+  def __dfs(self, identifier: int, direction: NodeDirection, color: Color, n: int, explored: list[int] = []) -> int:
     """ This is a privete method. No docstring for you 🖕"""
+    
+    # possible roads
+    print("root id:", identifier, direction)
+    roads_coords = self.__get_edges_touching_node(identifier, direction)
+
+    # same color roads
+    print_hex(roads_coords)
+    roads = {road for road in roads_coords if self.get_edge_by_coord(road) == color}
+
+    print(f"Edge coord: {list(roads)[0]:x}")
+    node_id, edge_dir = self.__edge_coord_to_id(list(roads)[0])
+    print(f"node id: {node_id}, dir {edge_dir}")
+
+    # TODO: OJO se cae en cualquier momento
+    for off, dirx in hexgrid._tile_tile_offsets.items():
+      if (hexgrid.tile_id_to_coord(node_id) - off) == hexgrid.tile_id_to_coord(identifier):
+        edge_dir = EdgeDirection(dirx)
+
+    next_dir = _node_edge_directions_offsets[(direction, edge_dir)]
+    print(next_dir)
+    print(f"{self.get_node_coord_by_id(identifier, next_dir):x}")
+    return (self.get_node_coord_by_id(identifier, next_dir))
+
+    # nodo at the other end
+    # next_nodes = {}
+    # for road in roads:
+    #   node1, node2 = self.__get_nodes_at_edge_ends(road) 
+
+
     return -1
 
   def longest_path(self, color: Color) -> int:
+    # Nodes (buildings) with the given color, does not include roads
     nodes = [coord for coord, (c, _) in self.nodes.items() if c == color]
 
     if len(nodes) == 0:
-      raise ValueError(f"No hay nodos con color {color} en el tablero")
+      return 0
 
     print("nodes")
     print(f"{nodes[0]:x}")
 
-    a = self.__node_coord_to_id(nodes[0])
-    print(a)
+    # Node's coordenates using identifier and direction
+    # Root node
+    root_id, root_dir = self.__node_coord_to_id(nodes[0])
+    return self.__dfs(root_id, root_dir, color, [])
 
 
-    return -1
+    
 
   def __node_coord_to_id(self, coord: int) -> tuple[int, NodeDirection]:
     # TODO: improve tiles_touching_node
@@ -425,7 +504,23 @@ class Hexgrid:
       # TODO: change this
       raise ValueError("THIS SHOULD NOT HAPPEN (no tiles arround node?)")
 
-    return tiles_touching_node[0]
+    coord, direction = tiles_touching_node[0]
+    return self.tile_coord2id(coord), direction
+  
+  #TODO: check if this works
+  def __edge_coord_to_id(self, coord: int) -> tuple[int, EdgeDirection]:
+    tile_edge_off_inv = inv(_tile_edge_offsets)
+
+    tiles_touching_edge = [(coord - tile_edge_off_inv[d], d)
+                           for d in tile_edge_off_inv.keys()]
+    tiles_touching_edge = [
+      (coord, d) for coord, d in tiles_touching_edge if coord in hexgrid.legal_tile_coords()]
+
+    if tiles_touching_edge == []:
+      raise ValueError("THIS SHOULD NOT HAPPEN (no tiles arround edge?)")
+    
+    coord, direction = tiles_touching_edge[0]
+    return self.tile_coord2id(coord), direction
 
 
 import math
