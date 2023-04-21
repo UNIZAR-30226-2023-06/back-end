@@ -210,11 +210,26 @@ def create_Test_Lobby():
     LobbyTest : Lobby = Lobby()
 
     # Añado los jugadores
-    LobbyTest.add_Player(Jugador(1, 1000, 2, None, None, 0, False, False, True))
-    LobbyTest.add_Player(Jugador(2, 1000, 3, None, None, 0, True, False, True))
-    LobbyTest.add_Player(Jugador(3, 1000, 5, None, None, 0, False, False, True))
-    LobbyTest.add_Player(Jugador(4, 1000, 0, None, None, 0, False, True, True))
+    # LobbyTest.add_Player(Jugador(1, 1000, 2, None, None, 0, False, False, True, True))
+    # LobbyTest.add_Player(Jugador(2, 1000, 3, None, None, 0, True, False, True, True))
+    # LobbyTest.add_Player(Jugador(3, 1000, 5, None, None, 0, False, False, True, True))
+    # LobbyTest.add_Player(Jugador(4, 1000, 0, None, None, 0, False, True, True, True))
 
+    # Añado aleatoriamente entre 2 y 4 jugadores
+    num_players = random.randint(2, 4)
+    for i in range(num_players):
+
+        # Elijo aleatoriamente algunos atributos del jugador
+        id = random.randint(1, 1000)
+        elo = random.randint(1000, 2000)
+        puntos_victoria = random.randint(0, 9)
+        caballeros_usados = random.randint(0, 4)
+        tiene_bono_carreteras = random.choice([True, False])
+        tiene_bono_caballeros = random.choice([True, False])
+
+        # Añado el jugador
+        LobbyTest.add_Player(Jugador(id, elo, puntos_victoria, None, None, caballeros_usados, tiene_bono_carreteras, tiene_bono_caballeros, True, True))
+    
     #start the game
     LobbyTest.start_Game()
     

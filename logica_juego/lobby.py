@@ -15,6 +15,9 @@ class Lobby:
     max_Players = None 
     current_Players = 0
 
+    # Partes de configuracion
+    hay_ladron = True
+    max_tiempo_turno = 30 # en segundos
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
@@ -24,6 +27,9 @@ class Lobby:
         self.current_Players = len(self.players)
         self.players = []
         self.game= Partida(4,0,0,None,60,0,0,Board(),True)
+        
+        self.hay_ladron = True
+        self.max_tiempo_turno = 30
 
     def add_Player(self, player : Jugador):
         if len(self.players) < self.max_Players:
@@ -60,13 +66,13 @@ class Lobby:
     def start_Game(self):
         color = { Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW }
         #initialize all the player's hands, victory points, etc
-        for player in self.players:
-            player.mano = nueva_mano()
-            player.puntos_victoria = 0
-            player.color = color.pop()
-            player.caballeros_usados = 0
-            player.tiene_bono_carreteras = False
-            player.tiene_bono_caballeros = False
+        # for player in self.players:
+        #     player.mano = nueva_mano()
+        #     player.puntos_victoria = 0
+        #     player.color = color.pop()
+        #     player.caballeros_usados = 0
+        #     player.tiene_bono_carreteras = False
+        #     player.tiene_bono_caballeros = False
 
         #initialize the board
         self.game = Board()
