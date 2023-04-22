@@ -844,9 +844,11 @@ class Board(Hexgrid):
 
   def place_town(self, color: Color, position: int) -> bool:
     try:
-      self.set_node_building_by_coord(position, Building.VILLAGE)
-      self.set_node_color_by_coord(position, color)
-      return True
+      if position in self.legal_building_nodes(color):
+        self.set_node_building_by_coord(position, Building.VILLAGE)
+        self.set_node_color_by_coord(position, color)
+        return True
+      else: return False
     except Exception:
       return False
     
@@ -860,8 +862,10 @@ class Board(Hexgrid):
 
   def place_road(self, color: Color, position: int) -> bool:
     try:
-      self.set_edge_by_coord(color, position)
-      return True
+      if position in self.legal_building_edges(color):
+        self.set_edge_by_coord(color, position)
+        return True
+      else: return False
     except Exception as e:
       print(e)
       return False

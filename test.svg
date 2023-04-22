@@ -5,8 +5,8 @@
     </defs>
 
     <g id="hexgrid">
-    <use href='#hexagon' x='3.48' y='1' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='3.48' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>Thief(37)</text>
+    <use href='#hexagon' x='3.48' y='1' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='3.48' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>CLAY(37)</text>
 <text x='3.48' y='0.125' text-anchor='middle' font-size='0.25' fill='purple'>_(38)</text>
 <text x='2.61' y='0.625' text-anchor='middle' font-size='0.25' fill='purple'>_(27)</text>
 <text x='2.61' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(36)</text>
@@ -19,8 +19,8 @@
 <text x='3.915' y='1.87' text-anchor='middle' font-size='0.25' fill='purple'>47</text>
 <text x='4.35' y='1' text-anchor='middle' font-size='0.25' fill='purple'>48</text>
 <text x='3.915' y='0.33999999999999997' text-anchor='middle' font-size='0.25' fill='purple'>38</text>
-<use href='#hexagon' x='5.22' y='1' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='5.22' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>CLAY(59)</text>
+<use href='#hexagon' x='5.22' y='1' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='5.22' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>WOOD(59)</text>
 <text x='5.22' y='0.125' text-anchor='middle' font-size='0.25' fill='purple'>_(5a)</text>
 <text x='4.35' y='0.625' text-anchor='middle' font-size='0.25' fill='purple'>_(49)</text>
 <text x='4.35' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(58)</text>
@@ -33,8 +33,8 @@
 <text x='5.654999999999999' y='1.87' text-anchor='middle' font-size='0.25' fill='purple'>69</text>
 <text x='6.09' y='1' text-anchor='middle' font-size='0.25' fill='purple'>6a</text>
 <text x='5.654999999999999' y='0.33999999999999997' text-anchor='middle' font-size='0.25' fill='purple'>5a</text>
-<use href='#hexagon' x='6.96' y='1' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='6.96' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(7b)</text>
+<use href='#hexagon' x='6.96' y='1' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='6.96' y='1.15' text-anchor='middle' font-size='0.3' fill='black'>STONE(7b)</text>
 <text x='6.96' y='0.125' text-anchor='middle' font-size='0.25' fill='purple'>_(7c)</text>
 <text x='6.09' y='0.625' text-anchor='middle' font-size='0.25' fill='purple'>_(6b)</text>
 <text x='6.09' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(7a)</text>
@@ -47,8 +47,8 @@
 <text x='7.395' y='1.87' text-anchor='middle' font-size='0.25' fill='purple'>8b</text>
 <text x='7.83' y='1' text-anchor='middle' font-size='0.25' fill='purple'>8c</text>
 <text x='7.395' y='0.33999999999999997' text-anchor='middle' font-size='0.25' fill='purple'>7c</text>
-<use href='#hexagon' x='2.61' y='2.5' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='2.61' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(35)</text>
+<use href='#hexagon' x='2.61' y='2.5' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='2.61' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>CLAY(35)</text>
 <text x='2.61' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(36)</text>
 <text x='1.7399999999999998' y='2.125' text-anchor='middle' font-size='0.25' fill='purple'>_(25)</text>
 <text x='1.7399999999999998' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(34)</text>
@@ -61,8 +61,8 @@
 <text x='3.045' y='3.37' text-anchor='middle' font-size='0.25' fill='purple'>45</text>
 <text x='3.48' y='2.5' text-anchor='middle' font-size='0.25' fill='purple'>46</text>
 <text x='3.045' y='1.8399999999999999' text-anchor='middle' font-size='0.25' fill='purple'>36</text>
-<use href='#hexagon' x='4.35' y='2.5' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='4.35' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(57)</text>
+<use href='#hexagon' x='4.35' y='2.5' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='4.35' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>STONE(57)</text>
 <text x='4.35' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(58)</text>
 <text x='3.4799999999999995' y='2.125' text-anchor='middle' font-size='0.25' fill='purple'>_(47)</text>
 <text x='3.4799999999999995' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(56)</text>
@@ -89,8 +89,8 @@
 <text x='6.5249999999999995' y='3.37' text-anchor='middle' font-size='0.25' fill='purple'>89</text>
 <text x='6.96' y='2.5' text-anchor='middle' font-size='0.25' fill='purple'>8a</text>
 <text x='6.5249999999999995' y='1.8399999999999999' text-anchor='middle' font-size='0.25' fill='purple'>7a</text>
-<use href='#hexagon' x='7.83' y='2.5' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='7.83' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>CLAY(9b)</text>
+<use href='#hexagon' x='7.83' y='2.5' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='7.83' y='2.65' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(9b)</text>
 <text x='7.83' y='1.625' text-anchor='middle' font-size='0.25' fill='purple'>_(9c)</text>
 <text x='6.96' y='2.125' text-anchor='middle' font-size='0.25' fill='purple'>_(8b)</text>
 <text x='6.96' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(9a)</text>
@@ -103,8 +103,8 @@
 <text x='8.265' y='3.37' text-anchor='middle' font-size='0.25' fill='purple'>ab</text>
 <text x='8.7' y='2.5' text-anchor='middle' font-size='0.25' fill='purple'>ac</text>
 <text x='8.265' y='1.8399999999999999' text-anchor='middle' font-size='0.25' fill='purple'>9c</text>
-<use href='#hexagon' x='1.74' y='4.0' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='1.74' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>CLAY(33)</text>
+<use href='#hexagon' x='1.74' y='4.0' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='1.74' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(33)</text>
 <text x='1.74' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(34)</text>
 <text x='0.87' y='3.625' text-anchor='middle' font-size='0.25' fill='purple'>_(23)</text>
 <text x='0.87' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(32)</text>
@@ -117,8 +117,8 @@
 <text x='2.175' y='4.87' text-anchor='middle' font-size='0.25' fill='purple'>43</text>
 <text x='2.61' y='4.0' text-anchor='middle' font-size='0.25' fill='purple'>44</text>
 <text x='2.175' y='3.34' text-anchor='middle' font-size='0.25' fill='purple'>34</text>
-<use href='#hexagon' x='3.48' y='4.0' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='3.48' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(55)</text>
+<use href='#hexagon' x='3.48' y='4.0' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='3.48' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>WOOD(55)</text>
 <text x='3.48' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(56)</text>
 <text x='2.61' y='3.625' text-anchor='middle' font-size='0.25' fill='purple'>_(45)</text>
 <text x='2.61' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(54)</text>
@@ -131,8 +131,8 @@
 <text x='3.915' y='4.87' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
 <text x='4.35' y='4.0' text-anchor='middle' font-size='0.25' fill='purple'>66</text>
 <text x='3.915' y='3.34' text-anchor='middle' font-size='0.25' fill='purple'>56</text>
-<use href='#hexagon' x='5.22' y='4.0' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='5.22' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(77)</text>
+<use href='#hexagon' x='5.22' y='4.0' fill='#E2725B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='5.22' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>Thief(77)</text>
 <text x='5.22' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(78)</text>
 <text x='4.35' y='3.625' text-anchor='middle' font-size='0.25' fill='purple'>_(67)</text>
 <text x='4.35' y='4.625' text-anchor='middle' font-size='0.25' fill='blue'>V_(76)</text>
@@ -145,8 +145,8 @@
 <text x='5.654999999999999' y='4.87' text-anchor='middle' font-size='0.25' fill='purple'>87</text>
 <text x='6.09' y='4.0' text-anchor='middle' font-size='0.25' fill='purple'>88</text>
 <text x='5.654999999999999' y='3.34' text-anchor='middle' font-size='0.25' fill='purple'>78</text>
-<use href='#hexagon' x='6.96' y='4.0' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='6.96' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(99)</text>
+<use href='#hexagon' x='6.96' y='4.0' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='6.96' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(99)</text>
 <text x='6.96' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(9a)</text>
 <text x='6.09' y='3.625' text-anchor='middle' font-size='0.25' fill='purple'>_(89)</text>
 <text x='6.09' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(98)</text>
@@ -159,8 +159,8 @@
 <text x='7.395' y='4.87' text-anchor='middle' font-size='0.25' fill='purple'>a9</text>
 <text x='7.83' y='4.0' text-anchor='middle' font-size='0.25' fill='purple'>aa</text>
 <text x='7.395' y='3.34' text-anchor='middle' font-size='0.25' fill='purple'>9a</text>
-<use href='#hexagon' x='8.7' y='4.0' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='8.7' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>STONE(bb)</text>
+<use href='#hexagon' x='8.7' y='4.0' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='8.7' y='4.15' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(bb)</text>
 <text x='8.7' y='3.125' text-anchor='middle' font-size='0.25' fill='purple'>_(bc)</text>
 <text x='7.829999999999999' y='3.625' text-anchor='middle' font-size='0.25' fill='purple'>_(ab)</text>
 <text x='7.829999999999999' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(ba)</text>
@@ -173,8 +173,8 @@
 <text x='9.135' y='4.87' text-anchor='middle' font-size='0.25' fill='purple'>cb</text>
 <text x='9.569999999999999' y='4.0' text-anchor='middle' font-size='0.25' fill='purple'>cc</text>
 <text x='9.135' y='3.34' text-anchor='middle' font-size='0.25' fill='purple'>bc</text>
-<use href='#hexagon' x='2.61' y='5.5' fill='#C09A6B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='2.61' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>DESERT(53)</text>
+<use href='#hexagon' x='2.61' y='5.5' fill='white' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='2.61' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>SHEEP(53)</text>
 <text x='2.61' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(54)</text>
 <text x='1.7399999999999998' y='5.125' text-anchor='middle' font-size='0.25' fill='purple'>_(43)</text>
 <text x='1.7399999999999998' y='6.125' text-anchor='middle' font-size='0.25' fill='purple'>_(52)</text>
@@ -187,8 +187,8 @@
 <text x='3.045' y='6.37' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
 <text x='3.48' y='5.5' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
 <text x='3.045' y='4.84' text-anchor='middle' font-size='0.25' fill='purple'>54</text>
-<use href='#hexagon' x='4.35' y='5.5' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='4.35' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>STONE(75)</text>
+<use href='#hexagon' x='4.35' y='5.5' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='4.35' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>WOOD(75)</text>
 <text x='4.35' y='4.625' text-anchor='middle' font-size='0.25' fill='blue'>V_(76)</text>
 <text x='3.4799999999999995' y='5.125' text-anchor='middle' font-size='0.25' fill='purple'>_(65)</text>
 <text x='3.4799999999999995' y='6.125' text-anchor='middle' font-size='0.25' fill='purple'>_(74)</text>
@@ -201,8 +201,8 @@
 <text x='4.784999999999999' y='6.37' text-anchor='middle' font-size='0.25' fill='purple'>85</text>
 <text x='5.22' y='5.5' text-anchor='middle' font-size='0.25' fill='purple'>86</text>
 <text x='4.784999999999999' y='4.84' text-anchor='middle' font-size='0.25' fill='purple'>76</text>
-<use href='#hexagon' x='6.09' y='5.5' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='6.09' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>STONE(97)</text>
+<use href='#hexagon' x='6.09' y='5.5' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='6.09' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(97)</text>
 <text x='6.09' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(98)</text>
 <text x='5.22' y='5.125' text-anchor='middle' font-size='0.25' fill='purple'>_(87)</text>
 <text x='5.22' y='6.125' text-anchor='middle' font-size='0.25' fill='red'>V_(96)</text>
@@ -215,8 +215,8 @@
 <text x='6.5249999999999995' y='6.37' text-anchor='middle' font-size='0.25' fill='purple'>a7</text>
 <text x='6.96' y='5.5' text-anchor='middle' font-size='0.25' fill='purple'>a8</text>
 <text x='6.5249999999999995' y='4.84' text-anchor='middle' font-size='0.25' fill='purple'>98</text>
-<use href='#hexagon' x='7.83' y='5.5' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='7.83' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>WOOD(b9)</text>
+<use href='#hexagon' x='7.83' y='5.5' fill='#f9f97f' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='7.83' y='5.65' text-anchor='middle' font-size='0.3' fill='black'>WHEAT(b9)</text>
 <text x='7.83' y='4.625' text-anchor='middle' font-size='0.25' fill='purple'>_(ba)</text>
 <text x='6.96' y='5.125' text-anchor='middle' font-size='0.25' fill='purple'>_(a9)</text>
 <text x='6.96' y='6.125' text-anchor='middle' font-size='0.25' fill='purple'>_(b8)</text>
@@ -229,8 +229,8 @@
 <text x='8.265' y='6.37' text-anchor='middle' font-size='0.25' fill='purple'>c9</text>
 <text x='8.7' y='5.5' text-anchor='middle' font-size='0.25' fill='purple'>ca</text>
 <text x='8.265' y='4.84' text-anchor='middle' font-size='0.25' fill='purple'>ba</text>
-<use href='#hexagon' x='3.48' y='7.0' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='3.48' y='7.15' text-anchor='middle' font-size='0.3' fill='black'>WOOD(73)</text>
+<use href='#hexagon' x='3.48' y='7.0' fill='#C09A6B' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='3.48' y='7.15' text-anchor='middle' font-size='0.3' fill='black'>DESERT(73)</text>
 <text x='3.48' y='6.125' text-anchor='middle' font-size='0.25' fill='purple'>_(74)</text>
 <text x='2.61' y='6.625' text-anchor='middle' font-size='0.25' fill='purple'>_(63)</text>
 <text x='2.61' y='7.625' text-anchor='middle' font-size='0.25' fill='purple'>_(72)</text>
@@ -243,8 +243,8 @@
 <text x='3.915' y='7.87' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
 <text x='4.35' y='7.0' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
 <text x='3.915' y='6.34' text-anchor='middle' font-size='0.25' fill='blue'>R</text>
-<use href='#hexagon' x='5.22' y='7.0' fill='#966F33' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
-<text x='5.22' y='7.15' text-anchor='middle' font-size='0.3' fill='black'>WOOD(95)</text>
+<use href='#hexagon' x='5.22' y='7.0' fill='#D3D3D3' stroke='black' stroke-width='0.03' transform='scale(1.0)' />
+<text x='5.22' y='7.15' text-anchor='middle' font-size='0.3' fill='black'>STONE(95)</text>
 <text x='5.22' y='6.125' text-anchor='middle' font-size='0.25' fill='red'>V_(96)</text>
 <text x='4.35' y='6.625' text-anchor='middle' font-size='0.25' fill='purple'>_(85)</text>
 <text x='4.35' y='7.625' text-anchor='middle' font-size='0.25' fill='purple'>_(94)</text>
