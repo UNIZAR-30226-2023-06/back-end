@@ -277,6 +277,81 @@ class Hexgrid:
 
     return res
 
+
+  def get_adjacent_edges_by_edge_id(self, edge_coord: int) -> list[EdgeType]:
+    """ Returns the edges adjacent to the node with the given coordinate.
+
+    Args:
+        edge_coord (int): The coordinate of the node to start from.
+
+    Returns:
+        list[EdgeType]: The edges adjacent to the node with the given coordinate.
+    """
+    res = []
+    #0xYX where Y is even and X is also even
+    if int((edge_coord / 0x10) % 2) == 0 and int((edge_coord % 0x10) % 2) == 0:
+      north_east_edge = edge_coord + 0x01
+      north_west_edge = edge_coord - 0x10
+      south_east_edge = edge_coord + 0x10
+      south_west_edge = edge_coord - 0x01
+      res.append(north_east_edge)
+      res.append(north_west_edge)
+      res.append(south_east_edge)
+      res.append(south_west_edge)
+    #0xYX where Y is odd and X is even
+    elif int((edge_coord / 0x10) % 2) == 1 and int((edge_coord % 0x10)) % 2 == 0:
+      north_east_edge = edge_coord + 0x11
+      north_west_edge = edge_coord - 0x10
+      south_east_edge = edge_coord + 0x10
+      south_west_edge = edge_coord - 0x11
+      res.append(north_east_edge)
+      res.append(north_west_edge)
+      res.append(south_east_edge)
+      res.append(south_west_edge)
+    #0xYX where Y is even and X is odd
+    elif int((edge_coord / 0x10)) % 2 == 0 and int((edge_coord % 0x10)) % 2 == 1:
+      north_east_edge = edge_coord + 0x01
+      north_west_edge = edge_coord - 0x11
+      south_east_edge = edge_coord + 0x11
+      south_west_edge = edge_coord - 0x01
+      res.append(north_east_edge)
+      res.append(north_west_edge)
+      res.append(south_east_edge)
+      res.append(south_west_edge)
+
+    return res
+  
+  def get_adjacent_nodes_by_edge_id(self, edge_coord: int) -> list[NodeType]:
+    """ Returns the nodes adjacent to the edge with the given coordinate.
+
+    Args:
+        edge_coord (int): The coordinate of the edge to start from.
+
+    Returns:
+        list[NodeType]: The nodes adjacent to the edge with the given coordinate.
+    """
+    res = []
+    #0xYX where Y is even and X is also even
+    if int((edge_coord / 0x10) % 2) == 0 and int((edge_coord % 0x10) % 2) == 0:
+      north_node = edge_coord + 0x01
+      south_node = edge_coord + 0x10
+      res.append(north_node)
+      res.append(south_node)
+    #0xYX where Y is odd and X is even
+    elif int((edge_coord / 0x10) % 2) == 1 and int((edge_coord % 0x10)) % 2 == 0:
+      north_node = edge_coord 
+      south_node = edge_coord + 0x11
+      res.append(north_node)
+      res.append(south_node)
+    #0xYX where Y is even and X is odd
+    elif int((edge_coord / 0x10)) % 2 == 0 and int((edge_coord % 0x10)) % 2 == 1:
+      north_node = edge_coord + 0x11
+      south_node = edge_coord 
+      res.append(north_node)
+      res.append(south_node)
+
+    return res
+
   def set_node_color_by_id(self, tile_identifier: int, direction: NodeDirection, color: Color):
     """ Sets the color of the node adjacent to the tile with the given identifier in the specified direction.
 
@@ -815,3 +890,20 @@ class Board(Hexgrid):
         
     return [coord for coord in uncolored_nodes if coord not in ilegal_nodes]
         
+  # a road can be placed if there is a road of the same color adjacent to it or if there is a town of the same color adjacent to it
+  def legal_building_edges(self, color: Color) -> list[int]:
+    uncolored_edges = [coord for coord, c in self.edges.items() if c is None]
+    legal_edges = []
+    #check that all adjacent edges are not colored
+    for coord in uncolored_edges:
+      adjacent_edges = self.get_adjacent_edges_by_edge_id(coord)
+      adjacent_edges = [edge for edge in adjacent_edges if edge in legal_edge_coords()]
+      if any([self.edges[edge] is not None and self.edges[edge] == color for edge in adjacent_edges]):
+        legal_edges.append(coord)
+      else:
+        adjacent_nodes = self.get_adjacent_nodes_by_edge_id(coord)
+        adjacent_nodes = [node for node in adjacent_nodes if node in legal_node_coords()]
+        if any([self.nodes[node][0] is not None and self.nodes[node][0] == color for node in adjacent_nodes]):
+          legal_edges.append(coord)
+        
+    return legal_edges

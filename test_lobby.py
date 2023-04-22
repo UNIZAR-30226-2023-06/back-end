@@ -54,6 +54,7 @@ def main():
 
     lob = Lobby()
     lob.game.board.place_town(Color.BLUE, 0x76)
+    lob.game.board.place_town(Color.RED, 0x96)
     lob.game.board.place_road(Color.BLUE, 0x65)
     lob.game.board.place_road(Color.BLUE, 0x64)
     lob.game.board.place_road(Color.BLUE, 0x63)
@@ -77,9 +78,9 @@ def main():
     # lob.game.board.place_road(Color.BLUE, 0x83)
 
 
-    legal_building_nodes = lob.game.board.legal_building_nodes(Color.RED)
+    legal_building_nodes = lob.game.board.legal_building_edges(Color.BLUE)
 
-    print(f"Legal building nodes for {Color.BLUE.name} : {[f'{node:x}' for node in legal_building_nodes]}")
+    print(f"Legal building edges for {Color.BLUE.name} : {[f'{node:x}' for node in legal_building_nodes]}")
 
     lob.game.board.svg("test.svg")
 
