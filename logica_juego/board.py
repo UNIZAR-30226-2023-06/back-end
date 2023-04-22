@@ -351,6 +351,34 @@ class Hexgrid:
       res.append(south_node)
 
     return res
+  
+  def get_adjacent_tiles_by_node_id(self, node_coord: int) -> list[TileType]:
+    """ Returns the tiles adjacent to the node with the given coordinate.
+
+    Args:
+        node_coord (int): The coordinate of the node to start from.
+
+    Returns:
+        list[TileType]: The tiles adjacent to the node with the given coordinate.
+    """
+    res = []
+    if node_coord % 2 == 1: 
+      north_edge = node_coord - 0x10
+      south_west_edge = node_coord - 0x12
+      south_east_edge = node_coord + 0x10
+      res.append(north_edge)
+      res.append(south_west_edge)
+      res.append(south_east_edge)
+    
+    else: 
+      south_edge = node_coord - 0x01
+      north_west_edge = node_coord - 0x21
+      north_east_edge = node_coord + 0x01
+      res.append(south_edge)
+      res.append(north_west_edge)
+      res.append(north_east_edge)
+
+    return res
 
   def set_node_color_by_id(self, tile_identifier: int, direction: NodeDirection, color: Color):
     """ Sets the color of the node adjacent to the tile with the given identifier in the specified direction.
@@ -911,3 +939,20 @@ class Board(Hexgrid):
           legal_edges.append(coord)
         
     return legal_edges
+  
+  def return_resources(self, color: Color, dice: int) -> list[Resource]:
+    resources = []
+    # nodes of the "color" color
+    nodes = [coord for coord, (c, b) in self.nodes.items() if c == color]
+    for n in nodes:
+      surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
+      for t in surrounding_tiles:
+        # if the tile is the thief, skip it
+        
+        if self.tiles[t][0] == dice and self.tile_coord2id(t) != self.thief:
+          resources.append(self.tiles[t][1])
+          # if the tile is a city, append the resource again
+          if self.nodes[n][1] == Building.CITY:
+            resources.append(self.tiles[t][1])
+
+    return resources

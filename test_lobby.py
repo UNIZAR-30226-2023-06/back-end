@@ -55,6 +55,7 @@ def main():
     lob = Lobby()
     lob.game.board.place_town(Color.BLUE, 0x76)
     lob.game.board.place_town(Color.RED, 0x96)
+    lob.game.board.upgrade_town(0x96)
     lob.game.board.place_road(Color.BLUE, 0x65)
     lob.game.board.place_road(Color.BLUE, 0x64)
     lob.game.board.place_road(Color.BLUE, 0x63)
@@ -63,24 +64,13 @@ def main():
     lob.game.board.place_road(Color.BLUE, 0x83)
     lob.game.board.place_road(Color.BLUE, 0x72)
 
-    # adj = lob.game.board.get_adjacent_nodes_by_node_id(0xad)
+   
+    lob.game.board.move_thief(0x95)
+    number = lob.game.board.tiles[0x95][0]
 
-    # adj = [node for node in adj if node in legal_node_coords()]
+    resources = lob.game.board.return_resources(Color.RED, number)
 
-    # print("Adjacent nodes to 0xad :", [f"{node:x}" for node in adj])
-
-    # adj_edges = lob.game.board.get_adjacent_edges_by_node_id(0x58)
-
-    # adj_edges = [edge for edge in adj_edges if edge in legal_edge_coords()]
-
-    # print("Adjacent edges to 0x58 :", [f"{edge:x}" for edge in adj_edges])
-
-    # lob.game.board.place_road(Color.BLUE, 0x83)
-
-
-    legal_building_nodes = lob.game.board.legal_building_edges(Color.BLUE)
-
-    print(f"Legal building edges for {Color.BLUE.name} : {[f'{node:x}' for node in legal_building_nodes]}")
+    print("Resources: ", resources)
 
     lob.game.board.svg("test.svg")
 
