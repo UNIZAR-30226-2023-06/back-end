@@ -2,6 +2,7 @@ from typing import Iterable
 from functools import reduce
 from itertools import combinations
 import hexgrid
+from hexgrid import *
 from enum import Enum, auto
 import random
 
@@ -245,9 +246,36 @@ class Hexgrid:
       res.append(south_node)
       res.append(north_west_node)
       res.append(north_east_node)
-      
+
     return res
 
+  def get_adjacent_edges_by_node_id(self, node_coord: int) -> list[EdgeType]:
+    """ Returns the edges adjacent to the node with the given coordinate.
+
+    Args:
+        node_coord (int): The coordinate of the node to start from.
+
+    Returns:
+        list[EdgeType]: The edges adjacent to the node with the given coordinate.
+    """
+    res = []
+    if node_coord % 2 == 0: # "upper triangle" form
+      north_edge = node_coord - 0x10
+      south_west_edge = node_coord - 0x11
+      south_east_edge = node_coord 
+      res.append(north_edge)
+      res.append(south_west_edge)
+      res.append(south_east_edge)
+    
+    else: # "lower triangle" form
+      south_edge = node_coord - 0x01
+      north_west_edge = node_coord - 0x11
+      north_east_edge = node_coord 
+      res.append(south_edge)
+      res.append(north_west_edge)
+      res.append(north_east_edge)
+
+    return res
 
   def set_node_color_by_id(self, tile_identifier: int, direction: NodeDirection, color: Color):
     """ Sets the color of the node adjacent to the tile with the given identifier in the specified direction.
@@ -769,3 +797,21 @@ class Board(Hexgrid):
       return True
     except Exception:
       return False
+    
+  def legal_building_nodes(self, color: Color) -> list[int]:
+    uncolored_nodes = [coord for coord, (c, b) in self.nodes.items() if c is None]
+    ilegal_nodes = []
+    #check that all adjacent nodes are not colored
+    for coord in uncolored_nodes:
+      adjacent_nodes = self.get_adjacent_nodes_by_node_id(coord)
+      adjacent_nodes = [node for node in adjacent_nodes if node in legal_node_coords()]
+      if any([self.nodes[node][0] is not None for node in adjacent_nodes]):
+        ilegal_nodes.append(coord)
+      else:
+        adjacent_edges = self.get_adjacent_edges_by_node_id(coord)
+        adjacent_edges = [edge for edge in adjacent_edges if edge in legal_edge_coords()]
+        if any([self.edges[edge] is not None and self.edges[edge] != color for edge in adjacent_edges]):
+          ilegal_nodes.append(coord)
+        
+    return [coord for coord in uncolored_nodes if coord not in ilegal_nodes]
+        
