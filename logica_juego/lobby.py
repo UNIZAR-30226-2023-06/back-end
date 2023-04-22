@@ -17,7 +17,8 @@ class Lobby:
 
     # Partes de configuracion
     hay_ladron = True
-    max_tiempo_turno = 30 # en segundos
+    # max_tiempo_turno = 30 # en segundos
+    max_tiempo_turno = 5 # en segundos
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
@@ -29,7 +30,7 @@ class Lobby:
         self.game= Partida(4,0,0,None,60,0,0,Board(),True)
         
         self.hay_ladron = True
-        self.max_tiempo_turno = 30
+        self.max_tiempo_turno = 5
 
     def add_Player(self, player : Jugador):
         if len(self.players) < self.max_Players:

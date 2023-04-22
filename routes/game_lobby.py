@@ -207,7 +207,6 @@ def start_Game(lobby_id: int):
 @router.post("/create-test-lobby", tags=["Debug"])
 def create_Test_Lobby():
 
-    LobbyTest : Lobby = Lobby()
 
     # Añado los jugadores
     # LobbyTest.add_Player(Jugador(1, 1000, 2, None, None, 0, False, False, True, True))
@@ -217,6 +216,8 @@ def create_Test_Lobby():
 
     # Añado aleatoriamente entre 2 y 4 jugadores
     num_players = random.randint(2, 4)
+    LobbyTest : Lobby = Lobby(num_players)
+
     for i in range(num_players):
 
         # Elijo aleatoriamente algunos atributos del jugador
