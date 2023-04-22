@@ -360,5 +360,31 @@ class Partida:
             
     ##########################################################################
 
+    ####################### FUNCIONES PONER CONSTRUCCIONES ############################
 
+    def place_town(self, node_coord : int, id_jugador : int) -> bool:
+        """
+        Función que permite a un jugador poner una ciudad en el tablero
+        """
+        jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
+        if not self.board.place_town(jugador.color, node_coord):
+            return False
+        return True
 
+    def place_road(self, edge_coord : int, id_jugador : int) -> bool:
+        """
+        Función que permite a un jugador poner una carretera en el tablero
+        """
+        jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
+        if not self.board.place_road(jugador.color, edge_coord):
+            return False
+        return True
+    
+    def upgrade_town(self, node_coord : int, id_jugador : int) -> bool:
+        """
+        Función que permite a un jugador poner una ciudad en el tablero
+        """
+        jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
+        if not self.board.upgrade_town(jugador.color, node_coord):
+            return False
+        return True
