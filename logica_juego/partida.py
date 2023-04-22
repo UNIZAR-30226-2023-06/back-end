@@ -109,13 +109,9 @@ class Partida:
         dado2 = random.randint(1,6)
         tirada_dados = dado1 + dado2
 
-        #  TODO: cosas del ladrón + saber qué recursos obtiene cada jugador
-
         # Consultamos en el tablero los recursos que obtiene cada jugador
         for j in self.jugadores:
-            # recursos = tablero.recursos_obtenidos(j.get_id(), tirada_dados)
-            recursos = {0,0,0,0,0}
-
+            recursos = self.board.return_resources(j.color, tirada_dados)
             j.sumar_recursos(recursos)
         
         return dado1, dado2
@@ -181,7 +177,7 @@ class Partida:
 
     def mover_ladron(self, tileCoord:int, id_jugador:int, id_jugador_robado:int):
         # Movemos el ladrón a la posición indicada en el tablero
-        
+        #TODO: check whether the robbed player has a building in the tile
         if self.board.move_thief(tileCoord):
             self.robar_recursos(id_jugador, id_jugador_robado)
         else:
@@ -253,7 +249,7 @@ class Partida:
     # devolverá -1
     def check_ganador(self) -> int:
         for j in self.jugadores:
-            if j.get_puntos_victoria() <= 10:
+            if j.get_puntos_victoria() >= 10:
                 return j.get_id()
         return -1
     
