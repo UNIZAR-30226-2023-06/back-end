@@ -85,7 +85,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Lobby not found")
     
     # Add the user to the lobby
-    player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False)
+    player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False, True)
 
     # Search whether the user is already in the lobby (some player has the same id)
     players = lobby.get_Players()
@@ -144,10 +144,17 @@ def search_Lobby(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
+    for l in Lobbies:
+        players = l.get_Players()
+        for j in players:
+            if j.id == user.id:
+                raise HTTPException(status_code=409, detail="User already in lobby")
+            
     player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False)
-    buscar_partida(player)
+    if buscar_partida(player) == .2:
+        raise HTTPException(status_code=409, detail="User already searching for a lobby")
 
-    return jugadores_buscando_partida
+    return {"detail": "Searching for a lobby"}
 
 # Get the lobby a player is in
 @router.get("/get-lobby-from-player", tags=["Lobby"])
@@ -178,6 +185,42 @@ def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
     else:
         return lobby
     
+# Set the player as ready
+@router.post("/set-player-ready", tags=["Lobby"])
+def set_Player_Ready(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Search for the lobby
+    lobby : Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lobby = l
+            break
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    # Search for the player in the lobby
+    player : Jugador = None
+    for j in lobby.players:
+        if j.id == user.id:
+            player = j
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not in the lobby")
+    
+    # Set the player as ready
+    player.esta_preparado = True
+    return {"detail": "Player ready"}
+
 #start the game
 @router.post("/start-game", tags=["Lobby"])
 def start_Game(lobby_id: int):

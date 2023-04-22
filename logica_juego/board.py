@@ -47,6 +47,12 @@ _tile_edge_offsets = {
     +0x01: EdgeDirection.NE,
 }
 
+_adjacent_nodes_offsets = {
+  -0x10: NodeDirection.N,
+  -0x11: NodeDirection.SW,
+  +0x11: NodeDirection.SE,
+}
+
 _node_edge_directions_offsets = { # Must have same identifier
   (NodeDirection.N, EdgeDirection.NW): NodeDirection.NW,
   (NodeDirection.N, EdgeDirection.NE): NodeDirection.NE,
@@ -188,6 +194,18 @@ class Hexgrid:
     """
     return hexgrid.node_coord_in_direction(
         tile_identifier, direction.value)
+  
+  def get_nodes_coords_by_id(self, tile_identifier: int) -> list[int]:
+    """ Returns the coordinates of the nodes adjacent to the tile 
+        with the given identifier.
+
+    Args:
+        tile_identifier (int): The identifier of the tile to start from.
+
+    Returns:
+        list[int]: The coordinates of the nodes adjacent to the tile with the given identifier.
+    """
+    return [self.get_node_coord_by_id(tile_identifier, direction) for direction in NodeDirection]
 
   def get_node_by_id(self, tile_identifier: int, direction: NodeDirection) -> NodeType:
     """ Returns the node adjacent to the tile with the given identifier in the specified direction.
@@ -201,6 +219,35 @@ class Hexgrid:
     """
     node_coord = self.get_node_coord_by_id(tile_identifier, direction)
     return self.nodes[node_coord]
+
+  def get_adjacent_nodes_by_node_id(self, node_coord: int) -> list[NodeType]:
+    """ Returns the nodes adjacent to the node with the given coordinate.
+
+    Args:
+        node_coord (int): The coordinate of the node to start from.
+
+    Returns:
+        list[NodeType]: The nodes adjacent to the node with the given coordinate.
+    """
+    res = []
+    if node_coord % 2 == 0: # "upper triangle" form 
+      north_node = node_coord - 0x10 + 0x01
+      south_west_node = node_coord - 0x11
+      south_east_node = node_coord + 0x11
+      res.append(north_node)
+      res.append(south_west_node)
+      res.append(south_east_node)
+
+    else: # "lower triangle" form
+      south_node = node_coord + 0x10 - 0x01
+      north_west_node = node_coord - 0x11
+      north_east_node = node_coord + 0x11
+      res.append(south_node)
+      res.append(north_west_node)
+      res.append(north_east_node)
+      
+    return res
+
 
   def set_node_color_by_id(self, tile_identifier: int, direction: NodeDirection, color: Color):
     """ Sets the color of the node adjacent to the tile with the given identifier in the specified direction.
@@ -460,7 +507,7 @@ class Hexgrid:
     # possible roads
     if VERBOSE:
       print("root id:", identifier, direction)
-    roads_coords = self.__get_edges_touching_node(identifier, direction)
+    roads_coords = self.__get_edges_touching_node(identifier, direction) 
 
     # same color roads
     roads = {road for road in roads_coords if self.get_edge_by_coord(road) == color and road not in explored}

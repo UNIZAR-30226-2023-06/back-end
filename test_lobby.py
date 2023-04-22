@@ -1,7 +1,10 @@
+from logica_juego.board import Hexgrid
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
 from logica_juego.constants import Color, Cards
 from logica_juego.mano import Mano
+from hexgrid import *
+from logica_juego.board import NodeDirection, EdgeDirection
 
 
 totalErrors = 0
@@ -50,22 +53,30 @@ def main():
 
 
     lob = Lobby()
-    lob.game.board.place_town(Color.BLUE, 0x76)
-    lob.game.board.place_road(Color.BLUE, 0x65)
-    lob.game.board.place_road(Color.BLUE, 0x64)
-    lob.game.board.place_road(Color.BLUE, 0x63)
-    lob.game.board.place_road(Color.BLUE, 0x74)
-    lob.game.board.place_road(Color.BLUE, 0x84)
-    lob.game.board.place_road(Color.BLUE, 0x83)
-    lob.game.board.place_road(Color.BLUE, 0x72)
+    # lob.game.board.place_town(Color.BLUE, 0x76)
+    # lob.game.board.place_road(Color.BLUE, 0x65)
+    # lob.game.board.place_road(Color.BLUE, 0x64)
+    # lob.game.board.place_road(Color.BLUE, 0x63)
+    # lob.game.board.place_road(Color.BLUE, 0x74)
+    # lob.game.board.place_road(Color.BLUE, 0x84)
+    # lob.game.board.place_road(Color.BLUE, 0x83)
+    # lob.game.board.place_road(Color.BLUE, 0x72)
+
+    adj = lob.game.board.get_adjacent_nodes_by_node_id(0xad)
+
+    adj = [node for node in adj if node in legal_node_coords()]
+
+    print("Adjacent nodes to 0xad :", [f"{node:x}" for node in adj])
+
+
     # lob.game.board.place_road(Color.BLUE, 0x83)
 
     lob.game.board.svg("test.svg")
 
-    longest_path = lob.game.board.longest_path(Color.BLUE)
-    print("Longest Path ----> ", longest_path)
+    # longest_path = lob.game.board.longest_path(Color.BLUE)
+    # print("Longest Path ----> ", longest_path)
     
-    print("Total errors: ", totalErrors)
+    # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
     main()
