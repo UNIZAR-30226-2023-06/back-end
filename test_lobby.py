@@ -39,13 +39,31 @@ def main():
                    (0x74, 0x64, 0x65, 9), #!
                    (0x74, 0x74, 0x85, 10), 
                    (0x96, 0x85, 0x85, 11),
-                   (0x96, 0x86, 0x87, 12)} #!
+                   (0x96, 0x86, 0x87, 12)
+                   } #!
     
     #sort test_params by the fourth element of each tuple
     test_params = sorted(test_params, key=lambda x: x[3])
 
-    for params in test_params:
-        testBoard(params[0], params[1], params[2], params[3])
+    # for params in test_params:
+    #     testBoard(params[0], params[1], params[2], params[3])
+
+
+    lob = Lobby()
+    lob.game.board.place_town(Color.BLUE, 0x76)
+    lob.game.board.place_road(Color.BLUE, 0x65)
+    lob.game.board.place_road(Color.BLUE, 0x64)
+    lob.game.board.place_road(Color.BLUE, 0x63)
+    lob.game.board.place_road(Color.BLUE, 0x74)
+    lob.game.board.place_road(Color.BLUE, 0x84)
+    lob.game.board.place_road(Color.BLUE, 0x83)
+    lob.game.board.place_road(Color.BLUE, 0x72)
+    # lob.game.board.place_road(Color.BLUE, 0x83)
+
+    lob.game.board.svg("test.svg")
+
+    longest_path = lob.game.board.longest_path(Color.BLUE)
+    print("Longest Path ----> ", longest_path)
     
     print("Total errors: ", totalErrors)
 
