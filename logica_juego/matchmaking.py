@@ -137,7 +137,7 @@ def init_buscador():
     sentido = Sentido.ASCENDENTE
 
     while(True):
-        print("Estoy vivo\n")
+        #print("Estoy vivo\n")
         # Alternamos el sentido de búsqueda en cada iteración.
         if sentido == Sentido.ASCENDENTE:
             sentido = Sentido.DESCENDENTE
@@ -146,14 +146,14 @@ def init_buscador():
 
         # Obtengo todos los jugadores buscando partida y los ordeno de menor a mayor
         # según su ELO.
-        print(jugadores_buscando_partida)
+        #print(jugadores_buscando_partida)
         jugadores = jugadores_buscando_partida
         jugadores.sort(key=lambda x: x.elo)
 
         # Si hay menos de 4 jugadores buscando partida, esperamos 5 segundos y
         # volvemos a comprobar.
         if len(jugadores) < 4:
-            print("No hay suficientes jugadores buscando partida\n")
+            #print("No hay suficientes jugadores buscando partida\n")
             time.sleep(2)
             continue
 

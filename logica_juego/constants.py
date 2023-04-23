@@ -51,3 +51,8 @@ class Cards(Enum): # Antes estaba en cartas.py
     def pick_random_card():
         import random
         return random.choice(list(Cards.TOTAL_CARDS))
+    
+class TurnPhase(Enum):
+    RESOURCE_PRODUCTION = 0 # Roll 2 dice, if dice sum is 7 move thief and steal resources from a player and if a player has >=7 cards discard half -- else give resources to players
+    TRADING = 1 # Player can trade with other players or with the bank
+    BUILDING = 2 # Player can build a village, city, road or development card

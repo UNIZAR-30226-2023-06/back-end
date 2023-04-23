@@ -6,10 +6,10 @@ from .jugador import Jugador
 from logica_juego.board import Board, NodeDirection
 # import errores
 
-from .constants import Errors, Color, Cards, Building, Resource
+from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
 
 class Partida:
-    def __init__(self, num_jugadores: int, turno: int , fase_turno: int, jugadores: list[Jugador],
+    def __init__(self, num_jugadores: int, turno: int , fase_turno: TurnPhase, jugadores: list[Jugador],
                  tiempo_turno: int,
                  num_jugadores_activos: int, jugadores_seleccionados: int,
                  tablero: Board | None = None, hay_ladron: bool = True):
@@ -32,6 +32,7 @@ class Partida:
         # partida y se le ha dado a comenzar la partida (aún no se han colocado
         # las construcciones iniciales)
         self.jugadores_seleccionados = jugadores_seleccionados
+        self.hay_ladron = hay_ladron
 
         if tablero is not None:
             self.board = tablero
@@ -78,6 +79,11 @@ class Partida:
     # El jugador 1 roba un recurso aleatorio al jugador 2
     #TODO: check whether the robbed player has enough resources
     def robar_recursos(self, id_jugador1: int, id_jugador2: int):
+        if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
+            raise Exception("No se pueden robar recursos en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador1:
+            raise Exception("No es el turno del jugador")
+
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
 
@@ -95,6 +101,12 @@ class Partida:
         #recursos_2 = {0,0,0,0,0}
         #recursos_2[tipo_recurso_2] = cantidad_recurso_2
 
+        if self.fase_turno != TurnPhase.TRADING:
+            raise Exception("No se pueden intercambiar recursos en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador1:
+            raise Exception("No es el turno del jugador")
+
+
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
 
@@ -109,6 +121,9 @@ class Partida:
         dado2 = random.randint(1,6)
         tirada_dados = dado1 + dado2
 
+        if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
+            raise Exception("No se pueden obtener recursos en esta fase del turno")
+
         # Consultamos en el tablero los recursos que obtiene cada jugador
         for j in self.jugadores:
             recursos = self.board.return_resources(j.color, tirada_dados)
@@ -117,6 +132,10 @@ class Partida:
         return dado1, dado2
     
     def usar_carta_desarrollo(self, id_jugador: int, tipo_carta : Cards, coords:int | None = None):
+        
+        if self.fase_turno != TurnPhase.BUILDING:
+            raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
+        
         index_jugador = self.i_jugador(id_jugador)
         jugador = self.jugadores[index_jugador]
         
@@ -160,6 +179,10 @@ class Partida:
     # El jugador con el id pasado cambia X cantidad de sus recursos_1 por una
     # unidad del recurso_2
     def intercambiar_banca(self, id_jugador:int, tipo_recurso_1:Resource, cantidad_recurso:int, tipo_recurso_2:Resource):
+        
+        if self.fase_turno != TurnPhase.TRADING:
+            raise Exception("No se pueden intercambiar recursos en esta fase del turno")
+        
         recursos_1 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
         recursos_1[tipo_recurso_1] = cantidad_recurso
 
@@ -210,19 +233,25 @@ class Partida:
     # Se pasa a la siguiente fase del turno actual, y se pasa al siguiente turno
     # si el actual ya ha acabado
     def avanzar_fase(self):
-        self.fase_turno = (self.fase_turno + 1)%4
-        if self.fase_turno == 0:
+        self.fase_turno = (self.fase_turno + 1)%3
+        if self.fase_turno == TurnPhase.RESOURCE_PRODUCTION:
             self.turno = (self.turno + 1)%4
 
     # Establecemos el tiempo de duración de los turnos en segundos
     def set_tiempo_turno(self, tiempo_turno:int):
         self.tiempo_turno = tiempo_turno
+
+    
     
     ##########################################################################
     
     ############ FUNCIONES SOBRE LA GESTIÓN DE LAS CONSTRUCCIONES ############
 
-    def comprar(self, id_jugador:int, tipo_construccion:Building, coord:int):
+    def comprar_y_construir(self, id_jugador:int, tipo_construccion:Building, coord:int):
+        
+        if self.fase_turno != TurnPhase.BUILDING:
+            raise Exception("No se pueden construir edificios en esta fase del turno")
+        
         player : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if tipo_construccion == Building.ROAD:
             if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0}): # Si no tiene los recursos suficientes
@@ -237,7 +266,7 @@ class Partida:
             if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,1,0,1}): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para construir el poblado")
 
-            if self.board.place_village(player.color, coord):
+            if self.board.place_town(player.color, coord):
                 self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
             else:
                 raise Exception("Error: No se ha podido construir el poblado")

@@ -151,7 +151,7 @@ def search_Lobby(token: str = Depends(oauth2_scheme)):
                 raise HTTPException(status_code=409, detail="User already in lobby")
             
     player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False)
-    if buscar_partida(player) == .2:
+    if buscar_partida(player) == 2:
         raise HTTPException(status_code=409, detail="User already searching for a lobby")
 
     return {"detail": "Searching for a lobby"}
@@ -187,7 +187,7 @@ def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
     
 # Set the player as ready
 @router.post("/set-player-ready", tags=["Lobby"])
-def set_Player_Ready(lobby_id: int, token: str = Depends(oauth2_scheme)):
+def set_Player_As_Ready(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -327,6 +327,7 @@ def set_Player_Ready(token : str = Depends(oauth2_scheme)):
     if lobby is None:
         raise HTTPException(status_code=404, detail="Player not in any lobby")
     
+    
     # Search for the player in the lobby
     player : Jugador = None
     for j in lobby.players:
@@ -375,6 +376,8 @@ def build_Village(node: int, token : str = Depends(oauth2_scheme)):
             break
     if player is None:
         raise HTTPException(status_code=404, detail="Player not in the lobby")
+    if not lobby.game_has_started:
+        raise HTTPException(status_code=409, detail="Game has not started yet")
     
     # Build the Village
     if not lobby.game.place_town(player.color, node):
@@ -407,6 +410,8 @@ def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
             break
     if lobby is None:
         raise HTTPException(status_code=404, detail="Player not in any lobby")
+    if not lobby.game_has_started:
+        raise HTTPException(status_code=409, detail="Game has not started yet")
     
     # Search for the player in the lobby
     player : Jugador = None
@@ -448,6 +453,8 @@ def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
             break
     if lobby is None:
         raise HTTPException(status_code=404, detail="Player not in any lobby")
+    if not lobby.game_has_started:
+        raise HTTPException(status_code=409, detail="Game has not started yet")
     
     # Search for the player in the lobby
     player : Jugador = None
