@@ -300,6 +300,169 @@ def get_Legal_Building_Edges(lobby_id: int, color: str):
     return lobby.game.board.legal_building_edges(col)
 
 
+#set a player as ready
+@router.post("/set-player-ready", tags=["Game"])
+def set_Player_Ready(token : str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Search for the lobby
+    lobby : Lobby = None
+    for l in Lobbies:
+        players = l.get_Players()
+        for j in players:
+            if j.id == user.id:
+                lobby = l
+                break
+        if lobby is not None:
+            break
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Player not in any lobby")
+    
+    # Search for the player in the lobby
+    player : Jugador = None
+    for j in lobby.players:
+        if j.id == user.id:
+            player = j
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not in the lobby")
+    
+    # Set the player as ready
+    player.esta_preparado = True
+    return {"detail": "Player ready"}
+
+# build a village
+@router.post("/build-village", tags=["Game"])
+def build_Village(node: int, token : str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Search for the lobby
+    lobby : Lobby = None
+    for l in Lobbies:
+        players = l.get_Players()
+        for j in players:
+            if j.id == user.id:
+                lobby = l
+                break
+        if lobby is not None:
+            break
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Player not in any lobby")
+    
+    # Search for the player in the lobby
+    player : Jugador = None
+    for j in lobby.players:
+        if j.id == user.id:
+            player = j
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not in the lobby")
+    
+    # Build the Village
+    if not lobby.game.place_town(player.color, node):
+        raise HTTPException(status_code=409, detail="Invalid building position")
+    return {"detail": "Village built"}
+
+#build a road
+@router.post("/build-road", tags=["Game"])
+def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Search for the lobby
+    lobby : Lobby = None
+    for l in Lobbies:
+        players = l.get_Players()
+        for j in players:
+            if j.id == user.id:
+                lobby = l
+                break
+        if lobby is not None:
+            break
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Player not in any lobby")
+    
+    # Search for the player in the lobby
+    player : Jugador = None
+    for j in lobby.players:
+        if j.id == user.id:
+            player = j
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not in the lobby")
+    
+    # Build the Road
+    if not lobby.game.place_road(player.color, edge):
+        raise HTTPException(status_code=409, detail="Invalid building position")
+    return {"detail": "Road built"}
+
+#upgrade a village to a city
+@router.post("/upgrade-village-to-city", tags=["Game"])
+def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Search for the lobby
+    lobby : Lobby = None
+    for l in Lobbies:
+        players = l.get_Players()
+        for j in players:
+            if j.id == user.id:
+                lobby = l
+                break
+        if lobby is not None:
+            break
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Player not in any lobby")
+    
+    # Search for the player in the lobby
+    player : Jugador = None
+    for j in lobby.players:
+        if j.id == user.id:
+            player = j
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not in the lobby")
+    
+    # Upgrade the Village
+    if not lobby.game.upgrade_town(player.color, node):
+        raise HTTPException(status_code=409, detail="Invalid building position")
+    return {"detail": "Village upgraded"}
+
 #create a test lobby
 @router.post("/create-test-lobby", tags=["Debug"])
 def create_Test_Lobby():

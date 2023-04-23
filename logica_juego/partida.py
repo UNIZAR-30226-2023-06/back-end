@@ -3,7 +3,7 @@ import random
 # import cartas
 # import construcciones
 from .jugador import Jugador
-from logica_juego.board import Board
+from logica_juego.board import Board, NodeDirection
 # import errores
 
 from .constants import Errors, Color, Cards, Building, Resource
@@ -177,7 +177,23 @@ class Partida:
 
     def mover_ladron(self, tileCoord:int, id_jugador:int, id_jugador_robado:int):
         # Movemos el ladrón a la posición indicada en el tablero
-        #TODO: check whether the robbed player has a building in the tile
+        jugador = self.jugadores[self.i_jugador(id_jugador)]
+        jugador_robado = self.jugadores[self.i_jugador(id_jugador_robado)]
+
+        nodes_around_thief = []
+        possible_directions : NodeDirection = {NodeDirection.N, NodeDirection.NE, NodeDirection.SE, NodeDirection.S, NodeDirection.SW, NodeDirection.NW}
+        for direction in possible_directions:
+            tile_id = self.board.get_tile_by_id(tileCoord)
+            node = self.board.get_node(tile_id, direction)
+            if node != None:
+                nodes_around_thief.append(node)
+        possible_nodes = []
+        for node in nodes_around_thief:
+            if self.board.nodes[node] == (jugador_robado.color, Building.VILLAGE) or self.board.nodes[node] == (jugador_robado.color, Building.CITY):
+                possible_nodes.append(node)
+        if len(possible_nodes) == 0:
+            raise Exception("Error: No hay ningún edificio del jugador robado en los nodos adyacentes al ladrón")
+
         if self.board.move_thief(tileCoord):
             self.robar_recursos(id_jugador, id_jugador_robado)
         else:

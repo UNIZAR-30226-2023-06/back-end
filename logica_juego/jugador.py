@@ -119,7 +119,7 @@ def nuevo_jugador(id : int, color : Color):
     mano_inicial = nueva_mano()
 
     jugador = Jugador(id, 0, color, mano_inicial, 0, False, False,
-                      False)
+                      False, False, True)
     return jugador
 
 

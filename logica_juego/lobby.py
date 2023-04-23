@@ -67,13 +67,13 @@ class Lobby:
     def start_Game(self):
         color = { Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW }
         #initialize all the player's hands, victory points, etc
-        # for player in self.players:
-        #     player.mano = nueva_mano()
-        #     player.puntos_victoria = 0
-        #     player.color = color.pop()
-        #     player.caballeros_usados = 0
-        #     player.tiene_bono_carreteras = False
-        #     player.tiene_bono_caballeros = False
+        for player in self.players:
+            player.mano = nueva_mano()
+            player.puntos_victoria = 0
+            player.color = color.pop()
+            player.caballeros_usados = 0
+            player.tiene_bono_carreteras = False
+            player.tiene_bono_caballeros = False
 
         #initialize the board
         self.game = Board()
