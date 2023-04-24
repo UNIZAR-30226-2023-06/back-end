@@ -92,7 +92,6 @@ class Partida:
     
     # El jugador 1 le da sus x recursos al jugador 2, y viceversa
     # Los recursos se codifican con el formato {arcilla, madera, oveja, piedra, trigo}
-    #TODO: check whether the players have enough resources
     def intercambiar_recursos(self, id_jugador1 : int , recursos_1 : list[int], id_jugador2 : int, recursos_2 : list[int]):
         #recursos_1 = {0,0,0,0,0}
         #recursos_1 = {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
@@ -106,9 +105,15 @@ class Partida:
         if self.jugadores[self.turno].get_id() != id_jugador1:
             raise Exception("No es el turno del jugador")
 
-
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
+
+        # Comprobamos que los jugadores tienen los recursos que quieren intercambiar
+        if self.jugadores[j1].mano.arcilla < recursos_1[0] or self.jugadores[j1].mano.madera < recursos_1[1] or self.jugadores[j1].mano.oveja < recursos_1[2] or self.jugadores[j1].mano.piedra < recursos_1[3] or self.jugadores[j1].mano.trigo < recursos_1[4]:
+            raise Exception("El jugador 1 no tiene los recursos que quiere intercambiar")
+
+        if self.jugadores[j2].mano.arcilla < recursos_2[0] or self.jugadores[j2].mano.madera < recursos_2[1] or self.jugadores[j2].mano.oveja < recursos_2[2] or self.jugadores[j2].mano.piedra < recursos_2[3] or self.jugadores[j2].mano.trigo < recursos_2[4]:
+            raise Exception("El jugador 2 no tiene los recursos que quiere intercambiar")
 
         self.jugadores[j1].restar_recursos(recursos_1)
         self.jugadores[j1].sumar_recursos(recursos_2)
@@ -135,7 +140,10 @@ class Partida:
         
         if self.fase_turno != TurnPhase.BUILDING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
-        
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
+
+
         index_jugador = self.i_jugador(id_jugador)
         jugador = self.jugadores[index_jugador]
         
@@ -151,7 +159,7 @@ class Partida:
             self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
 
         elif tipo_carta == Cards.INVENTION_PROGRESS:
-            # Obtenemos del frontend qué 2 recursos quiere obtener el jugador
+            # TODO Obtenemos del frontend qué 2 recursos quiere obtener el jugador
             recursos = {0,0,0,0,0}
             self.jugadores[self.i_jugador(id_jugador)].sumar_recursos(recursos)
 
@@ -162,7 +170,7 @@ class Partida:
 
 
         elif tipo_carta == Cards.MONOPOLY_PROGRESS:
-            # Obtenemos del frontend qué recurso quiere robar el jugador
+            # TODO Obtenemos del frontend qué recurso quiere robar el jugador
             tipo_recurso = Resource.CLAY
 
             recursos = {0,0,0,0,0}
@@ -182,7 +190,9 @@ class Partida:
         
         if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se pueden intercambiar recursos en esta fase del turno")
-        
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
+
         recursos_1 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
         recursos_1[tipo_recurso_1] = cantidad_recurso
 
@@ -191,7 +201,8 @@ class Partida:
 
         j = self.i_jugador(id_jugador)
 
-        self.jugadores[j].restar_recursos(recursos_1)
+        if not self.jugadores[j].restar_recursos(recursos_1):
+            raise Exception("El jugador no tiene los recursos que quiere intercambiar")
         self.jugadores[j].sumar_recursos(recursos_2)
     
     ##########################################################################
@@ -206,8 +217,8 @@ class Partida:
         nodes_around_thief = []
         possible_directions : NodeDirection = {NodeDirection.N, NodeDirection.NE, NodeDirection.SE, NodeDirection.S, NodeDirection.SW, NodeDirection.NW}
         for direction in possible_directions:
-            tile_id = self.board.get_tile_by_id(tileCoord)
-            node = self.board.get_node(tile_id, direction)
+            tile_id = self.board.tile_coord2id(tileCoord)
+            node = self.board.get_node_by_id(tile_id, direction)
             if node != None:
                 nodes_around_thief.append(node)
         possible_nodes = []
