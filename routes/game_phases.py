@@ -17,7 +17,7 @@ from models.user import User, Befriends
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
-from logica_juego.constants import Color, Cards, Resource, TurnPhase
+from logica_juego.constants import Building, Color, Cards, Resource, TurnPhase
 from logica_juego.mano import Mano
 
 from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar_partida
@@ -215,6 +215,377 @@ def trade_with_bank(lobby_id: int, resource_type: str, amount: int, requested_ty
 ####################################################################################### 
 
 
+
+
+
 ####################################### BUILDING ######################################
 
+#use a knight card
+@router.get("/game_phases/use_knight_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de caballero \
+            Args: id_stolen_player es el id del jugador al que se le quiere robar \
+                  coord es la coordenada de la casilla a la que se quiere mover el ladron \
+                  token -> token de autenticacion \
+                  lobby_id -> id del lobby en el que se esta jugando")
+def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: str, token: str = Depends(oauth2_scheme)): 
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    try:
+        lob.game.usar_carta_caballero(user.id, stolen_player_id, new_thief_position_tile_coord)
+        return {"detail": "Knight card used successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+#use an invention progress card
+@router.get("/game_phases/use_invention_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de invencion \
+            Args: token -> token de autenticacion \
+                  lobby_id -> id del lobby en el que se esta jugando \
+                  recurso1 -> primer recurso que se quiere \
+                  recurso2 -> segundo recurso que se quiere")
+def use_invention_card(lobby_id: int, resource1:str, resource2:str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        res1 = resource_str_to_Resource(resource1)
+        res2 = resource_str_to_Resource(resource2)
+        lob.game.usar_carta_invention_progress(user.id, res1, res2)
+        return {"detail": "Invention card used successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+#use road progress card
+@router.get("/game_phases/use_road_progress_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de camino \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando \
+                    coord -> coordenada de casilla en la que construir la carretera")
+def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.usar_carta_road_progress(user.id, coord)
+        return {"detail": "Road built successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+                    
+
+#use monopoly progress card
+@router.get("/game_phases/use_monopoly_progress_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de monopolio \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando \
+                    resource -> recurso que se quiere")
+def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        res = resource_str_to_Resource(resource)
+        lob.game.usar_carta_monopoly_progress(user.id, res)
+        return {"detail": "Monopoly card used successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+#use victory point progress card
+@router.get("/game_phases/use_victory_point_progress_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de punto de victoria \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando")
+def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.usar_carta_victory_progress(user.id)
+        return {"detail": "Victory point card used successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+#buy development card
+@router.get("/game_phases/buy_development_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador comprar una carta de desarrollo \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando")
+def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.comprar_y_construir(user.id, Building.DEV_CARD, None)
+        return {"detail": "Development card bought successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+#buy and build road
+@router.get("/game_phases/buy_and_build_road", tags=["game_phases: building"],
+            description="Funcion que permite al jugador comprar y construir una carretera \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando \
+                    coord -> coordenadas de la carretera")
+def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.comprar_y_construir(user.id, Building.ROAD, coord)
+        return {"detail": "Road bought and built successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+#buy and build village
+@router.get("/game_phases/buy_and_build_village", tags=["game_phases: building"],
+            description="Funcion que permite al jugador comprar y construir un pueblo \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando \
+                    coord -> coordenadas del pueblo")
+def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.comprar_y_construir(user.id, Building.VILLAGE, coord)
+        return {"detail": "Village bought and built successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+#buy and build city
+@router.get("/game_phases/buy_and_build_city", tags=["game_phases: building"],
+            description="Funcion que permite al jugador comprar y construir una ciudad \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando \
+                    coord -> coordenadas de la ciudad")
+def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    try:
+        lob.game.comprar_y_construir(user.id, Building.CITY, coord)
+        return {"detail": "City bought and built successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 ####################################################################################### 
+
+#TODO: get a player's stats (resources, buildings, etc)
+#TODO: get board state

@@ -210,9 +210,6 @@ class Partida:
         else:
             raise Exception("El jugador no tiene la carta de desarrollo")
 
-        # Obtenemos los recursos de los demás jugadores
-        recursos = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
-
         for j in self.jugadores:
             if j.get_id() != id_jugador:
                 cartas_robadas = j.robar_monopolio(tipo_recurso)
