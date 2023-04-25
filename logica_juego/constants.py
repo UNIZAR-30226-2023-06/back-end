@@ -30,11 +30,13 @@ class Cards(Enum): # Antes estaba en cartas.py
     INVENTION_PROGRESS = auto()
     ROAD_PROGRESS = auto()
     MONOPOLY_PROGRESS = auto()
+
     TOWN_HALL = auto()
     LIBRARY = auto()
     MARKET = auto()
     CHURCH = auto()
     UNIVERSITY = auto()
+    
     TOTAL_CARDS = {
         KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, 
         KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT,

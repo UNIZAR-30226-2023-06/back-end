@@ -75,7 +75,6 @@ class Partida:
     ##########################################################################
 
     ################# FUNCIONES SOBRE LA GESTIÓN DE RECURSOS #################
-
     # El jugador 1 roba un recurso aleatorio al jugador 2
     #TODO: check whether the robbed player has enough resources
     def robar_recursos(self, id_jugador1: int, id_jugador2: int):
@@ -136,53 +135,114 @@ class Partida:
         
         return dado1, dado2
     
-    def usar_carta_desarrollo(self, id_jugador: int, tipo_carta : Cards, coords:int | None = None):
-        
+    def usar_carta_caballero(self, id_jugador:int, id_jugador_robado: int, coord: int):
+        if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
+            raise Exception("No se pueden usar cartas de caballero en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
+
+        index_jugador = self.i_jugador(id_jugador)
+        jugador = self.jugadores[index_jugador]
+
+        # Comprobamos que el jugador tiene la carta de desarrollo
+        if jugador.tiene_carta_desarrollo(Cards.KNIGHT):
+            jugador.sub_carta_desarrollo(Cards.KNIGHT)
+        else:
+            raise Exception("El jugador no tiene la carta de desarrollo")
+
+        try:
+            self.mover_ladron(coord, id_jugador, id_jugador_robado)
+            self.jugadores[self.i_jugador(id_jugador)].add_caballero()
+            self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
+        except Exception as e:
+            raise e
+
+    def usar_carta_invention_progress(self, id_jugador: int, recurso1: Resource, recurso2: Resource):
         if self.fase_turno != TurnPhase.BUILDING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
 
+        index_jugador = self.i_jugador(id_jugador)
+        jugador = self.jugadores[index_jugador]
+
+        # Comprobamos que el jugador tiene la carta de desarrollo
+        if jugador.tiene_carta_desarrollo(Cards.INVENTION_PROGRESS):
+            jugador.sub_carta_desarrollo(Cards.INVENTION_PROGRESS)
+        else:
+            raise Exception("El jugador no tiene la carta de desarrollo")
+    
+        # añaadimos los recursos al jugador
+        jugador.mano.add_recurso(recurso1, 1)
+        jugador.mano.add_recurso(recurso2, 1)
+
+    def usar_carta_road_progress(self, id_jugador: int, coords: int):
+        if self.fase_turno != TurnPhase.BUILDING:
+            raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
 
         index_jugador = self.i_jugador(id_jugador)
         jugador = self.jugadores[index_jugador]
-        
+
         # Comprobamos que el jugador tiene la carta de desarrollo
-        if jugador.tiene_carta_desarrollo(tipo_carta):
-            self.sub_carta_desarrollo(tipo_carta)
+        if jugador.tiene_carta_desarrollo(Cards.ROAD_PROGRESS):
+            jugador.sub_carta_desarrollo(Cards.ROAD_PROGRESS)
         else:
             raise Exception("El jugador no tiene la carta de desarrollo")
 
-        if tipo_carta == Cards.KNIGHT:
-            self.mover_ladron(id_jugador)
-            self.jugadores[self.i_jugador(id_jugador)].add_caballero()
-            self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
+        # Indicamos al tablero dónde construimos las carreteras
+        if not self.board.place_road(jugador.color, coords):
+            raise Exception("No se puede construir la carretera")
+        
+    def usar_carta_monopoly_progress(self, id_jugador: int, tipo_recurso: Resource):
+        if self.fase_turno != TurnPhase.BUILDING:
+            raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
 
-        elif tipo_carta == Cards.INVENTION_PROGRESS:
-            # TODO Obtenemos del frontend qué 2 recursos quiere obtener el jugador
-            recursos = {0,0,0,0,0}
-            self.jugadores[self.i_jugador(id_jugador)].sumar_recursos(recursos)
+        index_jugador = self.i_jugador(id_jugador)
+        jugador = self.jugadores[index_jugador]
 
-        elif tipo_carta == Cards.ROAD_PROGRESS:
-            # Indicamos al tablero dónde construimos las carreteras
-            if not self.board.place_road(jugador.color, coords):
-                raise Exception("No se puede construir la carretera")
-
-
-        elif tipo_carta == Cards.MONOPOLY_PROGRESS:
-            # TODO Obtenemos del frontend qué recurso quiere robar el jugador
-            tipo_recurso = Resource.CLAY
-
-            recursos = {0,0,0,0,0}
-
-            for j in self.jugadores:
-                if j.get_id() != id_jugador:
-                    recursos[tipo_recurso] += j.robar_monopolio(tipo_recurso)
-            
-            self.jugadores[self.i_jugador(id_jugador)].sumar_recursos(recursos)
-
+        # Comprobamos que el jugador tiene la carta de desarrollo
+        if jugador.tiene_carta_desarrollo(Cards.MONOPOLY_PROGRESS):
+            jugador.sub_carta_desarrollo(Cards.MONOPOLY_PROGRESS)
         else:
-            self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+            raise Exception("El jugador no tiene la carta de desarrollo")
+
+        # Obtenemos los recursos de los demás jugadores
+        recursos = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
+
+        for j in self.jugadores:
+            if j.get_id() != id_jugador:
+                cartas_robadas = j.robar_monopolio(tipo_recurso)
+                jugador.mano.add_recurso(tipo_recurso, cartas_robadas)
+        
+    def usar_carta_victory_progress(self, id_jugador: int):
+        if self.fase_turno != TurnPhase.BUILDING:
+            raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
+
+        index_jugador = self.i_jugador(id_jugador)
+        jugador = self.jugadores[index_jugador]
+
+        # Comprobamos que el jugador tiene la carta de desarrollo
+        if jugador.tiene_carta_desarrollo(Cards.TOWN_HALL):
+            jugador.sub_carta_desarrollo(Cards.TOWN_HALL)
+        elif jugador.tiene_carta_desarrollo(Cards.LIBRARY):
+            jugador.sub_carta_desarrollo(Cards.LIBRARY)
+        elif jugador.tiene_carta_desarrollo(Cards.MARKET):
+            jugador.sub_carta_desarrollo(Cards.MARKET)
+        elif jugador.tiene_carta_desarrollo(Cards.CHURCH):
+            jugador.sub_carta_desarrollo(Cards.CHURCH)
+        elif jugador.tiene_carta_desarrollo(Cards.UNIVERSITY):
+            jugador.sub_carta_desarrollo(Cards.UNIVERSITY)
+        else:
+            raise Exception("El jugador no tiene la carta de desarrollo")
+
+        # Añadimos un punto de victoria al jugador
+        jugador.add_puntos_victoria(1)
 
     # El jugador con el id pasado cambia X cantidad de sus recursos_1 por una
     # unidad del recurso_2
@@ -262,6 +322,8 @@ class Partida:
         
         if self.fase_turno != TurnPhase.BUILDING:
             raise Exception("No se pueden construir edificios en esta fase del turno")
+        if self.jugadores[self.turno].get_id() != id_jugador:
+            raise Exception("No es el turno del jugador")
         
         player : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if tipo_construccion == Building.ROAD:
