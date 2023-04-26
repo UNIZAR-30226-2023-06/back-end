@@ -26,16 +26,16 @@ class Errors(Enum): # Antes estaba en errores.py
     GAME_FULL = auto()
 
 class Cards(Enum): # Antes estaba en cartas.py
-    KNIGHT = auto()
-    INVENTION_PROGRESS = auto()
-    ROAD_PROGRESS = auto()
-    MONOPOLY_PROGRESS = auto()
+    KNIGHT = 0
+    INVENTION_PROGRESS = 1
+    ROAD_PROGRESS = 2
+    MONOPOLY_PROGRESS = 3
 
-    TOWN_HALL = auto()
-    LIBRARY = auto()
-    MARKET = auto()
-    CHURCH = auto()
-    UNIVERSITY = auto()
+    TOWN_HALL = 4
+    LIBRARY = 5
+    MARKET = 6
+    CHURCH = 7
+    UNIVERSITY = 8
     
     TOTAL_CARDS = {
         KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, 

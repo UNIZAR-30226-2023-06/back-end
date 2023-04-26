@@ -37,6 +37,16 @@ def resource_str_to_Resource(res: str) -> Resource:
         return Resource.STONE
     else:
         raise Exception("Invalid resource")
+    
+def game_phase_to_str(gamePhase: TurnPhase) -> str:
+    if gamePhase == TurnPhase.RESOURCE_PRODUCTION:
+        return "RESOURCE_PRODUCTION"
+    elif gamePhase == TurnPhase.TRADING:
+        return "TRADING"
+    elif gamePhase == TurnPhase.BUILDING:
+        return "BUILDING"
+    else:
+        raise Exception("Invalid game phase")
 
 @router.get("/game_phases/advance_phase", tags=["game_phases"])
 def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
@@ -587,5 +597,100 @@ def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
     
 ####################################################################################### 
 
-#TODO: get a player's stats (resources, buildings, etc)
-#TODO: get board state
+# get a player state
+@router.get("/game_phases/get_player_state", tags=["game_phases: get_state"],
+            description="Funcion que permite al jugador obtener su estado \
+            Args: token -> token de autenticacion \
+                    lobby_id -> id del lobby en el que se esta jugando")
+def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player: Jugador = None
+    #check whether the player is in a lobby
+    for p in lob.players:
+        if p.id == user.id:
+            player = p
+            break
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    player_development_cards = {"knight" : player.mano.cartas_desarrollo[Cards.KNIGHT.value],
+                                "invention_progress" : player.mano.cartas_desarrollo[Cards.INVENTION_PROGRESS.value],
+                                "road_progress" : player.mano.cartas_desarrollo[Cards.ROAD_PROGRESS.value],
+                                "monopoly_progress" : player.mano.cartas_desarrollo[Cards.MONOPOLY_PROGRESS.value],
+                                "town_hall" : player.mano.cartas_desarrollo[Cards.TOWN_HALL.value],
+                                "library" : player.mano.cartas_desarrollo[Cards.LIBRARY.value],
+                                "market" : player.mano.cartas_desarrollo[Cards.MARKET.value],
+                                "university" : player.mano.cartas_desarrollo[Cards.UNIVERSITY.value],
+                                "church" : player.mano.cartas_desarrollo[Cards.CHURCH.value],}
+
+    player_hand = { "wheat" : player.mano.trigo,
+                    "wood" : player.mano.madera,
+                    "sheep" : player.mano.oveja,
+                    "brick" : player.mano.arcilla,
+                    "rock" : player.mano.piedra,
+                    "dev_cards" : player_development_cards,}
+
+    player_state = {"id" : player.id, 
+                    "victory_points" : player.puntos_victoria,
+                    "color" : player.color,
+                    "used_knights" : player.caballeros_usados,
+                    "has_knights_bonus": player.tiene_bono_caballeros,
+                    "has_longest_road_bonus": player.tiene_bono_carreteras,
+                    "is_ready": player.esta_preparado,
+                    "elo" : player.elo,
+                    "is_active" : player.activo,
+                    "hand" : player_hand,}
+
+    return player_state
+
+#get the state of the game
+@router.get("/game_phases/get_game_state", tags=["game_phases: get_state"],
+            description="Funcion que permite al jugador obtener el estado del juego \
+            Args: lobby_id -> id del lobby en el que se esta jugando")
+def get_game_state(lobby_id: int):
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    board_state = {}
+
+    game_state = {
+        "num_players" : lob.game.num_jugadores,
+        "active_players" : lob.game.num_jugadores_activos, 
+
+        "player_0" : {"id" : lob.game.jugadores[0].id, "color" : lob.game.jugadores[0].color, "is_active" : lob.game.jugadores[0].activo},
+        "player_1" : {"id" : lob.game.jugadores[1].id, "color" : lob.game.jugadores[1].color, "is_active" : lob.game.jugadores[1].activo},
+        "player_2" : {"id" : lob.game.jugadores[2].id, "color" : lob.game.jugadores[2].color, "is_active" : lob.game.jugadores[2].activo},
+        "player_3" : {"id" : lob.game.jugadores[3].id, "color" : lob.game.jugadores[3].color, "is_active" : lob.game.jugadores[3].activo},
+
+        "turn_phase" : game_phase_to_str(lob.game.fase_turno),
+        "player_turn" : lob.game.turno,
+        "turn_time" : lob.game.tiempo_turno,
+
+        "thief_enabled" : lob.game.hay_ladron,
+        "board" : board_state
+    }
+
+    return game_state

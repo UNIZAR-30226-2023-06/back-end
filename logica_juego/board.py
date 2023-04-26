@@ -92,10 +92,11 @@ class Hexgrid:
   def __init__(self, resources: list[Resource], thief: int | None = None):
     random.shuffle(resources)  # TODO: make copy?
     # TODO: puede no haber ladron
-    self.thief = random.randrange(
-      1, len(resources) + 1) if thief is None else thief
+    # self.thief = random.randrange(
+    #   1, len(resources) + 1) if thief is None else thief
 
     desert_index = resources.index(Resource.DESERT)
+    self.thief = desert_index
     numbers = Hexgrid.NUMBERS[:desert_index] + \
         [0, ] + Hexgrid.NUMBERS[desert_index:]
 
