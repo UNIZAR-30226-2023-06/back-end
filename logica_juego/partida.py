@@ -9,6 +9,17 @@ from logica_juego.board import Board, NodeDirection
 from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
 
 class Partida:
+
+    jugadores: list[Jugador] = []
+    num_jugadores: int = 4
+    num_jugadores_activos: int = 0
+    turno: int = 0
+    fase_turno: TurnPhase = TurnPhase.RESOURCE_PRODUCTION
+    tiempo_turno: int = 60
+    jugadores_seleccionados: int = 0
+    hay_ladron: bool = True
+    board: Board = Board()
+
     def __init__(self, num_jugadores: int, turno: int , fase_turno: TurnPhase, jugadores: list[Jugador],
                  tiempo_turno: int,
                  num_jugadores_activos: int, jugadores_seleccionados: int,
@@ -40,6 +51,24 @@ class Partida:
             self.board = Board() # TODO lo del ladron
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
+
+    def get_fase_turno(self) -> TurnPhase:
+        return self.fase_turno
+    
+    def get_turno(self) -> int:
+        return self.turno
+    
+    def get_jugador(self, i:int) -> Jugador:
+        return self.jugadores[i]
+    
+    def get_tiempo_turno(self) -> int:
+        return self.tiempo_turno
+    
+    def get_hay_ladron(self) -> bool:
+        return self.hay_ladron
+    
+    def get_board(self) -> Board:
+        return self.board
 
     # Defines whether the player is "active" or not. True if the player is active, False otherwise.
     def set_player_status(self, id_jugador : int, status : bool):

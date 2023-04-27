@@ -5,6 +5,7 @@ import random
 
 from fastapi import APIRouter, Depends, HTTPException
 from logica_juego.board import Board
+from logica_juego.partida import Partida
 from models.user import User
 from local_settings import  JWT_SECRET
 
@@ -447,8 +448,9 @@ def create_Test_Lobby():
     # LobbyTest.add_Player(Jugador(4, 1000, 0, None, None, 0, False, True, True, True))
 
     # Añado aleatoriamente entre 2 y 4 jugadores
-    num_players = random.randint(2, 4)
+    num_players = 4
     LobbyTest : Lobby = Lobby(num_players)
+    LobbyTest.game = Partida(num_players, 0, 0, [], 5, 4, 0, Board(), True)
 
     for i in range(num_players):
 
@@ -465,6 +467,6 @@ def create_Test_Lobby():
     
     #start the game
     LobbyTest.start_Game()
-    
+    Lobbies.append(LobbyTest)
 
     return LobbyTest

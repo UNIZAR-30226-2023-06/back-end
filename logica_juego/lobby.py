@@ -9,7 +9,7 @@ from .mano import Mano, nueva_mano
 class Lobby:
     id = None
     players = [] # list of players in the lobby
-    game = Partida(4,0,0,None,60,0,0,Board(),True)
+    game = Partida(4,0,0,[],60,0,0,Board(),True)
     game_has_started = False
     is_full = False
     max_Players = None 
@@ -27,7 +27,7 @@ class Lobby:
         self.max_Players = max_Players
         self.current_Players = len(self.players)
         self.players = []
-        self.game= Partida(4,0,0,None,60,0,0,Board(),True)
+        self.game: Partida = Partida(4, 0, 0, [], 60, 0, 0, Board(), True)
         
         self.hay_ladron = True
         self.max_tiempo_turno = 5
@@ -35,6 +35,7 @@ class Lobby:
     def add_Player(self, player : Jugador):
         if len(self.players) < self.max_Players:
             self.players.append(player)
+            self.game.jugadores.append(player)
             #recalculate elo (average of all players in lobby)
             self.elo = sum([player.elo for player in self.players]) / len(self.players)
             self.current_Players = len(self.players)
@@ -50,6 +51,7 @@ class Lobby:
         for player in self.players:
             if player.id == player_id:
                 self.players.remove(player)
+                self.game.jugadores.remove(player)
                 #recalculate elo (average of all players in lobby)
                 self.elo = sum([player.elo for player in self.players]) / len(self.players)
                 self.current_Players = len(self.players)

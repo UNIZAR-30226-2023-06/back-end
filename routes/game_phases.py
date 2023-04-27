@@ -674,12 +674,9 @@ def get_game_state(lobby_id: int):
     if lob is None:
         raise HTTPException(status_code=404, detail="Lobby not found")
 
-    board_state = {}
+    print(lob.game)
 
     game_state = {
-        "num_players" : lob.game.num_jugadores,
-        "active_players" : lob.game.num_jugadores_activos, 
-
         "player_0" : {"id" : lob.game.jugadores[0].id, "color" : lob.game.jugadores[0].color, "is_active" : lob.game.jugadores[0].activo},
         "player_1" : {"id" : lob.game.jugadores[1].id, "color" : lob.game.jugadores[1].color, "is_active" : lob.game.jugadores[1].activo},
         "player_2" : {"id" : lob.game.jugadores[2].id, "color" : lob.game.jugadores[2].color, "is_active" : lob.game.jugadores[2].activo},
@@ -690,7 +687,7 @@ def get_game_state(lobby_id: int):
         "turn_time" : lob.game.tiempo_turno,
 
         "thief_enabled" : lob.game.hay_ladron,
-        "board" : board_state
+        "board" : lob.game.board
     }
 
     return game_state
