@@ -157,6 +157,30 @@ def search_Lobby(token: str = Depends(oauth2_scheme)):
 
     return {"detail": "Searching for a lobby"}
 
+# Stop searching for a lobby
+@router.post("/stop-searching-lobby", tags=["Lobby"], description="Stop searching for a lobby")
+def stop_Searching_Lobby(token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    from logica_juego.matchmaking import jugadores_buscando_partida
+
+    for j in jugadores_buscando_partida:
+        if j.id == user.id:
+            jugadores_buscando_partida.remove(j)
+            return {"detail": "Stopped searching for a lobby"}
+    
+    raise HTTPException(status_code=404, detail="User not searching for a lobby")
+    
+    
 # Get the lobby a player is in
 @router.get("/get-lobby-from-player", tags=["Lobby"])
 def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
