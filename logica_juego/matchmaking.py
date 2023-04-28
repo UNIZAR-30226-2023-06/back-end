@@ -26,7 +26,7 @@ def nueva_partida(id_jugador):
     if user is None:
         return -1 # User not found
     lobby = Lobby()
-    player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False)
+    player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False, True)
     res = lobby.add_Player(player)
     if res == -1:
         return -2 # Lobby is full
@@ -56,7 +56,7 @@ def unirse_a_partida(id_jugador, codigo_partida):
         if lobby.id == codigo_partida:
             if len(lobby.players) >= 4:
                 return None
-            player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False)
+            player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False, True)
             lobby.add_Player(player)
             return lobby
 
@@ -117,7 +117,7 @@ def buscar_partida(jugador : Jugador):
 
     # Si no, añadimos el jugador a la lista de jugadores buscando partida.
     # TODO: el valor que se le debe asignar a cada jugador es su ELO
-    jugadores_buscando_partida.append(Jugador(user.id, user.elo, 0, None, None, 0, False, False, False))
+    jugadores_buscando_partida.append(Jugador(user.id, user.elo, 0, None, None, 0, False, False, False, True))
     print(jugadores_buscando_partida)
     return 0
 
@@ -146,7 +146,7 @@ def init_buscador():
 
         # Obtengo todos los jugadores buscando partida y los ordeno de menor a mayor
         # según su ELO.
-        #print(jugadores_buscando_partida)
+        print(jugadores_buscando_partida)
         jugadores = jugadores_buscando_partida
         jugadores.sort(key=lambda x: x.elo)
 
