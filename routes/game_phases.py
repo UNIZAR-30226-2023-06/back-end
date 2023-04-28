@@ -598,7 +598,7 @@ def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
 ####################################################################################### 
 
 # get a player state
-@router.get("/game_phases/get_player_state", tags=["game_phases: get_state"],
+@router.get("/game_phases/get_player_state", tags=["game_phases"],
             description="Funcion que permite al jugador obtener su estado \
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando")
@@ -662,7 +662,7 @@ def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
     return player_state
 
 #get the state of the game
-@router.get("/game_phases/get_game_state", tags=["game_phases: get_state"],
+@router.get("/game_phases/get_game_state", tags=["game_phases"],
             description="Funcion que permite al jugador obtener el estado del juego \
             Args: lobby_id -> id del lobby en el que se esta jugando")
 def get_game_state(lobby_id: int):
