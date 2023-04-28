@@ -305,6 +305,17 @@ def set_Player_Ready(token : str = Depends(oauth2_scheme)):
     
     # Set the player as ready
     player.esta_preparado = True
+
+    # Check if all players are ready
+    all_players_ready = True
+    for player in Lobby.players:
+        if player.esta_preparado == False:
+            all_players_ready = False
+            break
+    if all_players_ready == True:
+        lobby.start_Game()
+        return {"detail": "Player ready and Game started"}
+
     return {"detail": "Player ready"}
 
 # build a village
