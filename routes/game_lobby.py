@@ -99,7 +99,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if response == -1:
         raise HTTPException(status_code=409, detail="Lobby is full")
     elif response == 0 or response == 1:
-        return {"num_players":len(lobby.players),  "detail": "Lobby joined"}
+        return {"num_players":len(lobby.game.jugadores),  "detail": "Lobby joined"}
 
 # Leave a lobby
 @router.post("/leave-lobby", tags=["Lobby"])
@@ -129,7 +129,7 @@ def leave_Lobby(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Player not in any lobby")
     else:
         lobby.remove_Player(user.id)
-        return {"num_players":len(lobby.players),  "detail": "Lobby left"}
+        return {"num_players":len(lobby.game.jugadores),  "detail": "Lobby left"}
 
 # Search for a lobby
 @router.post("/search-lobby", tags=["Lobby"])
@@ -199,7 +199,7 @@ def start_Game(lobby_id: int):
         raise HTTPException(status_code=404, detail="Lobby not found")
 
     all_players_ready = True
-    for player in Lobby.players:
+    for player in lobby.game.jugadores:
         if player.esta_preparado == False:
             all_players_ready = False
             break
@@ -296,7 +296,7 @@ def set_Player_Ready(token : str = Depends(oauth2_scheme)):
     
     # Search for the player in the lobby
     player : Jugador = None
-    for j in lobby.players:
+    for j in lobby.game.jugadores:
         if j.id == user.id:
             player = j
             break
@@ -308,7 +308,7 @@ def set_Player_Ready(token : str = Depends(oauth2_scheme)):
 
     # Check if all players are ready
     all_players_ready = True
-    for player in Lobby.players:
+    for player in lobby.game.jugadores:
         if player.esta_preparado == False:
             all_players_ready = False
             break
@@ -347,7 +347,7 @@ def build_Village(node: int, token : str = Depends(oauth2_scheme)):
     
     # Search for the player in the lobby
     player : Jugador = None
-    for j in lobby.players:
+    for j in lobby.game.jugadores:
         if j.id == user.id:
             player = j
             break
@@ -392,7 +392,7 @@ def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
     
     # Search for the player in the lobby
     player : Jugador = None
-    for j in lobby.players:
+    for j in lobby.game.jugadores:
         if j.id == user.id:
             player = j
             break
@@ -435,7 +435,7 @@ def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
     
     # Search for the player in the lobby
     player : Jugador = None
-    for j in lobby.players:
+    for j in lobby.game.jugadores:
         if j.id == user.id:
             player = j
             break

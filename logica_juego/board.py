@@ -69,6 +69,14 @@ _node_edge_directions_offsets = { # Must have same identifier
   (NodeDirection.NE, EdgeDirection.NE): NodeDirection.N,
 }
 
+_tile_id_to_coord = {
+    # 1-19 clockwise starting from Top-Left
+    1: 0x37, 12: 0x59, 11: 0x7B,
+    2: 0x35, 13: 0x57, 18: 0x79, 10: 0x9B,
+    3: 0x33, 14: 0x55, 19: 0x77, 17: 0x99, 9: 0xBB,
+    4: 0x53, 15: 0x75, 16: 0x97, 8: 0xB9,
+    5: 0x73, 6: 0x95, 7: 0xB7
+}
 
 TileType = tuple[int, Resource]
 NodeType = tuple[Color | None, Building | None]
@@ -100,7 +108,7 @@ class Hexgrid:
     numbers = Hexgrid.NUMBERS[:desert_index] + \
         [0, ] + Hexgrid.NUMBERS[desert_index:]
 
-    # Dict with key=tile coord and value=(number, resource)
+    # Dict with key=tile coord and value=(number, resource) 
     self.tiles: dict[int, TileType] = {
         val: (i, res)
         for val, i, res in zip(

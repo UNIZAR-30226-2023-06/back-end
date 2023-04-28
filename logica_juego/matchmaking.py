@@ -54,7 +54,7 @@ def unirse_a_partida(id_jugador, codigo_partida):
         if user is None:
             return None
         if lobby.id == codigo_partida:
-            if len(lobby.players) >= 4:
+            if len(lobby.game.jugadores) >= 4:
                 return None
             player = Jugador(id_jugador, user.elo, 0, None, None, 0, False, False, False, True)
             lobby.add_Player(player)
@@ -84,7 +84,7 @@ def salirse_de_partida(id_jugador, codigo_partida):
     for lobby in Lobbies:
         if lobby.id == codigo_partida:
             lobby.remove_Player(id_jugador)
-            if len(lobby.players) == 0:
+            if len(lobby.game.jugadores) == 0:
                 limpiador(codigo_partida)
 
 # El limpiador checkea si una partida en concreto ha sido abandonada y la
@@ -93,7 +93,7 @@ def limpiador(codigo_partida):
     time.sleep(10*60)
     for lobby in Lobbies:
         if lobby.id == codigo_partida:
-            if len(lobby.players) == 0:
+            if len(lobby.game.jugadores) == 0:
                 thread = threading.Thread(target=limpiador, args=(codigo_partida,))
                 thread.start()
                 thread.join() # ? Is this necessary?
@@ -206,7 +206,7 @@ def empezar_partida(codigo_partida):
         if l.id == codigo_partida:
             lobby = l
     todos_listos = True
-    for player in lobby.players:
+    for player in lobby.game.jugadores:
         if player.esta_Preparado == False:
             todos_listos = False
             break
@@ -214,7 +214,7 @@ def empezar_partida(codigo_partida):
     # Si todos los jugadores están listos, se avisa a todos los jugadores de
     # la partida de que la partida va a empezar.
     if todos_listos:
-        for jugador in lobby.players:
+        for jugador in lobby.game.jugadores:
             # TODO: avisar a los jugadores de que la partida va a empezar
             return True
     

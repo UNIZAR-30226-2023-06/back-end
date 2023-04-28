@@ -1,4 +1,5 @@
 import random
+from logica_juego.constants import TurnPhase
 
 from logica_juego.partida import Partida
 
@@ -8,7 +9,6 @@ from .mano import Mano, nueva_mano
 
 class Lobby:
     id = None
-    players = [] # list of players in the lobby
     game = Partida(4,0,0,[],60,0,0,Board(),True)
     game_has_started = False
     is_full = False
@@ -25,21 +25,20 @@ class Lobby:
         self.id = random.randint(1000, 9999) #TODO: check if id already exists
         self.is_full = False
         self.max_Players = max_Players
-        self.current_Players = len(self.players)
-        self.players = []
+        self.current_Players = len(self.game.jugadores)
+        self.game.jugadores = []
         self.game: Partida = Partida(4, 0, 0, [], 60, 0, 0, Board(), True)
         
         self.hay_ladron = True
         self.max_tiempo_turno = 5
 
     def add_Player(self, player : Jugador):
-        if len(self.players) < self.max_Players:
-            self.players.append(player)
+        if len(self.game.jugadores) < self.max_Players:
             self.game.jugadores.append(player)
             #recalculate elo (average of all players in lobby)
-            self.elo = sum([player.elo for player in self.players]) / len(self.players)
-            self.current_Players = len(self.players)
-            if len(self.players) == self.max_Players:
+            self.elo = sum([player.elo for player in self.game.jugadores]) / len(self.game.jugadores)
+            self.current_Players = len(self.game.jugadores)
+            if len(self.game.jugadores) == self.max_Players:
                 self.is_Full = True
                 return 1 # Player added successfully and lobby is full now
             return 0 # Player added successfully
@@ -48,18 +47,17 @@ class Lobby:
             return -1 # Lobby is full, player not added
 
     def remove_Player(self, player_id : int):
-        for player in self.players:
+        for player in self.game.jugadores:
             if player.id == player_id:
-                self.players.remove(player)
                 self.game.jugadores.remove(player)
                 #recalculate elo (average of all players in lobby)
-                self.elo = sum([player.elo for player in self.players]) / len(self.players)
-                self.current_Players = len(self.players)
+                self.elo = sum([player.elo for player in self.game.jugadores]) / len(self.game.jugadores)
+                self.current_Players = len(self.game.jugadores)
                 return 0
         return -1 # Player not found
 
     def get_Players(self):
-        return self.players
+        return self.game.jugadores
     
     def is_Full(self):
         return self.is_full
@@ -69,7 +67,7 @@ class Lobby:
     def start_Game(self):
         color = { Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW }
         #initialize all the player's hands, victory points, etc
-        for player in self.players:
+        for player in self.game.jugadores:
             player.mano = nueva_mano()
             player.puntos_victoria = 0
             player.color = color.pop()
@@ -78,8 +76,10 @@ class Lobby:
             player.tiene_bono_caballeros = False
 
         #initialize the board
-        self.game = Board()
+        self.game.board = Board()
         self.game_has_started = True
         self.is_full = True
+        self.game.turno = 0
+        self.game.fase_turno = TurnPhase.BUILDING
         
         return 0

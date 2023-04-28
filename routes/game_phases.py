@@ -292,7 +292,7 @@ def use_invention_card(lobby_id: int, resource1:str, resource2:str, token: str =
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -336,7 +336,7 @@ def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -378,7 +378,7 @@ def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(oauth2_
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -419,7 +419,7 @@ def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -459,7 +459,7 @@ def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -500,7 +500,7 @@ def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -541,7 +541,7 @@ def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -582,7 +582,7 @@ def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
     
     player = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
@@ -624,7 +624,7 @@ def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
     
     player: Jugador = None
     #check whether the player is in a lobby
-    for p in lob.players:
+    for p in lob.game.jugadores:
         if p.id == user.id:
             player = p
             break
