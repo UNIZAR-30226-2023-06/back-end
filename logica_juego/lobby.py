@@ -51,7 +51,10 @@ class Lobby:
             if player.id == player_id:
                 self.game.jugadores.remove(player)
                 #recalculate elo (average of all players in lobby)
-                self.elo = sum([player.elo for player in self.game.jugadores]) / len(self.game.jugadores)
+                try:
+                    self.elo = sum([player.elo for player in self.game.jugadores]) / len(self.game.jugadores)
+                except ZeroDivisionError:
+                    self.elo = 0
                 self.current_Players = len(self.game.jugadores)
                 return 0
         return -1 # Player not found
