@@ -24,6 +24,9 @@ from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar
 
 router = APIRouter()
 
+last_die1: int = 0
+last_die2: int = 0
+
 def resource_str_to_Resource(res: str) -> Resource:
     if res == "WOOD":
         return Resource.WOOD
@@ -88,6 +91,7 @@ def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
 @router.get("/game_phases/resource_production", tags=["game_phases: resource_production"],
              description="Funcion que tira dados y actualiza los recursos de los jugadores")
 def resource_production(lobby_id: int):
+    global last_die1, last_die2
     lob: Lobby = None
     for l in Lobbies:
         if l.id == lobby_id:
@@ -98,6 +102,8 @@ def resource_production(lobby_id: int):
     
     try:
         die1, die2 = lob.game.asignacion_recursos()
+        last_die1 = die1
+        last_die2 = die2
         return {"die1": die1, "die2": die2}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -666,6 +672,7 @@ def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
             description="Funcion que permite al jugador obtener el estado del juego \
             Args: lobby_id -> id del lobby en el que se esta jugando")
 def get_game_state(lobby_id: int):
+    global last_die1, last_die2
     lob: Lobby = None
     for l in Lobbies:
         if l.id == lobby_id:
@@ -682,6 +689,9 @@ def get_game_state(lobby_id: int):
         "player_2" : {"id" : lob.game.jugadores[2].id, "color" : lob.game.jugadores[2].color, "is_active" : lob.game.jugadores[2].activo},
         "player_3" : {"id" : lob.game.jugadores[3].id, "color" : lob.game.jugadores[3].color, "is_active" : lob.game.jugadores[3].activo},
 
+        "die_1" : last_die1,
+        "die_2" : last_die2,
+
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
         "player_turn" : lob.game.turno,
         "turn_time" : lob.game.tiempo_turno,
@@ -691,3 +701,19 @@ def get_game_state(lobby_id: int):
     }
 
     return game_state
+
+# get the last die roll
+@router.get("/game_phases/get_last_die_roll", tags=["game_phases"],
+            description="Funcion que permite conocer el ultimo resultado de los dados \
+            Args: lobby_id -> id del lobby en el que se esta jugando")
+def get_last_die_roll(lobby_id: int):
+    global last_die1, last_die2
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    return {"die_1" : last_die1, "die_2" : last_die2}

@@ -16,6 +16,7 @@ from schemas.board import CreateBoardSkin, CreatePieceSkin, CreateProfilePicture
 router = APIRouter()
 
 
+
 ############################################### BOARD SKINS #########################################################
 @router.post("/add_board_skin", tags=["board"])
 def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
