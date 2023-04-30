@@ -19,7 +19,7 @@ router = APIRouter()
 
 ############################################### BOARD SKINS #########################################################
 @router.post("/add_board_skin", tags=["board"])
-def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
+async def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
     if session.query(Board_Skins).filter_by(name=board_skin.name).first():
         raise HTTPException(status_code=400, detail="Board skin already exists")
     new_skin = Board_Skins(name=board_skin.name, image=board_skin.image, description=board_skin.description, price=board_skin.price)
@@ -29,7 +29,7 @@ def add_board_skin(board_skin : str = Depends(CreateBoardSkin)):
 
 # route for deleting a board skin from the database's Board_Skins table
 @router.delete("/delete-board-skin", tags=["board"])
-def delete_board_skin(board_skin_name : str):
+async def delete_board_skin(board_skin_name : str):
     board_skin = session.query(Board_Skins).filter(Board_Skins.name == board_skin_name).first()
     if board_skin is None:
         raise HTTPException(status_code=404, detail="Board skin not found")
@@ -39,7 +39,7 @@ def delete_board_skin(board_skin_name : str):
         return {"detail": "Board skin deleted successfully"}
 
 @router.post("/buy_board_skin", tags=["board"])
-def buy_board_skin(board_skin_name : str , token: str = Depends(oauth2_scheme)):
+async def buy_board_skin(board_skin_name : str , token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="authenticated")
     elif not session.query(Board_Skins).filter_by(name=board_skin_name).first():
@@ -73,7 +73,7 @@ def buy_board_skin(board_skin_name : str , token: str = Depends(oauth2_scheme)):
     
 #route for listing a user's owned board skins
 @router.get("/list-board-skins", tags=["board"])
-def list_board_skins(token: str = Depends(oauth2_scheme)):
+async def list_board_skins(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -96,7 +96,7 @@ def list_board_skins(token: str = Depends(oauth2_scheme)):
 
 #route for listing all the board skins
 @router.get("/list-all-board-skins", tags=["board"])
-def list_all_board_skins():
+async def list_all_board_skins():
     board_skins = session.query(Board_Skins).all()
     board_skins_list = []
     for board_skin in board_skins:
@@ -105,7 +105,7 @@ def list_all_board_skins():
 
 #route for getting a board skin data
 @router.get("/get-board-skin", tags=["board"])
-def get_board_skin(board_skin_name : str):
+async def get_board_skin(board_skin_name : str):
     board_skin = session.query(Board_Skins).filter(Board_Skins.name == board_skin_name).first()
     if board_skin is None:
         raise HTTPException(status_code=404, detail="Board skin not found")
@@ -119,7 +119,7 @@ def get_board_skin(board_skin_name : str):
 
 #create a piece skin
 @router.post("/add_piece_skin", tags=["pieces"])
-def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
+async def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
     if session.query(Pieces_Skins).filter_by(name=piece_skin.name).first():
         raise HTTPException(status_code=400, detail="Piece skin already exists")
     new_skin = Pieces_Skins(name=piece_skin.name, image=piece_skin.image, description=piece_skin.description, price=piece_skin.price)
@@ -129,7 +129,7 @@ def add_piece_skin(piece_skin : str = Depends(CreatePieceSkin)):
 
 #route for deleting a piece skin from the database's Pieces_Skins table
 @router.delete("/delete-piece-skin", tags=["pieces"])
-def delete_piece_skin(piece_skin_name : str):
+async def delete_piece_skin(piece_skin_name : str):
     piece_skin = session.query(Pieces_Skins).filter(Pieces_Skins.name == piece_skin_name).first()
     if piece_skin is None:
         raise HTTPException(status_code=404, detail="Piece skin not found")
@@ -140,7 +140,7 @@ def delete_piece_skin(piece_skin_name : str):
 
 #buy a piece skin
 @router.post("/buy_piece_skin", tags=["pieces"])
-def buy_piece_skin(piece_skin_name : str , token: str = Depends(oauth2_scheme)):
+async def buy_piece_skin(piece_skin_name : str , token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="authenticated")
     elif not session.query(Pieces_Skins).filter_by(name=piece_skin_name).first():
@@ -174,7 +174,7 @@ def buy_piece_skin(piece_skin_name : str , token: str = Depends(oauth2_scheme)):
     
 #route for listing a user's owned piece skins
 @router.get("/list-piece-skins", tags=["pieces"])
-def list_piece_skins(token: str = Depends(oauth2_scheme)):
+async def list_piece_skins(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -198,7 +198,7 @@ def list_piece_skins(token: str = Depends(oauth2_scheme)):
 
 #route for listing all the piece skins
 @router.get("/list-all-piece-skins", tags=["pieces"])
-def list_all_piece_skins():
+async def list_all_piece_skins():
     piece_skins = session.query(Pieces_Skins).all()
     piece_skins_list = []
     for piece_skin in piece_skins:
@@ -207,7 +207,7 @@ def list_all_piece_skins():
 
 #route for getting a piece skin's data
 @router.get("/get-piece-skin", tags=["pieces"])
-def get_piece_skin(piece_skin_name : str):
+async def get_piece_skin(piece_skin_name : str):
     piece_skin = session.query(Pieces_Skins).filter(Pieces_Skins.name == piece_skin_name).first()
     if piece_skin is None:
         raise HTTPException(status_code=404, detail="Piece skin not found")
@@ -221,7 +221,7 @@ def get_piece_skin(piece_skin_name : str):
 
 #route for adding a new profile picture
 @router.post("/add_profile_picture", tags=["profile pictures"])
-def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
+async def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
     if session.query(Profile_Pictures).filter_by(name=profile_picture.name).first():
         raise HTTPException(status_code=400, detail="Profile picture already exists")
     new_picture = Profile_Pictures(name=profile_picture.name, image=profile_picture.image, description=profile_picture.description, price=profile_picture.price)
@@ -231,7 +231,7 @@ def add_profile_picture(profile_picture : str = Depends(CreateProfilePicture)):
 
 #route for deleting a profile picture from the database's Profile_Pictures table
 @router.delete("/delete-profile-picture", tags=["profile pictures"])
-def delete_profile_picture(profile_picture_name : str):
+async def delete_profile_picture(profile_picture_name : str):
     profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.name == profile_picture_name).first()
     if profile_picture is None:
         raise HTTPException(status_code=404, detail="Profile picture not found")
@@ -242,7 +242,7 @@ def delete_profile_picture(profile_picture_name : str):
 
 #route for buying a profile picture
 @router.post("/buy_profile_picture", tags=["profile pictures"])
-def buy_profile_picture(profile_picture_name : str , token: str = Depends(oauth2_scheme)):
+async def buy_profile_picture(profile_picture_name : str , token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="authenticated")
     elif not session.query(Profile_Pictures).filter_by(name=profile_picture_name).first():
@@ -276,7 +276,7 @@ def buy_profile_picture(profile_picture_name : str , token: str = Depends(oauth2
     
 #route for listing a user's owned profile pictures
 @router.get("/list-profile-pictures", tags=["profile pictures"])
-def list_profile_pictures(token: str = Depends(oauth2_scheme)):
+async def list_profile_pictures(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -299,7 +299,7 @@ def list_profile_pictures(token: str = Depends(oauth2_scheme)):
         
 #route for listing all the profile pictures
 @router.get("/list-all-profile-pictures", tags=["profile pictures"])
-def list_all_profile_pictures():
+async def list_all_profile_pictures():
     profile_pictures = session.query(Profile_Pictures).all()
     profile_pictures_list = []
     for profile_picture in profile_pictures:
@@ -308,7 +308,7 @@ def list_all_profile_pictures():
 
 #route for getting a profile picture's data
 @router.get("/get-profile-picture", tags=["profile pictures"])
-def get_profile_picture(profile_picture_name : str):
+async def get_profile_picture(profile_picture_name : str):
     profile_picture = session.query(Profile_Pictures).filter(Profile_Pictures.name == profile_picture_name).first()
     if profile_picture is None:
         raise HTTPException(status_code=404, detail="Profile picture not found")

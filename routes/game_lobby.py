@@ -29,14 +29,14 @@ router = APIRouter()
 
 # Create a new lobby
 @router.post("/create-lobby", tags=["Lobby"])
-def create_Lobby():
+async def create_Lobby():
     lobby = Lobby()
     Lobbies.append(lobby)
     return {"lobby_id": lobby.id, "detail": "Lobby created"}
 
 #delete a lobby
 @router.delete("/delete-lobby", tags=["Lobby"])
-def delete_Lobby(lobby_id: int):
+async def delete_Lobby(lobby_id: int):
     for lobby in Lobbies:
         if lobby.id == lobby_id:
             Lobbies.remove(lobby)
@@ -44,11 +44,11 @@ def delete_Lobby(lobby_id: int):
     return {"detail": "Lobby not found"}
 
 @router.get("/get-all-lobbies", tags=["Lobby"])
-def get_Lobbies():
+async def get_Lobbies():
     return Lobbies
 
 @router.get("/get-lobby-from-id", tags=["Lobby"])
-def get_Lobby_From_Id(lobby_id: int):
+async def get_Lobby_From_Id(lobby_id: int):
     for lobby in Lobbies:
         if lobby.id == lobby_id:
             return lobby
@@ -56,7 +56,7 @@ def get_Lobby_From_Id(lobby_id: int):
 
 # Join a lobby
 @router.post("/join-lobby", tags=["Lobby"])
-def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
+async def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -103,7 +103,7 @@ def join_Lobby(lobby_id: int, token: str = Depends(oauth2_scheme)):
 
 # Leave a lobby
 @router.post("/leave-lobby", tags=["Lobby"])
-def leave_Lobby(token: str = Depends(oauth2_scheme)):
+async def leave_Lobby(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -133,7 +133,7 @@ def leave_Lobby(token: str = Depends(oauth2_scheme)):
 
 # Search for a lobby
 @router.post("/search-lobby", tags=["Lobby"])
-def search_Lobby(token: str = Depends(oauth2_scheme)):
+async def search_Lobby(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -159,7 +159,7 @@ def search_Lobby(token: str = Depends(oauth2_scheme)):
 
 # Stop searching for a lobby
 @router.post("/stop-searching-lobby", tags=["Lobby"], description="Stop searching for a lobby")
-def stop_Searching_Lobby(token: str = Depends(oauth2_scheme)):
+async def stop_Searching_Lobby(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -183,7 +183,7 @@ def stop_Searching_Lobby(token: str = Depends(oauth2_scheme)):
     
 # Get the lobby a player is in
 @router.get("/get-lobby-from-player", tags=["Lobby"])
-def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
+async def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -213,7 +213,7 @@ def get_Lobby_From_Player(token: str = Depends(oauth2_scheme)):
 
 #start the game
 @router.post("/start-game", tags=["Lobby"])
-def start_Game(lobby_id: int):
+async def start_Game(lobby_id: int):
     lobby : Lobby = None
     for l in Lobbies:
         if l.id == lobby_id:
@@ -235,7 +235,7 @@ def start_Game(lobby_id: int):
 
 #return the legal building nodes for citys
 @router.get("/get-legal-building-nodes", tags=["Game"])
-def get_Legal_Building_Nodes(lobby_id: int, color: str):
+async def get_Legal_Building_Nodes(lobby_id: int, color: str):
     lobby : Lobby = None
     for l in Lobbies:
         if l.id == lobby_id:
@@ -263,7 +263,7 @@ def get_Legal_Building_Nodes(lobby_id: int, color: str):
 
 #return the legal building edges for roads
 @router.get("/get-legal-building-edges", tags=["Game"])
-def get_Legal_Building_Edges(lobby_id: int, color: str):
+async def get_Legal_Building_Edges(lobby_id: int, color: str):
     lobby : Lobby = None
     for l in Lobbies:
         if l.id == lobby_id:
@@ -292,7 +292,7 @@ def get_Legal_Building_Edges(lobby_id: int, color: str):
 
 #set a player as ready
 @router.post("/set-player-ready", tags=["Game"])
-def set_Player_Ready(token : str = Depends(oauth2_scheme)):
+async def set_Player_Ready(token : str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -344,7 +344,7 @@ def set_Player_Ready(token : str = Depends(oauth2_scheme)):
 
 # build a village
 @router.post("/build-village", tags=["Game"])
-def build_Village(node: int, token : str = Depends(oauth2_scheme)):
+async def build_Village(node: int, token : str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -387,7 +387,7 @@ def build_Village(node: int, token : str = Depends(oauth2_scheme)):
 
 #build a road
 @router.post("/build-road", tags=["Game"])
-def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
+async def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -430,7 +430,7 @@ def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
 
 #upgrade a village to a city
 @router.post("/upgrade-village-to-city", tags=["Game"])
-def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
+async def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -473,7 +473,7 @@ def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
 
 #create a test lobby
 @router.post("/create-test-lobby", tags=["Debug"])
-def create_Test_Lobby():
+async def create_Test_Lobby():
 
 
     # Añado los jugadores

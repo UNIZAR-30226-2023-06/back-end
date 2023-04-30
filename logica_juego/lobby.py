@@ -24,6 +24,7 @@ class Lobby:
         #id = random 4 digit number
         self.id = random.randint(1000, 9999) #TODO: check if id already exists
         self.is_full = False
+        self.game_has_started = False
         self.max_Players = max_Players
         self.current_Players = len(self.game.jugadores)
         self.game.jugadores = []

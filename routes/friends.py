@@ -14,7 +14,7 @@ router = APIRouter()
 
 #route for sending a friend request
 @router.post("/send_friend_request", tags=["friends"])
-def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
+async def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -42,7 +42,7 @@ def send_friend_request(friend_id: int, token: str = Depends(oauth2_scheme)):
         
 #route for accepting a friend request
 @router.post("/accept_friend_request", tags=["friends"])
-def accept_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)):
+async def accept_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -63,7 +63,7 @@ def accept_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)
         
 #route for rejecting a friend request
 @router.post("/reject_friend_request", tags=["friends"])
-def reject_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)):
+async def reject_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -84,7 +84,7 @@ def reject_friend_request(requester_id: int, token: str = Depends(oauth2_scheme)
         
 #route for getting all friend requests
 @router.put("/get_friend_requests", tags=["friends"])
-def get_friend_requests(token: str = Depends(oauth2_scheme)):
+async def get_friend_requests(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -105,7 +105,7 @@ def get_friend_requests(token: str = Depends(oauth2_scheme)):
     
 #route for getting all friends
 @router.put("/get_friends", tags=["friends"])
-def get_friends(token: str = Depends(oauth2_scheme)):
+async def get_friends(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -132,7 +132,7 @@ def get_friends(token: str = Depends(oauth2_scheme)):
     
 #route for deleting a friend
 @router.post("/delete_friend", tags=["friends"])
-def delete_friend(friend_id: int, token: str = Depends(oauth2_scheme)):
+async def delete_friend(friend_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:

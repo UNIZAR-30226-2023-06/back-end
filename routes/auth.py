@@ -23,7 +23,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 @router.post("/login", tags=["auth"])
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = session.query(User).filter_by(email=form_data.username).first() # we use from_data.username as email because we are using OAuth2EmailPasswordRequestForm
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect email")
@@ -38,7 +38,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 from schemas.user import UserBase, UserCreate
 @router.post("/register", tags=["auth"])
-def register(user: str = Depends(UserCreate)):
+async def register(user: str = Depends(UserCreate)):
 # def register(token: str = Depends(oauth2_scheme), user: str, email: str, password: str):
     if session.query(User).filter_by(email=user.email).first() is None:
         # generates a random 4 digit number to use as id. If that number is already in use, it will generate another one

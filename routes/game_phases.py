@@ -27,7 +27,7 @@ router = APIRouter()
 last_die1: int = 0
 last_die2: int = 0
 
-def resource_str_to_Resource(res: str) -> Resource:
+async def resource_str_to_Resource(res: str) -> Resource:
     if res == "WOOD":
         return Resource.WOOD
     elif res == "CLAY":
@@ -41,7 +41,7 @@ def resource_str_to_Resource(res: str) -> Resource:
     else:
         raise Exception("Invalid resource")
     
-def game_phase_to_str(gamePhase: TurnPhase) -> str:
+async def game_phase_to_str(gamePhase: TurnPhase) -> str:
     if gamePhase == TurnPhase.RESOURCE_PRODUCTION:
         return "RESOURCE_PRODUCTION"
     elif gamePhase == TurnPhase.TRADING:
@@ -52,7 +52,7 @@ def game_phase_to_str(gamePhase: TurnPhase) -> str:
         raise Exception("Invalid game phase")
 
 @router.get("/game_phases/advance_phase", tags=["game_phases"])
-def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
+async def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -90,7 +90,7 @@ def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
 
 @router.get("/game_phases/resource_production", tags=["game_phases: resource_production"],
              description="Funcion que tira dados y actualiza los recursos de los jugadores")
-def resource_production(lobby_id: int):
+async def resource_production(lobby_id: int):
     global last_die1, last_die2
     lob: Lobby = None
     for l in Lobbies:
@@ -113,7 +113,7 @@ def resource_production(lobby_id: int):
             description="Funcion que mueve el ladrón si ha salido un 7 en resource_production \
             y roba un recurso a un jugador ( new_thief_position_tile_coord es la coordenada \
             del hexágono, NO el ID del hexágono )")
-def move_thief(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: int, token: str = Depends(oauth2_scheme)):
+async def move_thief(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -151,7 +151,7 @@ def move_thief(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coo
                 son los recursos que el jugador 1 quiere dar al jugador 2\n \
                 los parametros wood_amount_p2, clay_amount_p2, sheep_amount_p2, wheat_amount_p2, stone_amount_p2 \
                 son los recursos que el jugador 2 quiere dar al jugador 1")
-def trade_with_player(lobby_id: int, player2_id: int, wood_amount_p1: int, clay_amount_p1: int, 
+async def trade_with_player(lobby_id: int, player2_id: int, wood_amount_p1: int, clay_amount_p1: int, 
                       sheep_amount_p1: int, wheat_amount_p1: int, stone_amount_p1: int,
                       wood_amount_p2: int, clay_amount_p2: int, sheep_amount_p2: int,
                       wheat_amount_p2: int, stone_amount_p2: int,
@@ -200,7 +200,7 @@ def trade_with_player(lobby_id: int, player2_id: int, wood_amount_p1: int, clay_
                 (resource_type es el tipo de recurso que se quiere, amount es la cantidad de \
                 recursos que se quiere, requested_type es el tipo de recurso que se quiere \
                 a cambio) [el tipo de recurso es: 'WOOD', 'CLAY', 'SHEEP', 'STONE', 'WHEAT']")
-def trade_with_bank(lobby_id: int, resource_type: str, amount: int, requested_type: str, token: str = Depends(oauth2_scheme)):
+async def trade_with_bank(lobby_id: int, resource_type: str, amount: int, requested_type: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -243,7 +243,7 @@ def trade_with_bank(lobby_id: int, resource_type: str, amount: int, requested_ty
                   coord es la coordenada de la casilla a la que se quiere mover el ladron \
                   token -> token de autenticacion \
                   lobby_id -> id del lobby en el que se esta jugando")
-def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: str, token: str = Depends(oauth2_scheme)): 
+async def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: str, token: str = Depends(oauth2_scheme)): 
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -276,7 +276,7 @@ def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_til
                   lobby_id -> id del lobby en el que se esta jugando \
                   recurso1 -> primer recurso que se quiere \
                   recurso2 -> segundo recurso que se quiere")
-def use_invention_card(lobby_id: int, resource1:str, resource2:str, token: str = Depends(oauth2_scheme)):
+async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -320,7 +320,7 @@ def use_invention_card(lobby_id: int, resource1:str, resource2:str, token: str =
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenada de casilla en la que construir la carretera")
-def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -362,7 +362,7 @@ def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     resource -> recurso que se quiere")
-def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(oauth2_scheme)):
+async def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -403,7 +403,7 @@ def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(oauth2_
             description="Funcion que permite al jugador usar una carta de punto de victoria \
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando")
-def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
+async def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -443,7 +443,7 @@ def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
             description="Funcion que permite al jugador comprar una carta de desarrollo \
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando")
-def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
+async def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -484,7 +484,7 @@ def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas de la carretera")
-def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -525,7 +525,7 @@ def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas del pueblo")
-def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -566,7 +566,7 @@ def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas de la ciudad")
-def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -608,7 +608,7 @@ def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_sc
             description="Funcion que permite al jugador obtener su estado \
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando")
-def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
+async def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -671,7 +671,7 @@ def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
 @router.get("/game_phases/get_game_state", tags=["game_phases"],
             description="Funcion que permite al jugador obtener el estado del juego \
             Args: lobby_id -> id del lobby en el que se esta jugando")
-def get_game_state(lobby_id: int):
+async def get_game_state(lobby_id: int):
     global last_die1, last_die2
     lob: Lobby = None
     for l in Lobbies:
@@ -706,7 +706,7 @@ def get_game_state(lobby_id: int):
 @router.get("/game_phases/get_last_die_roll", tags=["game_phases"],
             description="Funcion que permite conocer el ultimo resultado de los dados \
             Args: lobby_id -> id del lobby en el que se esta jugando")
-def get_last_die_roll(lobby_id: int):
+async def get_last_die_roll(lobby_id: int):
     global last_die1, last_die2
     lob: Lobby = None
     for l in Lobbies:

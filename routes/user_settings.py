@@ -19,7 +19,7 @@ is_valid_email = lambda email: re.match(r"[^@]+@[^@]+\.[^@]+", email) #checks if
 from routes.auth import session
 #gets a user from the database given the user id
 @router.get("/get-user-from-id/{user_id}", tags=["user_settings"])
-def get_user(user_id: int):
+async def get_user(user_id: int):
     user = session.query(User).filter(User.id == user_id).first()
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -28,7 +28,7 @@ def get_user(user_id: int):
     
 #gets a user from the database given the user email
 @router.get("/get-user-from-email/{email}", tags=["user_settings"])
-def get_user_by_email(email: str):
+async def get_user_by_email(email: str):
     #if the email is not a valid email, return an error
     if not is_valid_email(email):
         raise HTTPException(status_code=400, detail="Invalid email format")
@@ -42,7 +42,7 @@ def get_user_by_email(email: str):
 
 #route for changing a user's username
 @router.post("/change-username", tags=["user_settings"])
-def change_username(new_username: str, token: str = Depends(oauth2_scheme)):
+async def change_username(new_username: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -64,7 +64,7 @@ def change_username(new_username: str, token: str = Depends(oauth2_scheme)):
         
 #route for changing a user's email
 @router.post("/change-email", tags=["user_settings"])
-def change_email(new_email: str, token: str = Depends(oauth2_scheme)):
+async def change_email(new_email: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     elif not is_valid_email(new_email):
@@ -88,7 +88,7 @@ def change_email(new_email: str, token: str = Depends(oauth2_scheme)):
         
 #route for changing a user's password
 @router.post("/change-password", tags=["user_settings"])
-def change_password(new_password: str, token: str = Depends(oauth2_scheme)):
+async def change_password(new_password: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -111,7 +111,7 @@ def change_password(new_password: str, token: str = Depends(oauth2_scheme)):
         
 #delete a user from the database
 @router.delete("/delete-user", tags=["user_settings"])
-def delete_user(token: str = Depends(oauth2_scheme)):
+async def delete_user(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -138,7 +138,7 @@ def delete_user(token: str = Depends(oauth2_scheme)):
 
 #add an amount of coins to a user's balance
 @router.post("/add-coins", tags=["user_settings"])
-def add_coins(amount: int, token: str = Depends(oauth2_scheme)):
+async def add_coins(amount: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -159,7 +159,7 @@ def add_coins(amount: int, token: str = Depends(oauth2_scheme)):
         
 #remove an amount of coins from a user's balance
 @router.post("/remove-coins", tags=["user_settings"])
-def remove_coins(amount: int, token: str = Depends(oauth2_scheme)):
+async def remove_coins(amount: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -182,7 +182,7 @@ def remove_coins(amount: int, token: str = Depends(oauth2_scheme)):
 
 #route for modifying a user's selected grid skin
 @router.post("/change-grid-skin", tags=["user_settings"])
-def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
+async def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -206,7 +206,7 @@ def change_grid_skin(new_grid_skin: str, token: str = Depends(oauth2_scheme)):
         
 #route for modifying a user's selected pieces skin
 @router.post("/change-pieces-skin", tags=["user_settings"])
-def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)):
+async def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
@@ -230,7 +230,7 @@ def change_pieces_skin(new_pieces_skin: str, token: str = Depends(oauth2_scheme)
         
     #route for changing a user's profile picture
 @router.post("/change-profile-picture", tags=["user_settings"])
-def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2_scheme)):
+async def change_profile_picture(new_profile_picture: str, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     else:
