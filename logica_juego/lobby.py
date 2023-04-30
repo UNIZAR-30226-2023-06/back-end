@@ -40,11 +40,11 @@ class Lobby:
             self.elo = sum([player.elo for player in self.game.jugadores]) / len(self.game.jugadores)
             self.current_Players = len(self.game.jugadores)
             if len(self.game.jugadores) == self.max_Players:
-                self.is_Full = True
+                self.is_full = True
                 return 1 # Player added successfully and lobby is full now
             return 0 # Player added successfully
         else:
-            self.is_Full = True
+            self.is_full = True
             return -1 # Lobby is full, player not added
 
     def remove_Player(self, player_id : int):
@@ -61,11 +61,7 @@ class Lobby:
         return -1 # Player not found
 
     def get_Players(self):
-        return self.game.jugadores
-    
-    def is_Full(self):
-        return self.is_full
-    
+        return self.game.jugadores  
 
     #it is assumed that the lobby is full and all players are ready
     def start_Game(self):
