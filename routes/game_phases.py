@@ -74,7 +74,7 @@ async def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
     
     lob.game.avanzar_fase()
 
-    current_phase: TurnPhase = lob.game.fase_actual
+    current_phase: TurnPhase = lob.game.fase_turno
     output = ""
     if current_phase == TurnPhase.RESOURCE_PRODUCTION:
         output = "RESOURCE PRODUCTION"
