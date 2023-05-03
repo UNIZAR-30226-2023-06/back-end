@@ -83,7 +83,7 @@ async def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
     elif current_phase == TurnPhase.BUILDING:
         output = "BUILDING"
 
-    return {"current_phase": output, "detail": "Phase advanced successfully"}
+    return {"current_phase": output, "detail": "Phase advanced successfully", "turn": lob.game.jugadores[lob.game.turno].id}
     
 
 ################################# RESOURCE PRODUCTION #################################
