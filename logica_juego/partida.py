@@ -330,13 +330,13 @@ class Partida:
     # Se pasa a la siguiente fase del turno actual, y se pasa al siguiente turno
     # si el actual ya ha acabado
     def avanzar_fase(self):
-        self.turno = (self.turno + 1) % len(self.jugadores)
         if self.fase_turno == TurnPhase.RESOURCE_PRODUCTION:
             self.fase_turno = TurnPhase.TRADING
         elif self.fase_turno == TurnPhase.TRADING:
             self.fase_turno = TurnPhase.BUILDING
         elif self.fase_turno == TurnPhase.BUILDING:
             self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
+            self.turno = (self.turno + 1) % len(self.jugadores)
 
     # Establecemos el tiempo de duración de los turnos en segundos
     def set_tiempo_turno(self, tiempo_turno:int):
