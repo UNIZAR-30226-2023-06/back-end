@@ -328,7 +328,9 @@ async def set_Player_Ready(token : str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Player not in the lobby")
     
     # Set the player as ready
-    player.esta_preparado = True
+    lobby.game.jugador_listo(player.id)
+
+    lobby.game.actualizar_initial_turns()
 
     # Check if all players are ready
     all_players_ready = True

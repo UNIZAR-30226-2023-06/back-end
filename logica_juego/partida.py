@@ -8,6 +8,7 @@ from logica_juego.board import Board, NodeDirection
 
 from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
 
+## COSAS DE LOS TURNOS ##
 counter = 0
 
 class Partida:
@@ -51,6 +52,16 @@ class Partida:
 
         self.initial_buildings_done = False
 
+        self.initial_turns = []
+        i = 0
+        while i < len(self.jugadores):
+            self.initial_turns.append(i)
+            i += 1
+        i = len(self.jugadores) - 1 
+        while i >= 0:
+            self.initial_turns.append(i)
+            i -= 1
+
         if tablero is not None:
             self.board = tablero
         else:
@@ -85,6 +96,17 @@ class Partida:
                 else: self.num_jugadores_activos += 1
                 break
 
+    def actualizar_initial_turns(self):
+        self.initial_turns = []
+        i = 0
+        while i < len(self.jugadores):
+            self.initial_turns.append(i)
+            i += 1
+        i = len(self.jugadores) - 1 
+        while i >= 0:
+            self.initial_turns.append(i)
+            i -= 1
+
     # Obtenemos el índice del jugador en la lista de jugadores con id igual al
     # pasado por parámetro.
     def i_jugador(self, id: int) -> int:
@@ -100,6 +122,16 @@ class Partida:
     # devuelvo True si todos los jugadores están listos
     def jugador_listo(self, id_jugador: int) -> bool:
         self.jugadores[self.i_jugador(id_jugador)].set_preparado()
+
+        i = 0
+        self.initial_turns = []
+        while i < len(self.jugadores):
+            self.initial_turns.append(i)
+            i += 1
+        i = len(self.jugadores) - 1 
+        while i >= 0:
+            self.initial_turns.append(i)
+            i -= 1
 
         for j in self.jugadores:
             if not j.get_preparado():
@@ -341,14 +373,15 @@ class Partida:
     
     def avanzar_fase(self):
         global counter
+        
         if self.fase_turno == TurnPhase.INITIAL_TURN1:
-            self.turno = (self.turno + 1) % len(self.jugadores)
+            self.turno = self.initial_turns.pop()
             counter += 1
             if counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.INITIAL_TURN2
                 counter = 0
         elif self.fase_turno == TurnPhase.INITIAL_TURN2:
-            self.turno = (self.turno + 1) % len(self.jugadores)
+            self.turno = self.initial_turns.pop()
             counter += 1
             if counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.RESOURCE_PRODUCTION

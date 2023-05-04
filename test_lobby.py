@@ -77,4 +77,21 @@ def main():
     # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
-    main()
+    i = 0
+    initial_turns = []
+    while i < 4:
+        initial_turns.append(i)
+        i += 1
+        print(initial_turns)
+    i = 4 - 1 
+    while i >= 0:
+        initial_turns.append(i)
+        i -= 1
+        print(initial_turns)
+
+    print("Initial turns: ", initial_turns)
+
+    for i in range (len(initial_turns)):
+        cosa = initial_turns.pop()
+        print("Cosa: ", cosa)
+
