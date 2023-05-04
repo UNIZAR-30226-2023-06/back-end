@@ -4,7 +4,7 @@ import jwt
 import random
 
 from fastapi import APIRouter, Depends, HTTPException
-from logica_juego.board import Board
+from logica_juego.board import Board, Hexgrid
 from models.user import User
 from local_settings import  JWT_SECRET
 
@@ -21,7 +21,8 @@ from logica_juego.constants import Building, Color, Cards, Resource, TurnPhase
 from logica_juego.mano import Mano
 
 from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar_partida
-
+import hexgrid
+from hexgrid import *
 router = APIRouter()
 
 last_die1: int = 0
@@ -692,11 +693,11 @@ async def get_game_state(lobby_id: int):
         "die_2" : last_die2,
 
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
-        "player_turn" : lob.game.jugadores[lob.game.turno],
+        "player_turn" : lob.game.jugadores[lob.game.turno].id,
         "turn_time" : lob.game.tiempo_turno,
 
         "thief_enabled" : lob.game.hay_ladron,
-        "thief_position" : lob.game.board.thief,
+        "thief_position" : lob.game.board.thief_coord,
         "board" : lob.game.board,
         "initial_buildings_done" : lob.game.initial_buildings_done
     }
