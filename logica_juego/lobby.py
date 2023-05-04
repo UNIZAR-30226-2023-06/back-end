@@ -76,7 +76,7 @@ class Lobby:
             player.tiene_bono_caballeros = False
 
         #initialize the board
-        self.game.board = Board(to_assign=None, hay_ladron=self.hay_ladron)
+        self.game.board = Board(to_assign=None, thief=self.hay_ladron)
         self.game_has_started = True
         self.is_full = True
         self.game.turno = 0
