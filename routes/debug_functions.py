@@ -24,4 +24,33 @@ from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar
 
 router = APIRouter()
 
-#! A partir de aquí te defines funciones para probar cosas
+@router.post("/initial-buildings-true", tags=["Game"])
+async def initial_buildings_true(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    # TOKEN MANAGING
+
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    user_id = decoded_token["id"]
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # OBTAINING LOBBY
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    # DOING CHANGES
+
+    lob.game.initial_buildings_done = True
+
+    # RETURNING
+
+    return {"detail": "Initial building done"}

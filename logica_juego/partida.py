@@ -20,6 +20,8 @@ class Partida:
     hay_ladron: bool = True
     board: Board = Board()
 
+    initial_buildings_done: bool = False
+
     def __init__(self, num_jugadores: int, turno: int , fase_turno: TurnPhase, jugadores: list[Jugador],
                  tiempo_turno: int,
                  num_jugadores_activos: int, jugadores_seleccionados: int,
@@ -44,6 +46,8 @@ class Partida:
         # las construcciones iniciales)
         self.jugadores_seleccionados = jugadores_seleccionados
         self.hay_ladron = hay_ladron
+
+        self.initial_buildings_done = False
 
         if tablero is not None:
             self.board = tablero

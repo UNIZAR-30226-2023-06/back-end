@@ -693,11 +693,12 @@ async def get_game_state(lobby_id: int):
         "die_2" : last_die2,
 
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
-        "player_turn" : lob.game.turno,
+        "player_turn" : lob.game.jugadores[lob.game.turno],
         "turn_time" : lob.game.tiempo_turno,
 
         "thief_enabled" : lob.game.hay_ladron,
-        "board" : lob.game.board
+        "board" : lob.game.board,
+        "initial_buildings_done" : lob.game.initial_buildings_done
     }
 
     return game_state
