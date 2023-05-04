@@ -80,6 +80,6 @@ class Lobby:
         self.game_has_started = True
         self.is_full = True
         self.game.turno = 0
-        self.game.fase_turno = TurnPhase.RESOURCE_PRODUCTION
+        self.game.fase_turno = TurnPhase.INITIAL_TURN1
         
         return 0

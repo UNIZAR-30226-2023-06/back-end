@@ -27,7 +27,7 @@ router = APIRouter()
 last_die1: int = 0
 last_die2: int = 0
 
-async def resource_str_to_Resource(res: str) -> Resource:
+def resource_str_to_Resource(res: str) -> Resource:
     if res == "WOOD":
         return Resource.WOOD
     elif res == "CLAY":
@@ -41,13 +41,17 @@ async def resource_str_to_Resource(res: str) -> Resource:
     else:
         raise Exception("Invalid resource")
     
-async def game_phase_to_str(gamePhase: TurnPhase) -> str:
+def game_phase_to_str(gamePhase: TurnPhase) -> str:
     if gamePhase == TurnPhase.RESOURCE_PRODUCTION:
         return "RESOURCE_PRODUCTION"
     elif gamePhase == TurnPhase.TRADING:
         return "TRADING"
     elif gamePhase == TurnPhase.BUILDING:
         return "BUILDING"
+    elif gamePhase == TurnPhase.INITIAL_TURN1:
+        return "INITIAL_TURN1"
+    elif gamePhase == TurnPhase.INITIAL_TURN2:
+        return "INITIAL_TURN2"
     else:
         raise Exception("Invalid game phase")
 
@@ -75,13 +79,8 @@ async def advance_phase(lobby_id: int, token: str = Depends(oauth2_scheme)):
     lob.game.avanzar_fase()
 
     current_phase: TurnPhase = lob.game.fase_turno
-    output = ""
-    if current_phase == TurnPhase.RESOURCE_PRODUCTION:
-        output = "RESOURCE PRODUCTION"
-    elif current_phase == TurnPhase.TRADING:
-        output = "TRADING"
-    elif current_phase == TurnPhase.BUILDING:
-        output = "BUILDING"
+    output = game_phase_to_str(current_phase)
+    
 
     return {"current_phase": output, "detail": "Phase advanced successfully", "turn": lob.game.jugadores[lob.game.turno].id}
     
@@ -697,6 +696,7 @@ async def get_game_state(lobby_id: int):
         "turn_time" : lob.game.tiempo_turno,
 
         "thief_enabled" : lob.game.hay_ladron,
+        "thief_position" : lob.game.board.thief,
         "board" : lob.game.board,
         "initial_buildings_done" : lob.game.initial_buildings_done
     }

@@ -8,6 +8,8 @@ from logica_juego.board import Board, NodeDirection
 
 from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
 
+counter = 0
+
 class Partida:
 
     jugadores: list[Jugador] = []
@@ -336,8 +338,22 @@ class Partida:
     
     # Se pasa a la siguiente fase del turno actual, y se pasa al siguiente turno
     # si el actual ya ha acabado
+    
     def avanzar_fase(self):
-        if self.fase_turno == TurnPhase.RESOURCE_PRODUCTION:
+        global counter
+        if self.fase_turno == TurnPhase.INITIAL_TURN1:
+            self.turno = (self.turno + 1) % len(self.jugadores)
+            counter += 1
+            if counter == len(self.jugadores):
+                self.fase_turno = TurnPhase.INITIAL_TURN2
+                counter = 0
+        elif self.fase_turno == TurnPhase.INITIAL_TURN2:
+            self.turno = (self.turno + 1) % len(self.jugadores)
+            counter += 1
+            if counter == len(self.jugadores):
+                self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
+                counter = 0
+        elif self.fase_turno == TurnPhase.RESOURCE_PRODUCTION:
             self.fase_turno = TurnPhase.TRADING
         elif self.fase_turno == TurnPhase.TRADING:
             self.fase_turno = TurnPhase.BUILDING
