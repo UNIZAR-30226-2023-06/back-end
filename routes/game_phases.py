@@ -717,3 +717,53 @@ async def get_last_die_roll(lobby_id: int):
         raise HTTPException(status_code=404, detail="Lobby not found")
 
     return {"die_1" : last_die1, "die_2" : last_die2}
+
+#route for enabling the thief
+@router.post("/enable-thief", tags=["Lobby"])
+async def enable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token["id"]
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    lob.game.hay_ladron = True
+    return {"detail": "Thief enabled"}
+
+#route for disabling the thief
+@router.post("/disable-thief", tags=["Lobby"])
+async def disable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token["id"]
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    lob.game.hay_ladron = False
+    return {"detail": "Thief disabled"}

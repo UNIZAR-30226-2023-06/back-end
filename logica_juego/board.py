@@ -97,14 +97,14 @@ class Hexgrid:
   # we'll add 0 later to
   # represent desert
 
-  def __init__(self, resources: list[Resource], thief: int | None = None):
-    random.shuffle(resources)  # TODO: make copy?
+  def __init__(self, resources: list[Resource], thief: bool | None = None):
+    # random.shuffle(resources)  # TODO: make copy?
     # TODO: puede no haber ladron
     # self.thief = random.randrange(
     #   1, len(resources) + 1) if thief is None else thief
 
     desert_index = resources.index(Resource.DESERT)
-    self.thief = desert_index
+    self.thief = desert_index if thief is None or True else None
     numbers = Hexgrid.NUMBERS[:desert_index] + \
         [0, ] + Hexgrid.NUMBERS[desert_index:]
 
@@ -781,11 +781,15 @@ class Board(Hexgrid):
     [Resource.SHEEP, ] * 4 + [Resource.STONE, ] * 3 + [Resource.CLAY, ] * 3
   )
 
-  def __init__(self, to_assign: list[Resource] | None = None):
-    self.board = to_assign if to_assign is not None else Board.DEFAULT_RES_DISTRIB
-    random.shuffle(self.board)
+  def __init__(self, to_assign: list[Resource] | None = None, thief: bool = True):
+    # self.board = to_assign if to_assign is not None else Board.DEFAULT_RES_DISTRIB
+    if to_assign is None:
+      self.board = Board.DEFAULT_RES_DISTRIB
+      random.shuffle(self.board)
+    else:
+      self.board = to_assign
 
-    super().__init__(self.board)
+    super().__init__(resources=self.board, thief=thief)
 
   # DEBUG / PRINT
   # I SPENT WAAAAY TOO MUCH TIME ON THIS *redacted*

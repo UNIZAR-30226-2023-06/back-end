@@ -300,6 +300,9 @@ class Partida:
         jugador = self.jugadores[self.i_jugador(id_jugador)]
         jugador_robado = self.jugadores[self.i_jugador(id_jugador_robado)]
 
+        if self.hay_ladron == False:
+            raise Exception("Error: No hay ladrón en la partida")
+
         nodes_around_thief = []
         possible_directions : NodeDirection = {NodeDirection.N, NodeDirection.NE, NodeDirection.SE, NodeDirection.S, NodeDirection.SW, NodeDirection.NW}
         for direction in possible_directions:

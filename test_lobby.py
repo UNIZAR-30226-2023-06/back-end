@@ -1,7 +1,8 @@
-from logica_juego.board import Hexgrid
+
+from logica_juego.board import Board, Hexgrid
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
-from logica_juego.constants import Color, Cards
+from logica_juego.constants import Color, Cards, Resource
 from logica_juego.mano import Mano
 from hexgrid import *
 from logica_juego.board import NodeDirection, EdgeDirection
@@ -53,24 +54,20 @@ def main():
 
 
     lob = Lobby()
-    lob.game.board.place_town(Color.BLUE, 0x76)
-    lob.game.board.place_town(Color.RED, 0x96)
-    lob.game.board.upgrade_town(0x96)
-    lob.game.board.place_road(Color.BLUE, 0x65)
-    lob.game.board.place_road(Color.BLUE, 0x64)
-    lob.game.board.place_road(Color.BLUE, 0x63)
-    lob.game.board.place_road(Color.BLUE, 0x74)
-    lob.game.board.place_road(Color.BLUE, 0x84)
-    lob.game.board.place_road(Color.BLUE, 0x83)
-    lob.game.board.place_road(Color.BLUE, 0x72)
+    DEFAULT_RES_DISTRIB = (
+    [Resource.DESERT, ] + [Resource.WOOD, ] * 4 + [Resource.WHEAT, ] * 4 +
+    [Resource.SHEEP, ] * 4 + [Resource.STONE, ] * 3 + [Resource.CLAY, ] * 3
+    )
 
-   
-    lob.game.board.move_thief(0x95)
-    number = lob.game.board.tiles[0x95][0]
+    CENTER_DESERT_DISTRIB = ( [Resource.CLAY, ]  + 
+                             [Resource.WOOD, ] + [Resource.WOOD, ] + [Resource.WOOD, ] + [Resource.WOOD, ] +
+                             [Resource.WHEAT, ] + [Resource.WHEAT, ]+ [Resource.WHEAT, ]+ [Resource.WHEAT, ]+
+                             [Resource.SHEEP, ] + [Resource.SHEEP, ] + [Resource.SHEEP, ] + [Resource.SHEEP, ] + 
+                             [Resource.STONE, ] + [Resource.STONE, ] + [Resource.STONE, ]  + 
+                             [Resource.DESERT, ] + [Resource.CLAY, ] + [Resource.CLAY, ])
 
-    resources = lob.game.board.return_resources(Color.RED, number)
+    lob.game.board = Board(to_assign=CENTER_DESERT_DISTRIB, thief=True)
 
-    print("Resources: ", resources)
 
     lob.game.board.svg("test.svg")
 
