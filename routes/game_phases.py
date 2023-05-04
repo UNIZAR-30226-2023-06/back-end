@@ -699,7 +699,6 @@ async def get_game_state(lobby_id: int):
         "thief_enabled" : lob.game.hay_ladron,
         "thief_position" : lob.game.board.thief_coord,
         "board" : lob.game.board,
-        "initial_buildings_done" : lob.game.initial_buildings_done
     }
 
     return game_state
