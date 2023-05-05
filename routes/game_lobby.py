@@ -152,7 +152,7 @@ async def search_Lobby(token: str = Depends(oauth2_scheme)):
                 raise HTTPException(status_code=409, detail="User already in lobby")
             
     player = Jugador(user.id, user.elo ,0, None, None, 0, False, False, False, True)
-    if buscar_partida(player) == 2:
+    if buscar_partida(player) == -2:
         raise HTTPException(status_code=409, detail="User already searching for a lobby")
 
     return {"detail": "Searching for a lobby"}

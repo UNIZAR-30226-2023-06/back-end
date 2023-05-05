@@ -101,3 +101,5 @@ if __name__ == "__main__":
     print(lobby.game.jugadores[0].id) 
     print(lobby.game.jugadores[1].id)
 
+
+    print("AAAAAAA --->", Cards.KNIGHT.value)

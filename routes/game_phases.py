@@ -42,6 +42,18 @@ def resource_str_to_Resource(res: str) -> Resource:
     else:
         raise Exception("Invalid resource")
     
+def color_to_string(color: Color) -> str:
+    if color == Color.BLUE:
+        return "BLUE"
+    elif color == Color.RED:
+        return "RED"
+    elif color == Color.GREEN:
+        return "GREEN"
+    elif color == Color.YELLOW:
+        return "YELLOW"
+    else:
+        raise Exception("Invalid color")
+    
 def game_phase_to_str(gamePhase: TurnPhase) -> str:
     if gamePhase == TurnPhase.RESOURCE_PRODUCTION:
         return "RESOURCE_PRODUCTION"
@@ -56,7 +68,7 @@ def game_phase_to_str(gamePhase: TurnPhase) -> str:
     else:
         raise Exception("Invalid game phase")
     
-def get_player_as_json(player: Jugador):
+def get_player_as_json(player: Jugador, user: User):
     player_development_cards = {"knight" : player.mano.cartas_desarrollo[Cards.KNIGHT.value],
                                 "invention_progress" : player.mano.cartas_desarrollo[Cards.INVENTION_PROGRESS.value],
                                 "road_progress" : player.mano.cartas_desarrollo[Cards.ROAD_PROGRESS.value],
@@ -74,9 +86,13 @@ def get_player_as_json(player: Jugador):
                     "rock" : player.mano.piedra,
                     "dev_cards" : player_development_cards,}
 
-    player_state = {"id" : player.id, 
+    player_state = {"id" : player.id,
+                    "profile_pic" : user.profile_picture,
+                    "name" : user.username,
+                    "selected_pieces_skin" : user.selected_pieces_skin,
+                    "selected_grid_skin" : user.selected_grid_skin,
                     "victory_points" : player.puntos_victoria,
-                    "color" : player.color,
+                    "color" : color_to_string(player.color),
                     "used_knights" : player.caballeros_usados,
                     "has_knights_bonus": player.tiene_bono_caballeros,
                     "has_longest_road_bonus": player.tiene_bono_carreteras,
@@ -668,35 +684,7 @@ async def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    player_development_cards = {"knight" : player.mano.cartas_desarrollo[Cards.KNIGHT.value],
-                                "invention_progress" : player.mano.cartas_desarrollo[Cards.INVENTION_PROGRESS.value],
-                                "road_progress" : player.mano.cartas_desarrollo[Cards.ROAD_PROGRESS.value],
-                                "monopoly_progress" : player.mano.cartas_desarrollo[Cards.MONOPOLY_PROGRESS.value],
-                                "town_hall" : player.mano.cartas_desarrollo[Cards.TOWN_HALL.value],
-                                "library" : player.mano.cartas_desarrollo[Cards.LIBRARY.value],
-                                "market" : player.mano.cartas_desarrollo[Cards.MARKET.value],
-                                "university" : player.mano.cartas_desarrollo[Cards.UNIVERSITY.value],
-                                "church" : player.mano.cartas_desarrollo[Cards.CHURCH.value],}
-
-    player_hand = { "wheat" : player.mano.trigo,
-                    "wood" : player.mano.madera,
-                    "sheep" : player.mano.oveja,
-                    "brick" : player.mano.arcilla,
-                    "rock" : player.mano.piedra,
-                    "dev_cards" : player_development_cards,}
-
-    player_state = {"id" : player.id, 
-                    "victory_points" : player.puntos_victoria,
-                    "color" : player.color,
-                    "used_knights" : player.caballeros_usados,
-                    "has_knights_bonus": player.tiene_bono_caballeros,
-                    "has_longest_road_bonus": player.tiene_bono_carreteras,
-                    "is_ready": player.esta_preparado,
-                    "elo" : player.elo,
-                    "is_active" : player.activo,
-                    "hand" : player_hand,}
-
-    return player_state
+    return get_player_as_json(player, user)
 
 #get the state of the game
 @router.get("/game_phases/get_game_state", tags=["game_phases"],
@@ -714,11 +702,21 @@ async def get_game_state(lobby_id: int):
 
     print(lob.game)
 
+    user0 = session.query(User).filter(User.id == lob.game.jugadores[0].id).first()
+    user1 = session.query(User).filter(User.id == lob.game.jugadores[1].id).first()
+    user2 = session.query(User).filter(User.id == lob.game.jugadores[2].id).first()
+    user3 = session.query(User).filter(User.id == lob.game.jugadores[3].id).first()
+
+    player0 = get_player_as_json(lob.game.jugadores[0], user0)
+    player1 = get_player_as_json(lob.game.jugadores[1], user1)
+    player2 = get_player_as_json(lob.game.jugadores[2], user2)
+    player3 = get_player_as_json(lob.game.jugadores[3], user3)
+
     game_state = {
-        "player_0" : get_player_as_json(lob.game.jugadores[0]),
-        "player_1" : get_player_as_json(lob.game.jugadores[1]),
-        "player_2" : get_player_as_json(lob.game.jugadores[2]),
-        "player_3" : get_player_as_json(lob.game.jugadores[3]),
+        "player_0" : player0,
+        "player_1" : player1,
+        "player_2" : player2,
+        "player_3" : player3,
 
         "die_1" : last_die1,
         "die_2" : last_die2,

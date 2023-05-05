@@ -120,5 +120,5 @@ class Mano:
                 return {0,0,0,0,1}
 
 def nueva_mano():
-    mano = Mano({},0,0,0,0,0)
+    mano = Mano([0,0,0,0,0,0,0,0,0],0,0,0,0,0)
     return mano
