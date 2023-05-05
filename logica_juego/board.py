@@ -629,11 +629,9 @@ class Hexgrid:
 
   #   return (coord - hexgrid._edge_node_offsets[coord][0], coord - hexgrid._edge_node_offsets[coord][1])
 
-  explored : list[int] = []
-
-  def __dfs(self, identifier: int, direction: NodeDirection, color: Color) -> int:
+  def __dfs(self, identifier: int, direction: NodeDirection,
+            color: Color, path: list[int], explored: list[int] = []) -> int:
     """ This is a privete method. No docstring for you 🖕"""
-    global explored
     VERBOSE = True
 
     # if self.get_node_coord_by_id(identifier, direction) in explored:
@@ -681,6 +679,7 @@ class Hexgrid:
     }
 
     depth = 0
+    lst = None
     for road in roads:
       if road in explored:
         if VERBOSE:
@@ -711,15 +710,16 @@ class Hexgrid:
         print(f"explored: {[f'{x:x}' for x in explored]}")
 
       explored.append(road)
-      new_depth = (1 + self.__dfs(identifier, next_dir, color)) 
-      depth = max(depth, new_depth)
+      new_depth = (1 + self.__dfs(identifier, next_dir, color, path, explored)) 
+      argmax, depth = max(enumerate([depth, new_depth]), key=lambda x: x[1])
+      lst = [lst, self.get_node_coord_by_id(identifier, next_dir)][argmax]
+      path.append(lst)
       
       # explored.append(self.get_node_coord_by_id(identifier, edge_dir))
     return depth 
 
 
   def longest_path(self, color: Color) -> int:
-    global explored
     # Nodes (buildings) with the given color, does not include roads
     nodes = [coord for coord, (c, _) in self.nodes.items() if c == color]
 
@@ -733,8 +733,10 @@ class Hexgrid:
     # Root node
     root_id, root_dir = self.__node_coord_to_id(nodes[0])
     print(f" ****** root id: {root_id}, dir: {root_dir} ******")
-    explored = []
-    res = self.__dfs(root_id, root_dir, color)
+    path = [] # creo que ya esta, preguntame cualquiercosa y
+              # si esno me dides por whatasapp
+    res = self.__dfs(root_id, root_dir, color, path)
+    res += self.__dfs(root_id, root_dir, color, [], path)
     return res if res > 0 else 0
 
 

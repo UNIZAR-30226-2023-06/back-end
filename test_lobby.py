@@ -2,7 +2,7 @@
 from logica_juego.board import Board, Hexgrid
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
-from logica_juego.constants import Color, Cards, Resource
+from logica_juego.constants import Color, Cards, Resource, Building
 from logica_juego.mano import Mano
 from hexgrid import *
 from logica_juego.board import NodeDirection, EdgeDirection
@@ -68,11 +68,19 @@ def main():
 
     lob.game.board = Board(to_assign=CENTER_DESERT_DISTRIB, thief=True)
 
+    lob.game.board.set_node_building_by_coord(0x76, Building.CITY)
+    lob.game.board.set_node_color_by_coord(0x76, Color.BLUE)
+    lob.game.board.set_node_building_by_coord(0x65, Building.CITY)
+    lob.game.board.set_node_color_by_coord(0x65, Color.BLUE)
+
+    lob.game.board.set_edge_by_coord(Color.BLUE, 0x65)
+    lob.game.board.set_edge_by_coord(Color.BLUE, 0x76)
+    lob.game.board.set_edge_by_coord(Color.BLUE, 0x64)
 
     lob.game.board.svg("test.svg")
 
-    # longest_path = lob.game.board.longest_path(Color.BLUE)
-    # print("Longest Path ----> ", longest_path)
+    longest_path = lob.game.board.longest_path(Color.BLUE)
+    print("Longest Path ----> ", longest_path)
     
     # print("Total errors: ", totalErrors)
 
@@ -95,3 +103,5 @@ if __name__ == "__main__":
         cosa = initial_turns.pop()
         print("Cosa: ", cosa)
 
+
+    main()
