@@ -94,7 +94,7 @@ class Hexgrid:
     [2, ] + [3, 4, 5, 6, 8, 9, 10, 11] * 2 + [12, ]
   )
   #randomize the order of the numbers
-  random.shuffle(NUMBERS)
+  
 
   # Note this doesnt add up to 19,
   # we'll add 0 later to
@@ -105,7 +105,7 @@ class Hexgrid:
     # TODO: puede no haber ladron
     # self.thief = random.randrange(
     #   1, len(resources) + 1) if thief is None else thief
-
+    random.shuffle(self.NUMBERS)
     desert_index = resources.index(Resource.DESERT)
     self.thief = desert_index if thief is None or True else None
     numbers = Hexgrid.NUMBERS[:desert_index] + \
