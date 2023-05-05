@@ -702,15 +702,16 @@ async def get_game_state(lobby_id: int):
 
     print(lob.game)
 
-    user0 = session.query(User).filter(User.id == lob.game.jugadores[0].id).first()
-    user1 = session.query(User).filter(User.id == lob.game.jugadores[1].id).first()
-    user2 = session.query(User).filter(User.id == lob.game.jugadores[2].id).first()
-    user3 = session.query(User).filter(User.id == lob.game.jugadores[3].id).first()
+    user0 = session.query(User).filter(User.id == lob.game.jugadores[0].id).first() if lob.game.jugadores[0] is not None else None
+    user1 = session.query(User).filter(User.id == lob.game.jugadores[1].id).first() if lob.game.jugadores[1] is not None else None
+    user2 = session.query(User).filter(User.id == lob.game.jugadores[2].id).first() if lob.game.jugadores[2] is not None else None
+    user3 = session.query(User).filter(User.id == lob.game.jugadores[3].id).first() if lob.game.jugadores[3] is not None else None
 
-    player0 = get_player_as_json(lob.game.jugadores[0], user0)
-    player1 = get_player_as_json(lob.game.jugadores[1], user1)
-    player2 = get_player_as_json(lob.game.jugadores[2], user2)
-    player3 = get_player_as_json(lob.game.jugadores[3], user3)
+
+    player0 = get_player_as_json(lob.game.jugadores[0], user0) if lob.game.jugadores[0] is not None else None
+    player1 = get_player_as_json(lob.game.jugadores[1], user1) if lob.game.jugadores[1] is not None else None
+    player2 = get_player_as_json(lob.game.jugadores[2], user2) if lob.game.jugadores[2] is not None else None
+    player3 = get_player_as_json(lob.game.jugadores[3], user3) if lob.game.jugadores[3] is not None else None
 
     game_state = {
         "player_0" : player0,

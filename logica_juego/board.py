@@ -93,6 +93,9 @@ class Hexgrid:
   NUMBERS = (
     [2, ] + [3, 4, 5, 6, 8, 9, 10, 11] * 2 + [12, ]
   )
+  #randomize the order of the numbers
+  random.shuffle(NUMBERS)
+
   # Note this doesnt add up to 19,
   # we'll add 0 later to
   # represent desert
