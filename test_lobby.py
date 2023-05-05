@@ -85,23 +85,19 @@ def main():
     # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
-    i = 0
-    initial_turns = []
-    while i < 4:
-        initial_turns.append(i)
-        i += 1
-        print(initial_turns)
-    i = 4 - 1 
-    while i >= 0:
-        initial_turns.append(i)
-        i -= 1
-        print(initial_turns)
+    lobby = Lobby()
+    lobby.game.jugadores.append(Jugador(123, 500, 0, Color.BLUE, None,0, False, False, True, True))
+    lobby.game.jugadores.append(Jugador(456, 500, 0, Color.RED, None,0, False, False, True, True))
+    lobby.game.jugadores.append(Jugador(789, 500, 0, Color.GREEN, None,0, False, False, True, True))
+    lobby.game.jugadores.append(Jugador(101, 500, 0, Color.YELLOW, None,0, False, False, True, True))
 
-    print("Initial turns: ", initial_turns)
+    print("ANTES")
+    print(lobby.game.jugadores[0].id)
+    print(lobby.game.jugadores[1].id)
 
-    for i in range (len(initial_turns)):
-        cosa = initial_turns.pop()
-        print("Cosa: ", cosa)
+    lobby.remove_Player(123)
 
+    print("DESPUES")
+    print(lobby.game.jugadores[0].id) 
+    print(lobby.game.jugadores[1].id)
 
-    main()
