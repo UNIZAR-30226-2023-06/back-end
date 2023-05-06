@@ -63,6 +63,12 @@ class Jugador:
         return self.mano.extraer_recurso_aleatorio()
     
     def sumar_recursos(self, recursos):
+        # self.mano.arcilla += recursos[0]
+        # self.mano.madera += recursos[1]
+        # self.mano.oveja += recursos[2]
+        # self.mano.piedra += recursos[3]
+        # self.mano.trigo += recursos[4]
+
         self.mano.add_recurso(Resource.CLAY, recursos[0])
         self.mano.add_recurso(Resource.WOOD, recursos[1])
         self.mano.add_recurso(Resource.SHEEP, recursos[2])

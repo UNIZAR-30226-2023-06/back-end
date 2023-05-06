@@ -990,7 +990,9 @@ class Board(Hexgrid):
     nodes = [coord for coord, (c, b) in self.nodes.items() if c == color]
     for n in nodes:
       surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
+      print(f"surrounding tiles: {surrounding_tiles}")
       for t in surrounding_tiles:
+        print(f"TILES DIAVOLIKAS --> {self.tiles[t]}")
         if self.tiles[t][0] == dice and self.tile_coord2id(t) != self.thief:
           if self.tiles[t][1] == Resource.CLAY:
             print("clay")

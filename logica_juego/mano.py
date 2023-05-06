@@ -47,17 +47,17 @@ class Mano:
             return self.trigo
     
     # add para cada atributo
-    def add_recurso(self, tipo_recurso, cantidad=1):
+    def add_recurso(self, tipo_recurso:Resource, cantidad:int =1):
         if tipo_recurso == Resource.CLAY:
             self.arcilla += cantidad
         elif tipo_recurso == Resource.WOOD:
-            self.arcilla += cantidad
-        elif tipo_recurso == Resource:
-            self.arcilla += cantidad
+            self.madera += cantidad
+        elif tipo_recurso == Resource.SHEEP:
+            self.oveja += cantidad
         elif tipo_recurso == Resource.STONE:
-            self.arcilla += cantidad
+            self.piedra += cantidad
         elif tipo_recurso == Resource.WHEAT:
-            self.arcilla += cantidad
+            self.trigo += cantidad
     
     def add_carta_desarrollo(self, tipo_carta):
         self.cartas_desarrollo.append(tipo_carta)
@@ -73,13 +73,13 @@ class Mano:
         if tipo_recurso == Resource.CLAY:
             self.arcilla -= cantidad
         elif tipo_recurso == Resource.WOOD:
-            self.arcilla -= cantidad
-        elif tipo_recurso == Resource:
-            self.arcilla -= cantidad
+            self.madera -= cantidad
+        elif tipo_recurso == Resource.SHEEP:
+            self.oveja -= cantidad
         elif tipo_recurso == Resource.STONE:
-            self.arcilla -= cantidad
+            self.piedra -= cantidad
         elif tipo_recurso == Resource.WHEAT:
-            self.arcilla -= cantidad
+            self.trigo -= cantidad
     
     def num_total_recursos(self):
         return self.arcilla + self.piedra + self.madera + self.trigo + self.oveja

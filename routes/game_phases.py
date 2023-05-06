@@ -82,7 +82,7 @@ def get_player_as_json(player: Jugador, user: User):
     player_hand = { "wheat" : player.mano.trigo,
                     "wood" : player.mano.madera,
                     "sheep" : player.mano.oveja,
-                    "brick" : player.mano.arcilla,
+                    "clay" : player.mano.arcilla,
                     "rock" : player.mano.piedra,
                     "dev_cards" : player_development_cards,}
 

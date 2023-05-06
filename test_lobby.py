@@ -6,6 +6,7 @@ from logica_juego.constants import Color, Cards, Resource, Building
 from logica_juego.mano import Mano
 from hexgrid import *
 from logica_juego.board import NodeDirection, EdgeDirection
+from logica_juego.mano import nueva_mano
 
 
 totalErrors = 0
@@ -85,7 +86,13 @@ def main():
     # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
-    lobby = Lobby()
+    player = Jugador(123, 500, 0, Color.RED, nueva_mano(), 0, False, False, True, True)
+    recursos = [1, 1, 122, 1, 1]
+    
+    player.sumar_recursos(recursos)
 
-    lobby.game.board.svg("diavoliko.svg")
-    print(f"LADRON: {lobby.game.board.thief_coord:x}")
+    print("CLAY: ", player.mano.get_recurso(Resource.CLAY))
+    print("WOOD: ", player.mano.get_recurso(Resource.WOOD))
+    print("SHEEP: ", player.mano.get_recurso(Resource.SHEEP))
+    print("STONE: ", player.mano.get_recurso(Resource.STONE))
+    print("WHEAT: ", player.mano.get_recurso(Resource.WHEAT))
