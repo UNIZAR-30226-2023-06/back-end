@@ -146,7 +146,7 @@ def init_buscador():
 
         # Obtengo todos los jugadores buscando partida y los ordeno de menor a mayor
         # según su ELO.
-        print(jugadores_buscando_partida)
+        #print(jugadores_buscando_partida)
         jugadores = jugadores_buscando_partida
         jugadores.sort(key=lambda x: x.elo)
 

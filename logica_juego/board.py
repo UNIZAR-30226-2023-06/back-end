@@ -131,10 +131,7 @@ class Hexgrid:
     }
 
     #thief = dessert coord
-    print(self.tiles)
     for tile in self.tiles.values():
-      print("TILE0--> ",tile[0])
-      print("TILE1--> ", tile[1])
       if tile[1] == Resource.DESERT:
         self.thief = tile[0] if thief is None or True else None 
 
