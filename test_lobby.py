@@ -86,20 +86,9 @@ def main():
 
 if __name__ == "__main__":
     lobby = Lobby()
-    lobby.game.jugadores.append(Jugador(123, 500, 0, Color.BLUE, None,0, False, False, True, True))
-    lobby.game.jugadores.append(Jugador(456, 500, 0, Color.RED, None,0, False, False, True, True))
-    lobby.game.jugadores.append(Jugador(789, 500, 0, Color.GREEN, None,0, False, False, True, True))
-    lobby.game.jugadores.append(Jugador(101, 500, 0, Color.YELLOW, None,0, False, False, True, True))
+    lobby.game.board = Board()
 
-    print("ANTES")
-    print(lobby.game.jugadores[0].id)
-    print(lobby.game.jugadores[1].id)
+    print("LADRON -->", lobby.game.board.thief)
 
-    lobby.remove_Player(123)
-
-    print("DESPUES")
-    print(lobby.game.jugadores[0].id) 
-    print(lobby.game.jugadores[1].id)
-
-
-    print("AAAAAAA --->", Cards.KNIGHT.value)
+    desierto = [tile for tile in lobby.game.board.tiles.values() if tile[1]==Resource.DESERT]
+    print("DESIERTO-->", desierto)    
