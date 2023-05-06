@@ -105,12 +105,11 @@ class Hexgrid:
     # TODO: puede no haber ladron
     # self.thief = random.randrange(
     #   1, len(resources) + 1) if thief is None else thief
-
     desert_index = resources.index(Resource.DESERT)
+    self.thief = desert_index if thief is None or True else None
+    random.shuffle(self.NUMBERS)
     numbers = Hexgrid.NUMBERS[:desert_index] + \
         [0, ] + Hexgrid.NUMBERS[desert_index:]
-
-    random.shuffle(numbers)
 
     # Dict with key=tile coord and value=(number, resource) 
     self.tiles: dict[int, TileType] = {
@@ -119,6 +118,7 @@ class Hexgrid:
             hexgrid.legal_tile_coords(), numbers, resources
         )
     }
+
 
     # Dict with key=node coord and value=(color, building)
     self.nodes: dict[int, NodeType] = {
@@ -130,12 +130,12 @@ class Hexgrid:
         val: None for val in hexgrid.legal_edge_coords()
     }
 
-    #thief = dessert coord
-    for tile in self.tiles.values():
-      if tile[1] == Resource.DESERT:
-        self.thief = tile[0] if thief is None or True else None 
-
     self.__tile_coord2id = {v: k for k, v in hexgrid._tile_id_to_coord.items()}
+    for key in self.tiles.keys():
+      values = self.tiles.get(key)
+      if values[1] == Resource.DESERT:
+        self.thief =  self.tile_coord2id(key) if thief is None or True else none
+        break
 
   @property
   def thief_coord(self) -> int:

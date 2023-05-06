@@ -86,9 +86,6 @@ def main():
 
 if __name__ == "__main__":
     lobby = Lobby()
-    lobby.game.board = Board()
 
-    print("LADRON -->", lobby.game.board.thief)
-
-    desierto = [tile for tile in lobby.game.board.tiles.values() if tile[1]==Resource.DESERT]
-    print("DESIERTO-->", desierto)    
+    lobby.game.board.svg("diavoliko.svg")
+    print(f"LADRON: {lobby.game.board.thief_coord:x}")
