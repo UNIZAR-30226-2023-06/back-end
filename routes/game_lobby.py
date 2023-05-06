@@ -383,7 +383,7 @@ async def build_Village(node: int, token : str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=409, detail="Game has not started yet")
     
     # Build the Village
-    if not lobby.game.place_town(player.color, node):
+    if not lobby.game.place_town(node_coord=node, id_jugador=player.id):
         raise HTTPException(status_code=409, detail="Invalid building position")
     return {"detail": "Village built"}
 
@@ -426,7 +426,7 @@ async def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Player not in the lobby")
     
     # Build the Road
-    if not lobby.game.place_road(player.color, edge):
+    if not lobby.game.place_road(edge_coord=edge, id_jugador=player.id):
         raise HTTPException(status_code=409, detail="Invalid building position")
     return {"detail": "Road built"}
 
@@ -469,7 +469,7 @@ async def upgrade_Village(node: int, token : str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Player not in the lobby")
     
     # Upgrade the Village
-    if not lobby.game.upgrade_town(player.color, node):
+    if not lobby.game.upgrade_town(node_coord=node, id_jugador=player.id):
         raise HTTPException(status_code=409, detail="Invalid building position")
     return {"detail": "Village upgraded"}
 
