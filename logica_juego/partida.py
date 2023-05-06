@@ -381,7 +381,7 @@ class Partida:
                 self.fase_turno = TurnPhase.INITIAL_TURN2
                 counter = 0
         elif self.fase_turno == TurnPhase.INITIAL_TURN2:
-            self.turno = self.initial_turns.pop()
+            self.turno = self.initial_turns.pop() if len(self.initial_turns) > 0 else 0
             counter += 1
             if counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
