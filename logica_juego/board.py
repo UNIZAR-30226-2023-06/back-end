@@ -946,6 +946,26 @@ class Board(Hexgrid):
         
     return [coord for coord in uncolored_nodes if coord not in ilegal_nodes]
         
+  #returns the legal nodes in which a village can be placed in the second phase of the game (next to a road)
+  def legal_building_nodes_second_phase(self, color: Color) -> list[int]:
+    uncolored_nodes = [coord for coord, (c, b) in self.nodes.items() if c is None]
+    ilegal_nodes = []
+    #check that all adjacent nodes are not colored
+    for coord in uncolored_nodes:
+      adjacent_nodes = self.get_adjacent_nodes_by_node_id(coord)
+      adjacent_nodes = [node for node in adjacent_nodes if node in legal_node_coords()]
+      if any([self.nodes[node][0] is not None for node in adjacent_nodes]):
+        ilegal_nodes.append(coord)
+      else:
+        adjacent_edges = self.get_adjacent_edges_by_node_id(coord)
+        adjacent_edges = [edge for edge in adjacent_edges if edge in legal_edge_coords()]
+        if any([self.edges[edge] is not None and self.edges[edge] != color for edge in adjacent_edges]):
+          ilegal_nodes.append(coord)
+        elif any([self.edges[edge] is None for edge in adjacent_edges]):
+          ilegal_nodes.append(coord)
+
+    return [coord for coord in uncolored_nodes if coord not in ilegal_nodes]
+
   # a road can be placed if there is a road of the same color adjacent to it or if there is a town of the same color adjacent to it
   def legal_building_edges(self, color: Color) -> list[int]:
     uncolored_edges = [coord for coord, c in self.edges.items() if c is None]
@@ -965,18 +985,45 @@ class Board(Hexgrid):
     return legal_edges
   
   def return_resources(self, color: Color, dice: int) -> list[Resource]:
-    resources = []
+    resources = [0,0,0,0,0] #{CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
     # nodes of the "color" color
     nodes = [coord for coord, (c, b) in self.nodes.items() if c == color]
     for n in nodes:
       surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
       for t in surrounding_tiles:
-        # if the tile is the thief, skip it
-        
         if self.tiles[t][0] == dice and self.tile_coord2id(t) != self.thief:
-          resources.append(self.tiles[t][1])
+          if self.tiles[t][1] == Resource.CLAY:
+            print("clay")
+            resources[0] += 1
+          elif self.tiles[t][1] == Resource.WOOD:
+            print("wood")
+            resources[1] += 1
+          elif self.tiles[t][1] == Resource.SHEEP:
+            print("sheep")
+            resources[2] += 1
+          elif self.tiles[t][1] == Resource.STONE:
+            print("stone")
+            resources[3] += 1
+          elif self.tiles[t][1] == Resource.WHEAT:
+            print("wheat")
+            resources[4] += 1
+          else:
+            print(f"tile0: {self.tiles[t][0]} tile1: {self.tiles[t][1]}")
+            print("nothing")
+          #resources.append(self.tiles[t][1])
           # if the tile is a city, append the resource again
           if self.nodes[n][1] == Building.CITY:
-            resources.append(self.tiles[t][1])
+            if self.tiles[t][1] == Resource.CLAY:
+              resources[0] += 1
+            elif self.tiles[t][1] == Resource.WOOD:
+              resources[1] += 1
+            elif self.tiles[t][1] == Resource.SHEEP:
+              resources[2] += 1
+            elif self.tiles[t][1] == Resource.STONE:
+              resources[3] += 1
+            elif self.tiles[t][1] == Resource.WHEAT:
+              resources[4] += 1
+            #resources.append(self.tiles[t][1])
 
+    print(f"resources: {resources} to player {color}")
     return resources

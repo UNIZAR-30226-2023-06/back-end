@@ -202,6 +202,14 @@ class Partida:
         
         return dado1, dado2
     
+    def asignacion_recursos_a_jugador(self, id_jugador: int):
+        jugador = self.jugadores[self.i_jugador(id_jugador)]
+        for recurso in range (2, 13):
+            if recurso != 7:
+                recursos = self.board.return_resources(jugador.color, recurso)
+                jugador.sumar_recursos(recursos)
+        
+
     def usar_carta_caballero(self, id_jugador:int, id_jugador_robado: int, coord: int):
         if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
             raise Exception("No se pueden usar cartas de caballero en esta fase del turno")
@@ -379,9 +387,12 @@ class Partida:
             counter += 1
             if counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.INITIAL_TURN2
+                self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
                 counter = 0
         elif self.fase_turno == TurnPhase.INITIAL_TURN2:
-            self.turno = self.initial_turns.pop() if len(self.initial_turns) > 0 else 0
+            if counter < len(self.jugadores):
+                self.turno = self.initial_turns.pop() if len(self.initial_turns) > 0 else 0
+                self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
             counter += 1
             if counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
