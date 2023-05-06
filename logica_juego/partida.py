@@ -58,7 +58,7 @@ class Partida:
             self.initial_turns.append(i)
             i += 1
         i = len(self.jugadores) - 1 
-        while i >= 0:
+        while i > 0:
             self.initial_turns.append(i)
             i -= 1
 
@@ -103,7 +103,7 @@ class Partida:
             self.initial_turns.append(i)
             i += 1
         i = len(self.jugadores) - 1 
-        while i >= 0:
+        while i > 0:
             self.initial_turns.append(i)
             i -= 1
 
@@ -129,7 +129,7 @@ class Partida:
             self.initial_turns.append(i)
             i += 1
         i = len(self.jugadores) - 1 
-        while i >= 0:
+        while i > 0:
             self.initial_turns.append(i)
             i -= 1
 

@@ -81,5 +81,6 @@ class Lobby:
         self.is_full = True
         self.game.turno = 0
         self.game.fase_turno = TurnPhase.INITIAL_TURN1
+        print(self.game.initial_turns)
         
         return 0
