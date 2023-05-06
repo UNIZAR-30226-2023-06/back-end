@@ -3,8 +3,8 @@ from enum import Enum, auto
 class Color(Enum): # Antes estaba en board.py
     RED = auto()
     BLUE = auto()
-    YELLOW = auto()
     GREEN = auto()
+    YELLOW = auto()
 
 class Building(Enum): # Antes estaba en board.py
     VILLAGE = auto()
