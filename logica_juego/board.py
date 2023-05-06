@@ -106,10 +106,10 @@ class Hexgrid:
     # self.thief = random.randrange(
     #   1, len(resources) + 1) if thief is None else thief
     random.shuffle(self.NUMBERS)
-    desert_index = resources.index(Resource.DESERT)
-    self.thief = desert_index if thief is None or True else None
     numbers = Hexgrid.NUMBERS[:desert_index] + \
         [0, ] + Hexgrid.NUMBERS[desert_index:]
+    desert_index = resources.index(Resource.DESERT)
+    self.thief = desert_index if thief is None or True else None
 
     # Dict with key=tile coord and value=(number, resource) 
     self.tiles: dict[int, TileType] = {

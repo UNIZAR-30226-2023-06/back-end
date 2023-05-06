@@ -571,6 +571,7 @@ class Partida:
         jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if not self.board.place_town(jugador.color, node_coord):
             return False
+        self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
         return True
 
     def place_road(self, edge_coord : int, id_jugador : int) -> bool:
@@ -580,6 +581,7 @@ class Partida:
         jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if not self.board.place_road(jugador.color, edge_coord):
             return False
+        self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
         return True
     
     def upgrade_town(self, node_coord : int, id_jugador : int) -> bool:
@@ -589,4 +591,5 @@ class Partida:
         jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if not self.board.upgrade_town(jugador.color, node_coord):
             return False
+        self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
         return True
