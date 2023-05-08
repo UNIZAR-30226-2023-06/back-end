@@ -1,11 +1,19 @@
 import os
+from dotenv import load_dotenv
 
-JWT_SECRET = os.getenv('JWT_SECRET')
+KEYS = ["PGUSER", "PGPASSWD", "PGPORT", "PGHOST", "PGDB", "JWT_SECRET"]
+
+load_dotenv()
+
+config = {key: os.getenv(key) for key in KEYS}
+
+JWT_SECRET = config['JWT_SECRET']
 
 postgresql = {
-    'pguser': os.getenv('PGUSER'),
-    'pgpasswd': os.getenv('PGPASSWD'),
-    'pgport': os.getenv('PGPORT'),
-    'pghost': os.getenv('PGHOST'),
-    'pgdb': os.getenv('PGDB')
+
+    'pguser' : config['PGUSER'],
+    'pgpasswd' : config['PGPASSWD'],
+    'pgport' : config['PGPORT'],
+    'pghost' : config['PGHOST'],
+    'pgdb' : config['PGDB']
 }
