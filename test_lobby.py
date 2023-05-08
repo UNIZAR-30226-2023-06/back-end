@@ -86,13 +86,14 @@ def main():
     # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
-    player = Jugador(123, 500, 0, Color.RED, nueva_mano(), 0, False, False, True, True)
-    recursos = [1, 1, 122, 1, 1]
-    
-    player.sumar_recursos(recursos)
+    lob = Lobby()
+    lob.game.board.place_town(color=Color.RED, position=0x52)
+    lob.game.board.place_road(color=Color.RED, position=0x52)
+    lob.game.board.place_road(color=Color.RED, position=0x62)
 
-    print("CLAY: ", player.mano.get_recurso(Resource.CLAY))
-    print("WOOD: ", player.mano.get_recurso(Resource.WOOD))
-    print("SHEEP: ", player.mano.get_recurso(Resource.SHEEP))
-    print("STONE: ", player.mano.get_recurso(Resource.STONE))
-    print("WHEAT: ", player.mano.get_recurso(Resource.WHEAT))
+    legal = lob.game.board.legal_building_nodes_second_phase(color=Color.RED)
+    print(f"LEGAL NODES {[hex(coord) for coord in legal]}")
+
+    legal_edges = lob.game.board.legal_building_edges(Color.RED)
+    print(f"LEGAL EDGES {[hex(coord) for coord in legal_edges]}")
+    lob.game.board.svg("diavoliko.svg")

@@ -261,6 +261,33 @@ async def get_Legal_Building_Nodes(lobby_id: int, color: str):
 
     return lobby.game.board.legal_building_nodes(col)
 
+@router.get("/get-legal-building-nodes-non-initial-phases", tags=["Game"])
+async def get_Legal_Building_Nodes_Non_Initial_Phases(lobby_id: int, color: str):
+    lobby : Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lobby = l
+        
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lobby.game is None:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    col = None
+    if color == "RED":
+        col = Color.RED
+    elif color == "BLUE":
+        col = Color.BLUE
+    elif color == "GREEN":
+        col = Color.GREEN
+    elif color == "YELLOW":
+        col = Color.YELLOW
+    else:
+        raise HTTPException(status_code=400, detail="Invalid color")
+
+    return lobby.game.board.legal_building_nodes_second_phase(col)
+
 #return the legal building edges for roads
 @router.get("/get-legal-building-edges", tags=["Game"])
 async def get_Legal_Building_Edges(lobby_id: int, color: str):

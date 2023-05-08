@@ -896,7 +896,7 @@ class Board(Hexgrid):
 
   def place_town(self, color: Color, position: int) -> bool:
     try:
-      if position in self.legal_building_nodes(color):
+      if position in self.legal_building_nodes_second_phase(color):
         self.set_node_building_by_coord(position, Building.VILLAGE)
         self.set_node_color_by_coord(position, color)
         return True
@@ -949,20 +949,20 @@ class Board(Hexgrid):
   #returns the legal nodes in which a village can be placed in the second phase of the game (next to a road)
   def legal_building_nodes_second_phase(self, color: Color) -> list[int]:
     uncolored_nodes = [coord for coord, (c, b) in self.nodes.items() if c is None]
-    ilegal_nodes = []
     #check that all adjacent nodes are not colored
+    ilegal_nodes = []
     for coord in uncolored_nodes:
       adjacent_nodes = self.get_adjacent_nodes_by_node_id(coord)
       adjacent_nodes = [node for node in adjacent_nodes if node in legal_node_coords()]
+      adjacent_edges = self.get_adjacent_edges_by_node_id(coord)
+      adjacent_edges = [edge for edge in adjacent_edges if edge in legal_edge_coords()]
+
       if any([self.nodes[node][0] is not None for node in adjacent_nodes]):
         ilegal_nodes.append(coord)
-      else:
-        adjacent_edges = self.get_adjacent_edges_by_node_id(coord)
-        adjacent_edges = [edge for edge in adjacent_edges if edge in legal_edge_coords()]
-        if any([self.edges[edge] is not None and self.edges[edge] != color for edge in adjacent_edges]):
-          ilegal_nodes.append(coord)
-        elif any([self.edges[edge] is None for edge in adjacent_edges]):
-          ilegal_nodes.append(coord)
+      elif any([self.edges[edge] is not None and self.edges[edge] != color for edge in adjacent_edges]):
+        ilegal_nodes.append(coord)
+      elif all([self.edges[edge] is None for edge in adjacent_edges]):
+        ilegal_nodes.append(coord)
 
     return [coord for coord in uncolored_nodes if coord not in ilegal_nodes]
 
