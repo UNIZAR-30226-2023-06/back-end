@@ -1040,3 +1040,46 @@ class Board(Hexgrid):
 
     print(f"resources: {resources} to player {color}")
     return resources
+  
+  def return_resources_from_1_coord(self, color: Color, node_coord: int):
+    resources = [0,0,0,0,0] #{CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
+    # nodes of the "color" color
+    nodes = [coord for coord, (c, b) in self.nodes.items() if c == color and coord == node_coord]
+    for n in nodes:
+      surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
+      surrounding_tiles = [tile for tile in surrounding_tiles if tile in legal_tile_coords() and tile != self.thief_coord]
+      print(f"surrounding tiles: {surrounding_tiles}")
+      for t in surrounding_tiles:
+        print(f"TILES DIAVOLIKAS --> {self.tiles[t]}")
+        if self.tiles[t][1] == Resource.CLAY:
+          print("clay")
+          resources[0] += 1
+        elif self.tiles[t][1] == Resource.WOOD:
+          print("wood")
+          resources[1] += 1
+        elif self.tiles[t][1] == Resource.SHEEP:
+          print("sheep")
+          resources[2] += 1
+        elif self.tiles[t][1] == Resource.STONE:
+          print("stone")
+          resources[3] += 1
+        elif self.tiles[t][1] == Resource.WHEAT:
+          print("wheat")
+          resources[4] += 1
+        else:
+          print(f"tile0: {self.tiles[t][0]} tile1: {self.tiles[t][1]}")
+          print("nothing")
+        #resources.append(self.tiles[t][1])
+        # if the tile is a city, append the resource again
+        if self.nodes[n][1] == Building.CITY:
+          if self.tiles[t][1] == Resource.CLAY:
+            resources[0] += 1
+          elif self.tiles[t][1] == Resource.WOOD:
+            resources[1] += 1
+          elif self.tiles[t][1] == Resource.SHEEP:
+            resources[2] += 1
+          elif self.tiles[t][1] == Resource.STONE:
+            resources[3] += 1
+          elif self.tiles[t][1] == Resource.WHEAT:
+            resources[4] += 1
+          #resources.append(self.tiles[t][1])

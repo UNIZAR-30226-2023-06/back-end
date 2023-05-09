@@ -18,7 +18,7 @@ from models.user import User, Befriends
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
-from logica_juego.constants import Color, Cards
+from logica_juego.constants import Color, Cards, TurnPhase
 from logica_juego.mano import Mano
 
 from logica_juego.matchmaking import jugadores_buscando_partida, Lobbies, buscar_partida
@@ -412,6 +412,9 @@ async def build_Village(node: int, token : str = Depends(oauth2_scheme)):
     # Build the Village
     if not lobby.game.place_town(node_coord=node, id_jugador=player.id):
         raise HTTPException(status_code=409, detail="Invalid building position")
+    if lobby.game.fase_turno == TurnPhase.INITIAL_TURN2:
+        lobby.game.asignacion_recursos_a_jugador(lobby.game.jugadores[lobby.game.turno].id, node)
+        
     return {"detail": "Village built"}
 
 #build a road
@@ -452,9 +455,11 @@ async def build_Road(edge: int, token : str = Depends(oauth2_scheme)):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not in the lobby")
     
+    
     # Build the Road
     if not lobby.game.place_road(edge_coord=edge, id_jugador=player.id):
         raise HTTPException(status_code=409, detail="Invalid building position")
+    
     return {"detail": "Road built"}
 
 #upgrade a village to a city

@@ -202,12 +202,12 @@ class Partida:
         
         return dado1, dado2
     
-    def asignacion_recursos_a_jugador(self, id_jugador: int):
+    def asignacion_recursos_a_jugador(self, id_jugador: int, coord:int):
         jugador = self.jugadores[self.i_jugador(id_jugador)]
-        for recurso in range (2, 13):
-            if recurso != 7:
-                recursos = self.board.return_resources(jugador.color, recurso)
-                jugador.sumar_recursos(recursos)
+        recursos = self.board.return_resources_from_1_coord(jugador.color, coord)
+        jugador.sumar_recursos(recursos)
+
+        return recursos
         
 
     def usar_carta_caballero(self, id_jugador:int, id_jugador_robado: int, coord: int):
@@ -386,12 +386,12 @@ class Partida:
             self.__counter += 1
             if self.__counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.INITIAL_TURN2
-                self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
+                #self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
                 self.__counter = 0
         elif self.fase_turno == TurnPhase.INITIAL_TURN2:
             if self.__counter < len(self.jugadores):
                 self.turno = self.initial_turns.pop() if len(self.initial_turns) > 0 else 0
-                self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
+                #self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
             self.__counter += 1
             if self.__counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
