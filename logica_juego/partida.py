@@ -580,7 +580,7 @@ class Partida:
 
         print("INDICE JUGADOR: ", self.i_jugador(id_jugador))
         jugador : Jugador = self.jugadores[self.i_jugador(id_jugador)]
-        if not self.board.place_town(jugador.color, node_coord):
+        if not self.board.place_townV2(jugador.color, node_coord):
             return False
         self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
         return True

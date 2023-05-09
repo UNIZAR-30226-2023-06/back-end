@@ -904,6 +904,16 @@ class Board(Hexgrid):
     except Exception:
       return False
     
+  def place_townV2(self, color: Color, position: int) -> bool:
+    try:
+      if position in self.legal_building_nodes(color):
+        self.set_node_building_by_coord(position, Building.VILLAGE)
+        self.set_node_color_by_coord(position, color)
+        return True
+      else: return False
+    except Exception:
+      return False
+    
 
   def upgrade_town(self, position: int) -> bool:
     try:
