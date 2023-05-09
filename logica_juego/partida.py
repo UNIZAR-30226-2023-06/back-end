@@ -1,5 +1,5 @@
 import random
-
+import hexgrid
 # import cartas
 # import construcciones
 from .jugador import Jugador
@@ -362,11 +362,11 @@ class Partida:
                 possible_nodes.append(node)
         if len(possible_nodes) == 0:
             raise Exception("Error: No hay ningún edificio del jugador robado en los nodos adyacentes al ladrón")
-
-        if self.board.move_thief(tileCoord):
+        if tileCoord in hexgrid.legal_node_coords():
+            self.board.thief = tileCoord
             self.robar_recursos(id_jugador, id_jugador_robado)
         else:
-            raise Exception("Error: No se ha podido mover el ladrón")
+            raise Exception("Error: La coordenada del ladrón no es válida")
 
     # especificamos si queremos que haya un ladrón en la partida
     def set_ladron(self, hay_ladron:bool):
