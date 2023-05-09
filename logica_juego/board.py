@@ -1000,6 +1000,7 @@ class Board(Hexgrid):
     nodes = [coord for coord, (c, b) in self.nodes.items() if c == color]
     for n in nodes:
       surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
+      surrounding_tiles = [tile for tile in surrounding_tiles if tile in legal_tile_coords() and tile != self.thief_coord]
       print(f"surrounding tiles: {surrounding_tiles}")
       for t in surrounding_tiles:
         print(f"TILES DIAVOLIKAS --> {self.tiles[t]}")

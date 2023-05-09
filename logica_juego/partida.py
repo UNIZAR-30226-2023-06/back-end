@@ -9,7 +9,7 @@ from logica_juego.board import Board, NodeDirection
 from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
 
 ## COSAS DE LOS TURNOS ##
-counter = 0
+#counter = 0
 
 class Partida:
 
@@ -51,7 +51,7 @@ class Partida:
         self.hay_ladron = hay_ladron
 
         self.initial_buildings_done = False
-
+        self.__counter = 0
         self.initial_turns = []
         i = 0
         while i < len(self.jugadores):
@@ -380,23 +380,22 @@ class Partida:
     # si el actual ya ha acabado
     
     def avanzar_fase(self):
-        global counter
         
         if self.fase_turno == TurnPhase.INITIAL_TURN1:
             self.turno = self.initial_turns.pop()
-            counter += 1
-            if counter == len(self.jugadores):
+            self.__counter += 1
+            if self.__counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.INITIAL_TURN2
                 self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
-                counter = 0
+                self.__counter = 0
         elif self.fase_turno == TurnPhase.INITIAL_TURN2:
-            if counter < len(self.jugadores):
+            if self.__counter < len(self.jugadores):
                 self.turno = self.initial_turns.pop() if len(self.initial_turns) > 0 else 0
                 self.asignacion_recursos_a_jugador(self.jugadores[self.turno].id)
-            counter += 1
-            if counter == len(self.jugadores):
+            self.__counter += 1
+            if self.__counter == len(self.jugadores):
                 self.fase_turno = TurnPhase.RESOURCE_PRODUCTION
-                counter = 0
+                self.__counter = 0
         elif self.fase_turno == TurnPhase.RESOURCE_PRODUCTION:
             self.fase_turno = TurnPhase.TRADING
         elif self.fase_turno == TurnPhase.TRADING:
