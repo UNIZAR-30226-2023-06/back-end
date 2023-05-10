@@ -724,6 +724,7 @@ async def get_game_state(lobby_id: int):
 
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
         "player_turn" : lob.game.jugadores[lob.game.turno].id,
+        "player_turn_name": session.query(User).filter(User.id == lob.game.jugadores[lob.game.turno].id).first().username,
         "turn_time" : lob.game.tiempo_turno,
 
         "thief_enabled" : lob.game.hay_ladron,
