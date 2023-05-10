@@ -799,3 +799,16 @@ async def disable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
 
     lob.game.hay_ladron = False
     return {"detail": "Thief disabled"}
+
+#add resources to a player
+@router.post("/add-resources", tags=["Debug"])
+async def add_resources(player_id: int, wood: int, clay: int, sheep: int, stone: int, wheat: int):
+    user = session.query(User).filter(User.id == player_id).first()
+    #search the player in the lobbies
+    resources = [clay, wood, sheep, stone, wheat]
+    for l in Lobbies:
+        for p in l.game.jugadores:
+            if p.id == player_id:
+                l.game.jugadores[l.game.turno].sumar_recursos(resources)
+                return {"detail": "Resources added successfully"}
+    return {"detail": "Player not found"}
