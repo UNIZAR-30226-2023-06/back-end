@@ -326,10 +326,23 @@ class Partida:
             raise Exception("No es el turno del jugador")
 
         recursos_1 = [0,0,0,0,0] # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
-        recursos_1[tipo_recurso_1.value - 1] = cantidad_recurso
+        index = None
+        if tipo_recurso_1 == Resource.CLAY: index = 0
+        elif tipo_recurso_1 == Resource.WOOD: index = 1
+        elif tipo_recurso_1 == Resource.SHEEP: index = 2
+        elif tipo_recurso_1 == Resource.STONE: index = 3
+        elif tipo_recurso_1 == Resource.WHEAT: index = 4
+
+        recursos_1[index] = cantidad_recurso
 
         recursos_2 = [0,0,0,0,0] # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
-        recursos_2[tipo_recurso_2.value - 1] = 1
+        if tipo_recurso_2 == Resource.CLAY: index = 0
+        elif tipo_recurso_2 == Resource.WOOD: index = 1
+        elif tipo_recurso_2 == Resource.SHEEP: index = 2
+        elif tipo_recurso_2 == Resource.STONE: index = 3
+        elif tipo_recurso_2 == Resource.WHEAT: index = 4
+
+        recursos_2[index] = 1
 
         j = self.i_jugador(id_jugador)
 
