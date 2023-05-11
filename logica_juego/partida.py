@@ -437,7 +437,7 @@ class Partida:
         
         player : Jugador = self.jugadores[self.i_jugador(id_jugador)]
         if tipo_construccion == Building.ROAD:
-            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,0,0,0}): # Si no tiene los recursos suficientes
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([1,1,0,0,0]): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para construir la carretera")
 
             if self.board.place_road(player.color, coord):
@@ -446,7 +446,7 @@ class Partida:
                 raise Exception("Error: No se ha podido construir la carretera")
 
         elif tipo_construccion == Building.VILLAGE:
-            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({1,1,1,0,1}): # Si no tiene los recursos suficientes
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([1,1,1,0,1]): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para construir el poblado")
 
             if self.board.place_town(player.color, coord):
@@ -455,7 +455,7 @@ class Partida:
                 raise Exception("Error: No se ha podido construir el poblado")
 
         elif tipo_construccion == Building.CITY:
-            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,0,3,2}):
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([0,0,0,3,2]):
                 raise Exception("Error: No tienes los recursos suficientes para construir la ciudad")
 
             if self.board.upgrade_town(coord):
@@ -464,7 +464,7 @@ class Partida:
                 raise Exception("Error: No se ha podido construir la ciudad")
 
         elif tipo_construccion == Building.DEV_CARD:
-            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos({0,0,1,1,1}): # Si no tiene los recursos suficientes
+            if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([0,0,1,1,1]): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para comprar la carta de desarrollo")
             carta_robada = Cards.pick_random_card()
             self.jugadores[self.i_jugador(id_jugador)].add_carta_desarrollo(carta_robada)
