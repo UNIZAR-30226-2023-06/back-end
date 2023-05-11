@@ -68,7 +68,7 @@ def game_phase_to_str(gamePhase: TurnPhase) -> str:
     else:
         raise Exception("Invalid game phase")
     
-def get_player_as_json(player: Jugador, user: User):
+def get_player_as_json(player: Jugador, user: User, lobby: Lobby):
     player_development_cards = {"knight" : player.mano.cartas_desarrollo[Cards.KNIGHT.value],
                                 "invention_progress" : player.mano.cartas_desarrollo[Cards.INVENTION_PROGRESS.value],
                                 "road_progress" : player.mano.cartas_desarrollo[Cards.ROAD_PROGRESS.value],
@@ -86,6 +86,10 @@ def get_player_as_json(player: Jugador, user: User):
                     "rock" : player.mano.piedra,
                     "dev_cards" : player_development_cards,}
 
+    num_villages = len( [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.VILLAGE and c == player.color])
+    num_cities = len( [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.CITY and c == player.color])
+    num_roads = len( [coord for coord, (c, b) in lobby.game.board.edges.items() if b == Building.ROAD and c == player.color])
+
     player_state = {"id" : player.id,
                     "profile_pic" : user.profile_picture,
                     "name" : user.username,
@@ -99,6 +103,9 @@ def get_player_as_json(player: Jugador, user: User):
                     "is_ready": player.esta_preparado,
                     "elo" : player.elo,
                     "is_active" : player.activo,
+                    "num_villages" : num_villages,
+                    "num_cities" : num_cities,
+                    "num_roads" : num_roads,
                     "hand" : player_hand,}
     return player_state
 
@@ -690,7 +697,7 @@ async def get_player_state(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    return get_player_as_json(player, user)
+    return get_player_as_json(player, user, lob)
 
 #get the state of the game
 @router.get("/game_phases/get_game_state", tags=["game_phases"],
@@ -714,10 +721,10 @@ async def get_game_state(lobby_id: int):
     user3 = session.query(User).filter(User.id == lob.game.jugadores[3].id).first() if lob.game.jugadores[3] is not None else None
 
 
-    player0 = get_player_as_json(lob.game.jugadores[0], user0) if lob.game.jugadores[0] is not None else None
-    player1 = get_player_as_json(lob.game.jugadores[1], user1) if lob.game.jugadores[1] is not None else None
-    player2 = get_player_as_json(lob.game.jugadores[2], user2) if lob.game.jugadores[2] is not None else None
-    player3 = get_player_as_json(lob.game.jugadores[3], user3) if lob.game.jugadores[3] is not None else None
+    player0 = get_player_as_json(lob.game.jugadores[0], user0, lob) if lob.game.jugadores[0] is not None else None
+    player1 = get_player_as_json(lob.game.jugadores[1], user1, lob) if lob.game.jugadores[1] is not None else None
+    player2 = get_player_as_json(lob.game.jugadores[2], user2, lob) if lob.game.jugadores[2] is not None else None
+    player3 = get_player_as_json(lob.game.jugadores[3], user3, lob) if lob.game.jugadores[3] is not None else None
 
     game_state = {
         "player_0" : player0,
