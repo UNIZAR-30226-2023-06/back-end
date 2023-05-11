@@ -252,7 +252,9 @@ async def trade_with_bank(lobby_id: int, resource_type: str, amount: int, reques
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     #decode the token
+    print("TOKEN: ", token)
     decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    print("DECODED TOKEN: ", decoded_token)
     #get the user id from the token
     user_id = decoded_token['id']
     user = session.query(User).filter(User.id == user_id).first()
