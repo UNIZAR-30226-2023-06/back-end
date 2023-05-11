@@ -325,11 +325,11 @@ class Partida:
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
 
-        recursos_1 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
-        recursos_1[tipo_recurso_1] = cantidad_recurso
+        recursos_1 = [0,0,0,0,0] # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
+        recursos_1[tipo_recurso_1.value - 1] = cantidad_recurso
 
-        recursos_2 = {0,0,0,0,0} # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
-        recursos_2[tipo_recurso_2] = 1
+        recursos_2 = [0,0,0,0,0] # {CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
+        recursos_2[tipo_recurso_2.value - 1] = 1
 
         j = self.i_jugador(id_jugador)
 
