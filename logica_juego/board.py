@@ -1044,17 +1044,13 @@ class Board(Hexgrid):
   def return_resources_from_1_coord(self, color: Color, node_coord: int):
     resources = [0,0,0,0,0] #{CLAY:int, WOOD:int, SHEEP:int, STONE:int, WHEAT:int}
     # nodes of the "color" color
-    print("COORD DIAVOLIKAS --> ", node_coord)
     nodes = [coord for coord, (c, b) in self.nodes.items() if c == color and coord == node_coord]
-    cosa =  [coord for coord, (c, b) in self.nodes.items() if c == color]
-    print("JODEEEER --> ", cosa)
-    print("NODES DIAVOLIKAS --> ", nodes)
+
     for n in nodes:
       surrounding_tiles = self.get_adjacent_tiles_by_node_id(n)
       surrounding_tiles = [tile for tile in surrounding_tiles if tile in legal_tile_coords() and tile != self.thief_coord]
       print(f"surrounding tiles: {surrounding_tiles}")
       for t in surrounding_tiles:
-        print(f"TILES DIAVOLIKAS --> {self.tiles[t]}")
         if self.tiles[t][1] == Resource.CLAY:
           print("clay")
           resources[0] += 1
