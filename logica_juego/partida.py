@@ -204,7 +204,9 @@ class Partida:
     
     def asignacion_recursos_a_jugador(self, id_jugador: int, coord:int):
         jugador = self.jugadores[self.i_jugador(id_jugador)]
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         recursos = self.board.return_resources_from_1_coord(jugador.color, coord)
+        print("recursos: ", recursos)
         jugador.sumar_recursos(recursos)
 
         return recursos

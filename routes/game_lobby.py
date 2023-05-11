@@ -410,10 +410,12 @@ async def build_Village(node: int, token : str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=409, detail="Game has not started yet")
     
     # Build the Village
-    if not lobby.game.place_town(node_coord=node, id_jugador=player.id):
+    if lobby.game.place_town(node_coord=node, id_jugador=player.id):
+        if lobby.game.fase_turno == TurnPhase.INITIAL_TURN2:
+            print("nodo puesto =====>>>>>", lobby.game.board.nodes[node])
+            lobby.game.asignacion_recursos_a_jugador(lobby.game.jugadores[lobby.game.turno].id, node)
+    else:
         raise HTTPException(status_code=409, detail="Invalid building position")
-    if lobby.game.fase_turno == TurnPhase.INITIAL_TURN2:
-        lobby.game.asignacion_recursos_a_jugador(lobby.game.jugadores[lobby.game.turno].id, node)
         
     return {"detail": "Village built"}
 
