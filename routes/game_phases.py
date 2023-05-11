@@ -86,9 +86,9 @@ def get_player_as_json(player: Jugador, user: User, lobby: Lobby):
                     "rock" : player.mano.piedra,
                     "dev_cards" : player_development_cards,}
 
-    num_villages = len( [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.VILLAGE and c == player.color])
-    num_cities = len( [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.CITY and c == player.color])
-    num_roads = len( [coord for coord, (c, b) in lobby.game.board.edges.items() if b == Building.ROAD and c == player.color])
+    villages = [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.VILLAGE and c == player.color]
+    cities = [coord for coord, (c, b) in lobby.game.board.nodes.items() if b == Building.CITY and c == player.color]
+    roads = [coord for coord, c in lobby.game.board.edges.items() if c == player.color]
 
     player_state = {"id" : player.id,
                     "profile_pic" : user.profile_picture,
@@ -103,9 +103,9 @@ def get_player_as_json(player: Jugador, user: User, lobby: Lobby):
                     "is_ready": player.esta_preparado,
                     "elo" : player.elo,
                     "is_active" : player.activo,
-                    "num_villages" : num_villages,
-                    "num_cities" : num_cities,
-                    "num_roads" : num_roads,
+                    "num_villages" : len(villages),
+                    "num_cities" : len(cities),
+                    "num_roads" : len(roads),
                     "hand" : player_hand,}
     return player_state
 
