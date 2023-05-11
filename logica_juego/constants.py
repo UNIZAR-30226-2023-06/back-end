@@ -37,22 +37,22 @@ class Cards(Enum): # Antes estaba en cartas.py
     CHURCH = 7
     UNIVERSITY = 8
     
-    TOTAL_CARDS = {
-        KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, 
-        KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT, KNIGHT,
+TOTAL_CARDS = [
+    Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, 
+    Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT, Cards.KNIGHT,
 
-        ROAD_PROGRESS, ROAD_PROGRESS,
+    Cards.ROAD_PROGRESS, Cards.ROAD_PROGRESS,
 
-        INVENTION_PROGRESS, INVENTION_PROGRESS,
+    Cards.INVENTION_PROGRESS, Cards.INVENTION_PROGRESS,
 
-        MONOPOLY_PROGRESS, MONOPOLY_PROGRESS,
+    Cards.MONOPOLY_PROGRESS, Cards.MONOPOLY_PROGRESS,
 
-        TOWN_HALL, LIBRARY, MARKET, CHURCH, UNIVERSITY
-    }
+    Cards.TOWN_HALL, Cards.LIBRARY, Cards.MARKET, Cards.CHURCH, Cards.UNIVERSITY
+]
 
-    def pick_random_card():
-        import random
-        return random.choice(list(Cards.TOTAL_CARDS))
+def pick_random_card():
+    import random
+    return random.choice(TOTAL_CARDS)
     
 class TurnPhase(Enum):
     RESOURCE_PRODUCTION = 0 # Roll 2 dice, if dice sum is 7 move thief and steal resources from a player and if a player has >=7 cards discard half -- else give resources to players

@@ -7,7 +7,7 @@ from logica_juego.mano import Mano
 from hexgrid import *
 from logica_juego.board import NodeDirection, EdgeDirection
 from logica_juego.mano import nueva_mano
-
+from logica_juego.constants import TOTAL_CARDS, pick_random_card
 
 totalErrors = 0
 
@@ -86,14 +86,8 @@ def main():
     # print("Total errors: ", totalErrors)
 
 if __name__ == "__main__":
-    lob = Lobby()
-    lob.game.board.place_town(color=Color.RED, position=0x52)
-    lob.game.board.place_road(color=Color.RED, position=0x52)
-    lob.game.board.place_road(color=Color.RED, position=0x62)
+    card = pick_random_card()
 
-    legal = lob.game.board.legal_building_nodes_second_phase(color=Color.RED)
-    print(f"LEGAL NODES {[hex(coord) for coord in legal]}")
+    print("CARD: ", card)
 
-    legal_edges = lob.game.board.legal_building_edges(Color.RED)
-    print(f"LEGAL EDGES {[hex(coord) for coord in legal_edges]}")
-    lob.game.board.svg("diavoliko.svg")
+

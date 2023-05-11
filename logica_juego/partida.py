@@ -6,7 +6,7 @@ from .jugador import Jugador
 from logica_juego.board import Board, NodeDirection
 # import errores
 
-from .constants import Errors, Color, Cards, Building, Resource, TurnPhase
+from .constants import Errors, Color, Cards, Building, Resource, TurnPhase, pick_random_card
 
 ## COSAS DE LOS TURNOS ##
 #counter = 0
@@ -466,7 +466,7 @@ class Partida:
         elif tipo_construccion == Building.DEV_CARD:
             if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([0,0,1,1,1]): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para comprar la carta de desarrollo")
-            carta_robada = Cards.pick_random_card()
+            carta_robada = pick_random_card()
             self.jugadores[self.i_jugador(id_jugador)].add_carta_desarrollo(carta_robada)
 
     #!#########################################################################
