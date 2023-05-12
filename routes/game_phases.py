@@ -537,6 +537,7 @@ async def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme
         lob.game.comprar_y_construir(user.id, Building.DEV_CARD, None)
         return {"detail": "Development card bought successfully"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=403, detail=str(e))
 
 #buy and build road
@@ -620,6 +621,7 @@ async def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(
         lob.game.comprar_y_construir(user.id, Building.VILLAGE, coord)
         return {"detail": "Village bought and built successfully"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=403, detail=str(e))
     
 #buy and build city
@@ -661,6 +663,7 @@ async def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oau
         lob.game.comprar_y_construir(user.id, Building.CITY, coord)
         return {"detail": "City bought and built successfully"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=403, detail=str(e))
     
 ####################################################################################### 
