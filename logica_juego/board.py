@@ -930,6 +930,7 @@ class Board(Hexgrid):
       else: return False
     except Exception as e:
       print(e)
+      print("ñawoijfoiñawjfdñoiajfoñiajwofñigjaoñigwjoiñwgjoñaiwgjoiñawjgñoijawoliñgjaowiñg")
       return False
     
   def move_thief(self, position: int) -> bool:

@@ -440,8 +440,8 @@ class Partida:
             if not self.jugadores[self.i_jugador(id_jugador)].restar_recursos([1,1,0,0,0]): # Si no tiene los recursos suficientes
                 raise Exception("Error: No tienes los recursos suficientes para construir la carretera")
 
-            if self.board.place_road(player.color, coord):
-                self.check_bono_caballeros(self.jugadores[self.i_jugador(id_jugador)])
+            if self.board.place_road(color=player.color, position=coord):
+                self.check_bono_carreteras(self.jugadores[self.i_jugador(id_jugador)])
             else:
                 raise Exception("Error: No se ha podido construir la carretera")
 
