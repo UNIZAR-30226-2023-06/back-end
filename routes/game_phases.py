@@ -578,6 +578,7 @@ async def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oau
         lob.game.comprar_y_construir(user.id, Building.ROAD, coord)
         return {"detail": "Road bought and built successfully"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=403, detail=str(e))
     
 #buy and build village
