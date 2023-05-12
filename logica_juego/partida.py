@@ -532,7 +532,7 @@ class Partida:
                 jugador.otorgar_bono_caballeros()
         
         else:
-            num_caballeros_jugador = jugador.jugador.get_caballeros_usados()
+            num_caballeros_jugador = jugador.get_caballeros_usados()
             num_caballeros_poseedor_bono = self.jugadores[indice_poseedor_bono_actual].get_caballeros_usados()
             
             if num_caballeros_jugador > num_caballeros_poseedor_bono:
