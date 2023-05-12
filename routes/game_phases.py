@@ -191,6 +191,7 @@ async def move_thief(lobby_id: int, stolen_player_id: int, new_thief_position_ti
         lob.game.mover_ladron(new_thief_position_tile_coord, user.id, stolen_player_id)
         return {"message": "Thief moved successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
 ####################################################################################### 
 
