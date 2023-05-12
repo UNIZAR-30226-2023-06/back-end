@@ -925,12 +925,16 @@ class Board(Hexgrid):
   def place_road(self, color: Color, position: int) -> bool:
     try:
       if position in self.legal_building_edges(color):
+        print("POSICION _-_------->",position)
+        print("LEGAL EDGES _-_------->",self.legal_building_edges(color))
+        print("COLOR _-_------->",color)
         self.set_edge_by_coord(color, position)
         return True
-      else: return False
+      else: 
+        print("TREMENDA CAGADA")
+        return False
     except Exception as e:
       print(e)
-      print("ñawoijfoiñawjfdñoiajfoñiajwofñigjaoñigwjoiñwgjoñaiwgjoiñawjgñoijawoliñgjaowiñg")
       return False
     
   def move_thief(self, position: int) -> bool:
