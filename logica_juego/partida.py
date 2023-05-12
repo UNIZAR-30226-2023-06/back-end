@@ -145,10 +145,6 @@ class Partida:
     # El jugador 1 roba un recurso aleatorio al jugador 2
     #TODO: check whether the robbed player has enough resources
     def robar_recursos(self, id_jugador1: int, id_jugador2: int):
-        if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
-            raise Exception("No se pueden robar recursos en esta fase del turno")
-        if self.jugadores[self.turno].get_id() != id_jugador1:
-            raise Exception("No es el turno del jugador")
 
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
