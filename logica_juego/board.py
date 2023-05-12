@@ -896,11 +896,17 @@ class Board(Hexgrid):
 
   def place_town(self, color: Color, position: int) -> bool:
     try:
+      print("POSICION _-_------->",position)
+      print("COLOR _-_------->",color)
+      print("LEGAL NODES _-_------->",self.legal_building_nodes(color))
+
       if position in self.legal_building_nodes_second_phase(color):
         self.set_node_building_by_coord(position, Building.VILLAGE)
         self.set_node_color_by_coord(position, color)
         return True
-      else: return False
+      else: 
+        print("TREMENDA CAGADA CASA")
+        return False
     except Exception:
       return False
     
