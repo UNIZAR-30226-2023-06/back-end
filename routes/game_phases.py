@@ -304,7 +304,7 @@ async def trade_with_bank(lobby_id: int, resource_type: str, amount: int, reques
                   coord es la coordenada de la casilla a la que se quiere mover el ladron \
                   token -> token de autenticacion \
                   lobby_id -> id del lobby en el que se esta jugando")
-async def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: str, token: str = Depends(oauth2_scheme)): 
+async def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_position_tile_coord: int, token: str = Depends(oauth2_scheme)): 
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -381,7 +381,7 @@ async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token:
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenada de casilla en la que construir la carretera")
-async def use_road_card(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def use_road_card(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -546,7 +546,7 @@ async def buy_development_card(lobby_id: int, token: str = Depends(oauth2_scheme
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas de la carretera")
-async def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_road(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -588,7 +588,7 @@ async def buy_and_build_road(lobby_id: int, coord: str, token: str = Depends(oau
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas del pueblo")
-async def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_village(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
@@ -630,7 +630,7 @@ async def buy_and_build_village(lobby_id: int, coord: str, token: str = Depends(
             Args: token -> token de autenticacion \
                     lobby_id -> id del lobby en el que se esta jugando \
                     coord -> coordenadas de la ciudad")
-async def buy_and_build_city(lobby_id: int, coord: str, token: str = Depends(oauth2_scheme)):
+async def buy_and_build_city(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
