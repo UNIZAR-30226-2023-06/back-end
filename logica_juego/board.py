@@ -924,10 +924,10 @@ class Board(Hexgrid):
 
   def place_road(self, color: Color, position: int) -> bool:
     try:
+      print("POSICION _-_------->",position)
+      print("LEGAL EDGES _-_------->",self.legal_building_edges(color))
+      print("COLOR _-_------->",color)
       if position in self.legal_building_edges(color):
-        print("POSICION _-_------->",position)
-        print("LEGAL EDGES _-_------->",self.legal_building_edges(color))
-        print("COLOR _-_------->",color)
         self.set_edge_by_coord(color, position)
         return True
       else: 
