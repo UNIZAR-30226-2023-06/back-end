@@ -59,8 +59,8 @@ class Mano:
         elif tipo_recurso == Resource.WHEAT:
             self.trigo += cantidad
     
-    def add_carta_desarrollo(self, tipo_carta):
-        self.cartas_desarrollo.append(tipo_carta)
+    def add_carta_desarrollo(self, tipo_carta:Cards):
+        self.cartas_desarrollo[tipo_carta.value] += 1
     
     def sub_carta_desarrollo(self, tipo_carta):
         self.cartas_desarrollo.remove(tipo_carta)
