@@ -767,6 +767,8 @@ async def get_game_state(lobby_id: int):
         "player_2" : player2,
         "player_3" : player3,
 
+        "chat" : lob.game.get_messages(),
+
         "die_1" : last_die1,
         "die_2" : last_die2,
 
