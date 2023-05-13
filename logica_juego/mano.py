@@ -89,13 +89,15 @@ class Mano:
     def extraer_recurso_aleatorio(self):
         index = random.randint(0, 4)
         recursos = self.num_total_recursos()
+        recurso_robado = [0,0,0,0,0]
         i = 0
         while recursos[index] == 0 and i < 5:
             index = (index + 1) % 5
             i += 1
         recursos[index] -= 1
+        recurso_robado[index] += 1
 
-        return recursos
+        return recurso_robado
 
 def nueva_mano():
     mano = Mano([0,0,0,0,0,0,0,0,0],0,0,0,0,0)
