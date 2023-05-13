@@ -97,6 +97,12 @@ class Mano:
         recursos[index] -= 1
         recurso_robado[index] += 1
 
+        self.arcilla = recursos[0]
+        self.madera = recursos[1]
+        self.oveja = recursos[2]
+        self.piedra = recursos[3]
+        self.trigo = recursos[4]
+
         return recurso_robado
 
 def nueva_mano():
