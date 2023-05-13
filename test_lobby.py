@@ -105,6 +105,10 @@ if __name__ == "__main__":
     lob.game.jugadores.append(player3)
     lob.game.jugadores.append(player4)
 
-    print("NODES AROUND TILE", lob.game.board.nodes_around_tile(0x53))
+    lob.game.send_message(message="Hola", id_jugador=2880)
+    lob.game.send_message(message="Hello there", id_jugador=7365)
+    lob.game.send_message(message="General Kenobi", id_jugador=7771)
+
+    print(lob.game.get_messages())
 
     lob.game.board.svg("diavoliko.svg")

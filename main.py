@@ -16,6 +16,7 @@ from routes.user_settings import router as user_settings_router
 from routes.game_lobby import router as game_lobby_router
 from routes.game_phases import router as game_phases_router
 from routes.debug_functions import router as debug_functions_router
+from routes.game_chat import router as game_chat_router
 from local_settings import JWT_SECRET
 from sqlalchemy.orm import sessionmaker
 
@@ -55,6 +56,7 @@ app.include_router(friends_router)
 app.include_router(game_lobby_router)
 app.include_router(game_phases_router)
 app.include_router(debug_functions_router)
+app.include_router(game_chat_router)
 
 thread = threading.Thread(target=init_buscador)
 thread.start()

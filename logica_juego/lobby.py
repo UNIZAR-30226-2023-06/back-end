@@ -6,6 +6,7 @@ from logica_juego.partida import Partida
 from .jugador import Color, Jugador
 from .board import Board
 from .mano import Mano, nueva_mano
+from logica_juego.chat import Chat, Message
 
 class Lobby:
     id = None

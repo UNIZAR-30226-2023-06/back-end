@@ -1,5 +1,7 @@
 import random
 import hexgrid
+
+from models.user import User
 # import cartas
 # import construcciones
 from .jugador import Jugador
@@ -7,6 +9,7 @@ from logica_juego.board import Board, NodeDirection
 # import errores
 
 from .constants import Errors, Color, Cards, Building, Resource, TurnPhase, pick_random_card
+from logica_juego.chat import Chat, Message
 
 ## COSAS DE LOS TURNOS ##
 #counter = 0
@@ -22,6 +25,7 @@ class Partida:
     jugadores_seleccionados: int = 0
     hay_ladron: bool = True
     board: Board = Board()
+    chat: Chat = Chat()
 
     initial_buildings_done: bool = False
 
@@ -66,6 +70,7 @@ class Partida:
             self.board = tablero
         else:
             self.board = Board() # TODO lo del ladron
+        self.chat = Chat()
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
@@ -618,3 +623,22 @@ class Partida:
             return False
         self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
         return True
+    
+
+   ##########################################################################
+
+    ####################### FUNCIONES SOBRE EL CHAT ############################
+
+    def send_message(self, id_jugador : int, message : str):
+        from routes.auth import session
+        """
+        Función que permite a un jugador enviar un mensaje al chat
+        """
+        user = session.query(User).filter(User.id == id_jugador).first()
+        self.chat.add_message(user, message)
+
+    def get_messages(self):
+        """
+        Función que devuelve los mensajes del chat
+        """
+        return self.chat.get_messages()
