@@ -59,11 +59,14 @@ class Mano:
         elif tipo_recurso == Resource.WHEAT:
             self.trigo += cantidad
     
-    def add_carta_desarrollo(self, tipo_carta:Cards):
+    def add_carta_desarrollo(self, tipo_carta: Cards):
         self.cartas_desarrollo[tipo_carta.value] += 1
     
-    def sub_carta_desarrollo(self, tipo_carta):
-        self.cartas_desarrollo.remove(tipo_carta)
+    def sub_carta_desarrollo(self, tipo_carta: Cards):
+        if self.cartas_desarrollo[tipo_carta.value] > 0:
+            self.cartas_desarrollo[tipo_carta.value] -= 1
+        else:
+            raise Exception("No tiene cartas de desarrollo de ese tipo")
 
     def tiene_carta_desarrollo(self, tipo_carta : Cards):
         return tipo_carta in self.cartas_desarrollo

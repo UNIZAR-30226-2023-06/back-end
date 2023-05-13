@@ -329,6 +329,36 @@ async def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_positi
         return {"detail": "Knight card used successfully"}
     except Exception as e:
         raise HTTPException(status_code=403, detail=str(e))
+    
+@router.get("/game_phases/substract_knight_card", tags=["game_phases: building"])
+async def substract_knight_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    try:
+        lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.KNIGHT)
+        lob.game.jugadores[lob.game.turno].caballeros_usados += 1
+        lob.game.check_bono_caballeros()
+        return {"detail": "Knight card substracted successfully"}
+    except Exception as e:
+        print("ERROR: ", e)
+        raise HTTPException(status_code=403, detail=str(e))
 
 #use an invention progress card
 @router.get("/game_phases/use_invention_card", tags=["game_phases: building"],
