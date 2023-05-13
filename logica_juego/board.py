@@ -1096,3 +1096,15 @@ class Board(Hexgrid):
           #resources.append(self.tiles[t][1])
 
     return resources     
+  
+
+  def nodes_around_tile(self, tileCoord):
+    nodes_around_tile = []
+    possible_directions : NodeDirection = {NodeDirection.N, NodeDirection.NE, NodeDirection.SE, NodeDirection.S, NodeDirection.SW, NodeDirection.NW}
+    
+    for direction in possible_directions:
+        tile_id = self.tile_coord2id(tileCoord)
+        node = self.get_node_by_id(tile_id, direction)
+        if node != (None, None):
+            nodes_around_tile.append(node)
+    return nodes_around_tile

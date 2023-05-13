@@ -90,13 +90,21 @@ if __name__ == "__main__":
     # lob.game.board.set_node_building_by_coord(0x52, Building.VILLAGE)
     # lob.game.board.set_node_color_by_coord(0x52, Color.RED)
     aaa = lob.game.board.place_townV2(color=Color.RED, position=0x52)
+    lob.game.board.place_townV2(color=Color.BLUE, position=0x54)
     print("aaa ",aaa)
     lob.game.board.place_road(color=Color.RED, position=0x52)
-    # lob.game.board.place_road(color=Color.RED, position=0x62)
 
-    # legal = lob.game.board.legal_building_nodes_second_phase(color=Color.RED)
-    # print(f"LEGAL NODES {[hex(coord) for coord in legal]}")
 
-    # legal_edges = lob.game.board.legal_building_edges(Color.RED)
-    # print(f"LEGAL EDGES {[hex(coord) for coord in legal_edges]}")
+    player1 = Jugador(2880, 500, 0, Color.RED, nueva_mano(), 0, False, False, True, True)
+    player2 = Jugador(7365, 500, 0, Color.BLUE, nueva_mano(), 0, False, False, True, True)
+    player3 = Jugador(7771, 500, 0, Color.GREEN, nueva_mano(), 0, False, False, True, True)
+    player4 = Jugador(7543, 500, 0, Color.YELLOW, nueva_mano(), 0, False, False, True, True)
+
+    lob.game.jugadores.append(player1)
+    lob.game.jugadores.append(player2)
+    lob.game.jugadores.append(player3)
+    lob.game.jugadores.append(player4)
+
+    print("NODES AROUND TILE", lob.game.board.nodes_around_tile(0x53))
+
     lob.game.board.svg("diavoliko.svg")

@@ -541,3 +541,20 @@ async def create_Test_Lobby():
     Lobbies.append(LobbyTest)
 
     return LobbyTest
+
+
+#get nodes around tile
+@router.get("/get-nodes-around-tile", tags=["Game"])
+async def get_Nodes_Around_Tile(lobby_id: int, tileCoord: int):
+    lobby : Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lobby = l
+        
+    if lobby is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lobby.game is None:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    return {"nodes": lobby.game.board.nodes_around_tile(tileCoord), "detail": "Nodes around tile returned",}

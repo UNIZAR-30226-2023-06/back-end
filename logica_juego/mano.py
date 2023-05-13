@@ -82,42 +82,20 @@ class Mano:
             self.trigo -= cantidad
     
     def num_total_recursos(self):
-        return self.arcilla + self.piedra + self.madera + self.trigo + self.oveja
+        return [self.arcilla, self.madera, self.oveja, self.piedra, self.trigo]
 
     # Se extrae un recurso aleatorio de entre todos los que hay en la mano (esto
     # se utiliza con el tema del ladrón)
     def extraer_recurso_aleatorio(self):
-        a = random.randint(1, self.num_total_recursos())
+        index = random.randint(0, 4)
+        recursos = self.num_total_recursos()
+        i = 0
+        while recursos[index] == 0 and i < 5:
+            index = (index + 1) % 5
+            i += 1
+        recursos[index] -= 1
 
-        for i in range(self.arcilla):
-            a -= 1
-            if a == 0:
-                self.arcilla -= 1
-                return {1,0,0,0,0}
-        
-        for i in range(self.madera):
-            a -= 1
-            if a == 0:
-                self.madera -= 1
-                return {0,1,0,0,0}
-        
-        for i in range(self.oveja):
-            a -= 1
-            if a == 0:
-                self.oveja -= 1
-                return {0,0,1,0,0}
-        
-        for i in range(self.piedra):
-            a -= 1
-            if a == 0:
-                self.piedra -= 1
-                return {0,0,0,1,0}
-        
-        for i in range(self.trigo):
-            a -= 1
-            if a == 0:
-                self.trigo -= 1
-                return {0,0,0,0,1}
+        return recursos
 
 def nueva_mano():
     mano = Mano([0,0,0,0,0,0,0,0,0],0,0,0,0,0)

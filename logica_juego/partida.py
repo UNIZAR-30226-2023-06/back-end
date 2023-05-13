@@ -361,22 +361,28 @@ class Partida:
 
         nodes_around_thief = []
         possible_directions : NodeDirection = {NodeDirection.N, NodeDirection.NE, NodeDirection.SE, NodeDirection.S, NodeDirection.SW, NodeDirection.NW}
+        
         for direction in possible_directions:
             tile_id = self.board.tile_coord2id(tileCoord)
             node = self.board.get_node_by_id(tile_id, direction)
-            if node != None:
+            if node != (None, None):
                 nodes_around_thief.append(node)
         possible_nodes = []
         for node in nodes_around_thief:
-            if self.board.nodes[node] == (jugador_robado.color, Building.VILLAGE) or self.board.nodes[node] == (jugador_robado.color, Building.CITY):
+            if node == (jugador_robado.color, Building.VILLAGE) or node == (jugador_robado.color, Building.CITY):
                 possible_nodes.append(node)
         if len(possible_nodes) == 0:
+            if tileCoord in hexgrid.legal_tile_coords():
+                self.board.move_thief(tileCoord)
+            else:
+                raise Exception("Error: La coordenada del ladrón no es válida")
             raise Exception("Error: No hay ningún edificio del jugador robado en los nodos adyacentes al ladrón")
-        if tileCoord in hexgrid.legal_node_coords():
-            self.board.thief = tileCoord
-            self.robar_recursos(id_jugador, id_jugador_robado)
         else:
-            raise Exception("Error: La coordenada del ladrón no es válida")
+            if tileCoord in hexgrid.legal_tile_coords():
+                self.board.move_thief(tileCoord)
+                self.robar_recursos(id_jugador, id_jugador_robado)
+            else:
+                raise Exception("Error: La coordenada del ladrón no es válida")
 
     # especificamos si queremos que haya un ladrón en la partida
     def set_ladron(self, hay_ladron:bool):
