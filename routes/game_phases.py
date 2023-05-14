@@ -576,7 +576,7 @@ async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token:
                   lobby_id -> id del lobby en el que se esta jugando \
                     DESPUÉS DE ESTA FUNCIÓN ES TRABAJO DEL FRONT END CONSTRUIR LA CARRETERA CON \
                     LA FUNCIÓN DE BUILD ROAD, NO BUY AND BUILD ROAD!")
-async def substract_road_card(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
+async def substract_road_card(lobby_id: int, token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
