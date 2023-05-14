@@ -975,6 +975,8 @@ async def get_game_state(lobby_id: int):
         "die_1" : last_die1,
         "die_2" : last_die2,
 
+        "winner" : lob.game.ganador if lob.game.ganador is not -1 else None,
+
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
         "player_turn" : lob.game.jugadores[lob.game.turno].id,
         "player_turn_name": session.query(User).filter(User.id == lob.game.jugadores[lob.game.turno].id).first().username,
@@ -1075,6 +1077,84 @@ async def set_points_to_win(Lobyb_id: int, points: int):
     lob.game.puntos_victoria_ganar = points
 
     return {"detail": "Points to win set successfully"}
+
+
+#set the time per turn
+@router.post("/set-time-per-turn", tags=["Lobby"])
+async def set_time_per_turn(Lobyb_id: int, time: int):
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lob.game_has_started:
+        raise HTTPException(status_code=403, detail="Game has already started")
+    
+    lob.game.tiempo_turno = time
+
+    return {"detail": "Time per turn set successfully"}
+
+#set the maximum number of players
+@router.post("/set-max-players", tags=["Lobby"])
+async def set_max_players(Lobyb_id: int, max_players: int):
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lob.game_has_started:
+        raise HTTPException(status_code=403, detail="Game has already started")
+    
+    if max_players < 2 or max_players > 4:
+        raise HTTPException(status_code=403, detail="Max players must be between 2 and 4")
+
+    lob.max_Players = max_players
+
+    return {"detail": "Max players set successfully"}
+
+#set the game board to one of the default boards
+@router.post("/set-board", tags=["Lobby"])
+async def set_board(Lobyb_id: int, board: str):
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lob.game_has_started:
+        raise HTTPException(status_code=403, detail="Game has already started")
+    
+    if board not in ["default", "default2", "random"]:
+        raise HTTPException(status_code=403, detail="Board must be 'default' or 'random'")
+    
+    boards = {
+        "default" : ( [Resource.CLAY, ]  + 
+                             [Resource.WOOD, ] + [Resource.WOOD, ] + [Resource.WOOD, ] + [Resource.WOOD, ] +
+                             [Resource.WHEAT, ] + [Resource.WHEAT, ]+ [Resource.WHEAT, ]+ [Resource.WHEAT, ]+
+                             [Resource.SHEEP, ] + [Resource.SHEEP, ] + [Resource.SHEEP, ] + [Resource.SHEEP, ] + 
+                             [Resource.STONE, ] + [Resource.STONE, ] + [Resource.STONE, ]  + 
+                             [Resource.DESERT, ] + [Resource.CLAY, ] + [Resource.CLAY, ]),
+        "default2": ( [Resource.WOOD, ]  + 
+                             [Resource.CLAY, ] + [Resource.WOOD, ] + [Resource.SHEEP, ] + [Resource.WHEAT, ] +
+                             [Resource.SHEEP, ] + [Resource.DESERT, ]+ [Resource.STONE, ]+ [Resource.STONE, ]+
+                             [Resource.WHEAT, ] + [Resource.CLAY, ] + [Resource.WOOD, ] + [Resource.CLAY, ] + 
+                             [Resource.STONE, ] + [Resource.WHEAT, ] + [Resource.SHEEP, ]  + 
+                             [Resource.WOOD, ] + [Resource.SHEEP, ] + [Resource.WHEAT, ]),
+        "random" : None
+    }
+
+    lob.game.board = Board(boards[board])
+
+
+    return {"detail": "Board set successfully"}
 
 #######################################################################################
 

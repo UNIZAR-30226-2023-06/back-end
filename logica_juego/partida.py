@@ -75,6 +75,7 @@ class Partida:
         self.chat = Chat()
         self.trades = []
         self.puntos_victoria_ganar = 10
+        self.ganador = -1
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
@@ -321,6 +322,9 @@ class Partida:
 
         # Añadimos un punto de victoria al jugador
         jugador.add_puntos_victoria(1)
+        ganador = self.check_ganador()
+        if ganador != -1:
+            self.ganador = ganador
 
     # El jugador con el id pasado cambia X cantidad de sus recursos_1 por una
     # unidad del recurso_2
@@ -462,6 +466,9 @@ class Partida:
 
             if self.board.place_town(player.color, coord):
                 self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+                ganador = self.check_ganador()
+                if ganador != -1:
+                    self.ganador = ganador
             else:
                 raise Exception("Error: No se ha podido construir el poblado")
 
@@ -471,6 +478,9 @@ class Partida:
 
             if self.board.upgrade_town(coord):
                 self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+                ganador = self.check_ganador()
+                if ganador != -1:
+                    self.ganador = ganador
             else:
                 raise Exception("Error: No se ha podido construir la ciudad")
 
@@ -607,6 +617,9 @@ class Partida:
         if not self.board.place_townV2(jugador.color, node_coord):
             return False
         self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+        ganador = self.check_ganador()
+        if ganador != -1:
+            self.ganador = ganador
         return True
 
     def place_road(self, edge_coord : int, id_jugador : int) -> bool:
@@ -626,6 +639,9 @@ class Partida:
         if not self.board.upgrade_town(jugador.color, node_coord):
             return False
         self.jugadores[self.i_jugador(id_jugador)].add_puntos_victoria()
+        ganador = self.check_ganador()
+        if ganador != -1:
+            self.ganador = ganador
         return True
     
 
