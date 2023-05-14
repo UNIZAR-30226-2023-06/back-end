@@ -160,6 +160,7 @@ async def resource_production(lobby_id: int):
         last_die2 = die2
         return {"die1": die1, "die2": die2}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
 
 #move the robber
@@ -408,6 +409,7 @@ async def trade_with_player(lobby_id: int, player2_id: int, wood_amount_p1: int,
         lob.game.intercambiar_recursos(user.id, recursos_p1, player2_id, recursos_p2)
         return {"message": "Trade with player successful"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
 
 # trade with bank
@@ -489,6 +491,7 @@ async def use_knight_card(lobby_id: int, stolen_player_id: int, new_thief_positi
         lob.game.usar_carta_caballero(user.id, stolen_player_id, new_thief_position_tile_coord)
         return {"detail": "Knight card used successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
     
 @router.get("/game_phases/substract_knight_card", tags=["game_phases: building"])
@@ -563,6 +566,7 @@ async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token:
         lob.game.usar_carta_invention_progress(user.id, res1, res2)
         return {"detail": "Invention card used successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
 
 
@@ -605,6 +609,7 @@ async def use_road_card(lobby_id: int, coord: int, token: str = Depends(oauth2_s
         lob.game.usar_carta_road_progress(user.id, coord)
         return {"detail": "Road built successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
                     
 
@@ -648,6 +653,7 @@ async def use_monopoly_card(lobby_id: int, resource: str, token: str = Depends(o
         lob.game.usar_carta_monopoly_progress(user.id, res)
         return {"detail": "Monopoly card used successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
     
 #use victory point progress card
