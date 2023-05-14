@@ -688,6 +688,7 @@ async def use_victory_point_card(lobby_id: int, token: str = Depends(oauth2_sche
         lob.game.usar_carta_victory_progress(user.id)
         return {"detail": "Victory point card used successfully"}
     except Exception as e:
+        print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
     
 #buy development card

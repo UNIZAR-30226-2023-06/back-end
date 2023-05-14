@@ -216,7 +216,7 @@ class Partida:
         
 
     def usar_carta_caballero(self, id_jugador:int, id_jugador_robado: int, coord: int):
-        if self.fase_turno != TurnPhase.RESOURCE_PRODUCTION:
+        if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se pueden usar cartas de caballero en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
@@ -238,7 +238,7 @@ class Partida:
             raise e
 
     def usar_carta_invention_progress(self, id_jugador: int, recurso1: Resource, recurso2: Resource):
-        if self.fase_turno != TurnPhase.BUILDING:
+        if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
@@ -257,7 +257,7 @@ class Partida:
         jugador.mano.add_recurso(recurso2, 1)
 
     def usar_carta_road_progress(self, id_jugador: int, coords: int):
-        if self.fase_turno != TurnPhase.BUILDING:
+        if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
@@ -276,7 +276,7 @@ class Partida:
             raise Exception("No se puede construir la carretera")
         
     def usar_carta_monopoly_progress(self, id_jugador: int, tipo_recurso: Resource):
-        if self.fase_turno != TurnPhase.BUILDING:
+        if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
@@ -296,7 +296,7 @@ class Partida:
                 jugador.mano.add_recurso(tipo_recurso, cartas_robadas)
         
     def usar_carta_victory_progress(self, id_jugador: int):
-        if self.fase_turno != TurnPhase.BUILDING:
+        if self.fase_turno != TurnPhase.TRADING:
             raise Exception("No se puede usar una carta de desarrollo en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador:
             raise Exception("No es el turno del jugador")
