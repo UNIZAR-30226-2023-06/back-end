@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-# from sqlalchemy_utils import database_exists
+# from sqlalchemy_utils import database_exists 
 from local_settings import postgresql as settings
 
 def get_engine(user, passwd, host, port, db):
