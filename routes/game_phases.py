@@ -1025,3 +1025,18 @@ async def add_resources(player_id: int, wood: int, clay: int, sheep: int, stone:
                 l.game.jugadores[l.game.turno].sumar_recursos(resources)
                 return {"detail": "Resources added successfully"}
     return {"detail": "Player not found"}
+
+#adds 99 resources of each to every player
+@router.post("/add-resources-to-all", tags=["Debug"])
+async def add_resources_to_all(lobby_id: int):
+    lob : Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        return {"detail": "Lobby not found"}
+    
+    for p in lob.game.jugadores:
+        p.sumar_recursos([99,99,99,99,99])
+    return {"detail": "Resources added successfully"}
