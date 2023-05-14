@@ -193,6 +193,50 @@ async def move_thief(lobby_id: int, stolen_player_id: int, new_thief_position_ti
     except Exception as e:
         print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
+    
+
+    #steal half of the resources of a player
+@router.get("/game_phases/steal_half_of_player_resources", tags=["game_phases: resource_production"],
+            description="Funcion que roba la mitad de los recursos de un jugador")
+async def steal_resources(lobby_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    try:
+        player_resources = lob.game.jugadores[lob.game.turno].mano.num_total_recursos()
+        player_num_resources = sum(player_resources)
+
+        stolen_resources = [0,0,0,0,0]
+        for i in range(player_num_resources//2):
+            aux = lob.game.jugadores[lob.game.i_jugador(user_id)].robar_recurso()
+            for j in range(len(aux)):
+                stolen_resources[j] += aux[j]
+        return {"stolen_clay": stolen_resources[0],
+                "stolen_wood": stolen_resources[1],
+                "stolen_sheep": stolen_resources[2],
+                "stolen_stone": stolen_resources[3],
+                "stolen_wheat": stolen_resources[4],
+                "detail": "Resources stolen successfully"}
+
+    except Exception as e:
+        print("ERROR: ", e)
+        raise HTTPException(status_code=403, detail=str(e))
 ####################################################################################### 
 
 

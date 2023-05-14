@@ -515,8 +515,8 @@ class Partida:
             num_carreteras_poseedor_bono = self.board.longest_path(self.jugadores[indice_poseedor_bono_actual].color)
             
             if num_carreteras_jugador > num_carreteras_poseedor_bono:
-                jugador.otorgar_bono_carreteras()
                 self.jugadores[indice_poseedor_bono_actual].quitar_bono_carreteras()
+                jugador.otorgar_bono_carreteras()
     
     # Checkea si el jugador indicado puede obtener el bono por carreteras
     def check_bono_caballeros(self, jugador:Jugador):
