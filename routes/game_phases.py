@@ -354,7 +354,7 @@ async def substract_knight_card(lobby_id: int, token: str = Depends(oauth2_schem
     try:
         lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.KNIGHT)
         lob.game.jugadores[lob.game.turno].caballeros_usados += 1
-        lob.game.check_bono_caballeros()
+        lob.game.check_bono_caballeros(lob.game.jugadores[lob.game.turno])
         return {"detail": "Knight card substracted successfully"}
     except Exception as e:
         print("ERROR: ", e)

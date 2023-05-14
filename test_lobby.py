@@ -105,10 +105,24 @@ if __name__ == "__main__":
     lob.game.jugadores.append(player3)
     lob.game.jugadores.append(player4)
 
-    lob.game.send_message(message="Hola", id_jugador=2880)
-    lob.game.send_message(message="Hello there", id_jugador=7365)
-    lob.game.send_message(message="General Kenobi", id_jugador=7771)
+    lob.game.jugadores[0].mano.cartas_desarrollo[0] = 7
+    lob.game.jugadores[1].mano.cartas_desarrollo[0] = 7
 
-    print(lob.game.get_messages())
+    for i in range(0, 3):
+        lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.KNIGHT)
+        lob.game.jugadores[lob.game.turno].caballeros_usados += 1
+        lob.game.check_bono_caballeros(lob.game.jugadores[lob.game.turno])
+        print("caballeros usados ", lob.game.jugadores[lob.game.turno].caballeros_usados)
+        print("tiene bono caballeros ", lob.game.jugadores[lob.game.turno].tiene_bono_caballeros)
+
+    for i in range(0, 4):
+        lob.game.jugadores[1].sub_carta_desarrollo(Cards.KNIGHT)
+        lob.game.jugadores[1].caballeros_usados += 1
+        lob.game.check_bono_caballeros(lob.game.jugadores[1])
+        print("caballeros usados ", lob.game.jugadores[1].caballeros_usados)
+        print("tiene bono caballeros ", lob.game.jugadores[1].tiene_bono_caballeros)
+
+    print("tiene bono caballeros ", lob.game.jugadores[0].tiene_bono_caballeros)
+    
 
     lob.game.board.svg("diavoliko.svg")
