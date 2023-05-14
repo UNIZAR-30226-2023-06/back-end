@@ -69,7 +69,7 @@ class Mano:
             raise Exception("No tiene cartas de desarrollo de ese tipo")
 
     def tiene_carta_desarrollo(self, tipo_carta : Cards):
-        return tipo_carta in self.cartas_desarrollo
+        return self.cartas_desarrollo[tipo_carta.value] > 0
     
     # sub para cada atributo
     def sub_recurso(self, tipo_recurso, cantidad=1):
