@@ -569,6 +569,40 @@ async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token:
         print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
 
+#substract road progress card
+@router.get("/game_phases/substract_road_progress_card", tags=["game_phases: building"],
+            description="Funcion que permite al jugador usar una carta de camino \
+            Args: token -> token de autenticacion \
+                  lobby_id -> id del lobby en el que se esta jugando \
+                    DESPUÉS DE ESTA FUNCIÓN ES TRABAJO DEL FRONT END CONSTRUIR LA CARRETERA CON \
+                    LA FUNCIÓN DE BUILD ROAD, NO BUY AND BUILD ROAD!")
+async def substract_road_card(lobby_id: int, coord: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    try:
+        lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.ROAD_PROGRESS)
+        return {"detail": "Road built successfully"}
+    except Exception as e:
+        print("ERROR: ", e)
+        raise HTTPException(status_code=403, detail=str(e))
 
 #use road progress card
 @router.get("/game_phases/use_road_progress_card", tags=["game_phases: building"],
@@ -969,6 +1003,10 @@ async def get_last_die_roll(lobby_id: int):
 
     return {"die_1" : last_die1, "die_2" : last_die2}
 
+
+#######################################################################################
+
+####################################### GAME RULES #########################################
 #route for enabling the thief
 @router.post("/enable-thief", tags=["Lobby"])
 async def enable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
@@ -1018,6 +1056,33 @@ async def disable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
 
     lob.game.hay_ladron = False
     return {"detail": "Thief disabled"}
+
+
+#set the necessary points to win
+@router.post("/set-points-to-win", tags=["Lobby"])
+async def set_points_to_win(Lobyb_id: int, points: int):
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == Lobyb_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    if lob.game_has_started:
+        raise HTTPException(status_code=403, detail="Game has already started")
+    
+    lob.game.puntos_victoria_ganar = points
+
+    return {"detail": "Points to win set successfully"}
+
+#######################################################################################
+
+
+
+
+
+#!###################################### DEBUG #########################################
 
 #add resources to a player
 @router.post("/add-resources", tags=["Debug"])

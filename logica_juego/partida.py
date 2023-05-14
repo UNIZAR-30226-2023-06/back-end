@@ -74,6 +74,7 @@ class Partida:
             self.board = Board() # TODO lo del ladron
         self.chat = Chat()
         self.trades = []
+        self.puntos_victoria_ganar = 10
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
@@ -487,7 +488,7 @@ class Partida:
     # devolverá -1
     def check_ganador(self) -> int:
         for j in self.jugadores:
-            if j.get_puntos_victoria() >= 10:
+            if j.get_puntos_victoria() >= self.puntos_victoria_ganar:
                 return j.get_id()
         return -1
     
