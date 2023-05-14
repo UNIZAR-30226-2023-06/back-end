@@ -60,3 +60,9 @@ class TurnPhase(Enum):
     BUILDING = 2 # Player can build a village, city, road or development card
     INITIAL_TURN1 = 3 # Player can build a village or road
     INITIAL_TURN2 = 4 # Player can build a village or road
+
+class TradeState(Enum):
+    NONE = 0
+    TRADE_OFFERED = 1
+    TRADE_ACCEPTED = 2
+    TRADE_REJECTED = 3

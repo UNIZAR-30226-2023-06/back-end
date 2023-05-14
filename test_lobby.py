@@ -2,7 +2,7 @@
 from logica_juego.board import Board, Hexgrid
 from logica_juego.lobby import Lobby
 from logica_juego.jugador import Jugador
-from logica_juego.constants import Color, Cards, Resource, Building
+from logica_juego.constants import Color, Cards, Resource, Building, TurnPhase
 from logica_juego.mano import Mano
 from hexgrid import *
 from logica_juego.board import NodeDirection, EdgeDirection
@@ -105,24 +105,22 @@ if __name__ == "__main__":
     lob.game.jugadores.append(player3)
     lob.game.jugadores.append(player4)
 
-    lob.game.jugadores[0].mano.cartas_desarrollo[0] = 7
-    lob.game.jugadores[1].mano.cartas_desarrollo[0] = 7
+    lob.game.jugadores[0].mano.arcilla = 5
+    lob.game.jugadores[1].mano.madera = 5
 
-    for i in range(0, 3):
-        lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.KNIGHT)
-        lob.game.jugadores[lob.game.turno].caballeros_usados += 1
-        lob.game.check_bono_caballeros(lob.game.jugadores[lob.game.turno])
-        print("caballeros usados ", lob.game.jugadores[lob.game.turno].caballeros_usados)
-        print("tiene bono caballeros ", lob.game.jugadores[lob.game.turno].tiene_bono_caballeros)
-
-    for i in range(0, 4):
-        lob.game.jugadores[1].sub_carta_desarrollo(Cards.KNIGHT)
-        lob.game.jugadores[1].caballeros_usados += 1
-        lob.game.check_bono_caballeros(lob.game.jugadores[1])
-        print("caballeros usados ", lob.game.jugadores[1].caballeros_usados)
-        print("tiene bono caballeros ", lob.game.jugadores[1].tiene_bono_caballeros)
-
-    print("tiene bono caballeros ", lob.game.jugadores[0].tiene_bono_caballeros)
+    lob.game.fase_turno = TurnPhase.TRADING
     
+    print("ANTES DE INTERCAMBIO")
+    print("Jugador 1: ", lob.game.jugadores[0].mano.arcilla," ", lob.game.jugadores[0].mano.madera)
+    print("Jugador 2: ", lob.game.jugadores[1].mano.arcilla," ", lob.game.jugadores[1].mano.madera)
+
+
+    lob.game.propose_trade(id_sender= 2880, resources_sender= [3,0,0,0,0], id_reciever= 7365, resources_reciever= [0,2,0,0,0])
+    lob.game.reject_trade(2880, 7365)
+
+    print("DESPUES DE INTERCAMBIO")
+    print("Jugador 1: ", lob.game.jugadores[0].mano.arcilla," ", lob.game.jugadores[0].mano.madera)
+    print("Jugador 2: ", lob.game.jugadores[1].mano.arcilla," ", lob.game.jugadores[1].mano.madera)
+
 
     lob.game.board.svg("diavoliko.svg")

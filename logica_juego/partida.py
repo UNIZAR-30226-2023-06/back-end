@@ -1,5 +1,6 @@
 import random
 import hexgrid
+from logica_juego.trade import Trade
 
 from models.user import User
 # import cartas
@@ -26,6 +27,7 @@ class Partida:
     hay_ladron: bool = True
     board: Board = Board()
     chat: Chat = Chat()
+    trades: list[Trade] = []
 
     initial_buildings_done: bool = False
 
@@ -71,6 +73,7 @@ class Partida:
         else:
             self.board = Board() # TODO lo del ladron
         self.chat = Chat()
+        self.trades = []
 
     ################ FUNCIONES SOBRE LA GESTIÓN DE JUGADORES ################
 
@@ -642,3 +645,41 @@ class Partida:
         Función que devuelve los mensajes del chat
         """
         return self.chat.get_messages()
+    ##########################################################################
+
+    ####################### FUNCIONES SOBRE LOS TRADES ############################
+    def propose_trade(self, id_sender: int, id_reciever: int, resources_sender: list[int], resources_reciever: list[int]):
+        """
+        Función que permite a un jugador enviar una propuesta de trade a otro jugador
+        """
+        new_trade = Trade(id_sender, id_reciever, resources_sender, resources_reciever)
+        self.trades.append(new_trade)
+
+    def get_trades(self):
+        """
+        Función que devuelve los trades que hay en la partida
+        """
+        return self.trades
+    
+    def accept_trade(self, id_sender: int, id_reciever: int):
+        """
+        Función que permite a un jugador aceptar un trade
+        """
+        for trade in self.trades:
+            if trade.sender == id_sender and trade.reciever == id_reciever:
+                self.intercambiar_recursos(id_sender, trade.resource1, id_reciever, trade.resource2)
+                trade.accept()
+                self.trades.remove(trade)
+                return True
+        return False
+    
+    def reject_trade(self, id_sender: int, id_reciever: int):
+        """
+        Función que permite a un jugador rechazar un trade
+        """
+        for trade in self.trades:
+            if trade.sender == id_sender and trade.reciever == id_reciever:
+                trade.decline()
+                self.trades.remove(trade)
+                return True
+        return False

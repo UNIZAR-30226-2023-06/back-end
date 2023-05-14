@@ -243,7 +243,124 @@ async def steal_resources(lobby_id: int, token: str = Depends(oauth2_scheme)):
 
 
 ####################################### TRADING #######################################
-@router.get("/game_phases/trade_with_player", tags=["game_phases: trading"],
+
+#propose trade to another player
+@router.post("/game_phases/propose_trade", tags=["game_phases: trading"])
+async def propose_trade(lobby_id: int, player2_id: int, wood_amount_p1: int, clay_amount_p1: int, 
+                      sheep_amount_p1: int, wheat_amount_p1: int, stone_amount_p1: int,
+                      wood_amount_p2: int, clay_amount_p2: int, sheep_amount_p2: int,
+                      wheat_amount_p2: int, stone_amount_p2: int,
+                      token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+    
+    player2 : Jugador = None
+    for j in lob.game.jugadores:
+        if j.id == player2_id:
+            player2 = j
+            break
+    if player2 is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    
+    resource1 = [clay_amount_p1, wood_amount_p1, sheep_amount_p1, stone_amount_p1, wheat_amount_p1]
+    resource2 = [clay_amount_p2, wood_amount_p2, sheep_amount_p2, stone_amount_p2, wheat_amount_p2]
+
+    lob.game.propose_trade(user_id, player2.id, resource1, resource2)
+
+    return {"detail": "trade proposed successfully"}
+
+#accept trade
+@router.get("/game_phases/accept_trade", tags=["game_phases: trading"])
+async def accept_trade(lobby_id: int, player2_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id: int = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    player2 : Jugador = None
+    for j in lob.game.jugadores:
+        if j.id == player2_id:
+            player2 = j
+            break
+
+    if player2 is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    if lob.game.accept_trade(user_id, player2_id):
+        return {"detail": "trade accepted successfully"}
+    else:
+        raise HTTPException(status_code=403, detail="Trade not found")
+    
+#reject trade
+@router.get("/game_phases/reject_trade", tags=["game_phases: trading"])
+async def reject_trade(lobby_id: int, player2_id: int, token: str = Depends(oauth2_scheme)):
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    #decode the token
+    decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    #get the user id from the token
+    user_id: int = decoded_token['id']
+    user = session.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    lob: Lobby = None
+    for l in Lobbies:
+        if l.id == lobby_id:
+            lob = l
+            break
+
+    if lob is None:
+        raise HTTPException(status_code=404, detail="Lobby not found")
+
+    player2 : Jugador = None
+    for j in lob.game.jugadores:
+        if j.id == player2_id:
+            player2 = j
+            break
+
+    if player2 is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    if lob.game.reject_trade(user_id, player2_id):
+        return {"detail": "trade rejected successfully"}
+    else:
+        raise HTTPException(status_code=403, detail="Trade not found")
+
+
+@router.get("/game_phases/trade_with_player", tags=["Debug"],
             description="Funcion que permite al jugador hacer un intercambio con otro jugador \n \
                 ( player2_id es el ID del jugador con el que se quiere hacer el intercambio )\n \
                 los parametros wood_amount_p1, clay_amount_p1, sheep_amount_p1, wheat_amount_p1, stone_amount_p1 \
@@ -812,6 +929,7 @@ async def get_game_state(lobby_id: int):
         "player_3" : player3,
 
         "chat" : lob.game.get_messages(),
+        "trade_requests" : lob.game.get_trades(),
 
         "die_1" : last_die1,
         "die_2" : last_die2,
