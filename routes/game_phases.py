@@ -164,20 +164,13 @@ async def resource_production(lobby_id: int):
         player_num_resources = sum(player_resources)
         if player_num_resources > 7:
             stolen_resources = [0,0,0,0,0]
-            for i in range(player_num_resources//2):
-                aux = lob.game.jugadores[lob.game.turno].robar_recurso()
-                for j in range(len(aux)):
-                    stolen_resources[j] += aux[j]
+            for i in range (len(lob.game.jugadores)):
+                for k in range(player_num_resources//2):
+                    aux = lob.game.jugadores[i].robar_recurso()
+                    for j in range(len(aux)):
+                        stolen_resources[j] += aux[j]
 
-            stolen = {"stolen_clay": stolen_resources[0],
-                    "stolen_wood": stolen_resources[1],
-                    "stolen_sheep": stolen_resources[2],
-                    "stolen_stone": stolen_resources[3],
-                    "stolen_wheat": stolen_resources[4],}
-        else: 
-            stolen = None
-
-        return {"die1": die1, "die2": die2, "stolen": stolen}
+        return {"die1": die1, "die2": die2}
     except Exception as e:
         print("ERROR: ", e)
         raise HTTPException(status_code=403, detail=str(e))
