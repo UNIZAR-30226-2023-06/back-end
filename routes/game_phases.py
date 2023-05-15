@@ -160,15 +160,12 @@ async def resource_production(lobby_id: int):
         last_die1 = die1
         last_die2 = die2
 
-        player_resources = lob.game.jugadores[lob.game.turno].mano.num_total_recursos()
-        player_num_resources = sum(player_resources)
-        if player_num_resources > 7:
-            stolen_resources = [0,0,0,0,0]
-            for i in range (len(lob.game.jugadores)):
+        for i in range (len(lob.game.jugadores)):
+            player_resources = lob.game.jugadores[lob.game.turno].mano.num_total_recursos()
+            player_num_resources = sum(player_resources)
+            if player_num_resources > 7:
                 for k in range(player_num_resources//2):
-                    aux = lob.game.jugadores[i].robar_recurso()
-                    for j in range(len(aux)):
-                        stolen_resources[j] += aux[j]
+                    lob.game.jugadores[i].robar_recurso()
 
         return {"die1": die1, "die2": die2}
     except Exception as e:
