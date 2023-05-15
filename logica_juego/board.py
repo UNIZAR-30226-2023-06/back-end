@@ -134,12 +134,12 @@ class Hexgrid:
     for key in self.tiles.keys():
       values = self.tiles.get(key)
       if values[1] == Resource.DESERT:
-        self.thief =  self.tile_coord2id(key) if thief is None or True else none
+        self.thief =  self.tile_coord2id(key) if thief is None or True else None
         break
 
   @property
   def thief_coord(self) -> int:
-    return hexgrid._tile_id_to_coord[self.thief]
+    return hexgrid._tile_id_to_coord[self.thief] if self.thief is not None else None
 
   @property
   def tile_coord_list(self) -> list[int]:

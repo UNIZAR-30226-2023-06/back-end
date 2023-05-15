@@ -55,3 +55,36 @@ async def register(user: str = Depends(UserCreate)):
         return {"access_token": token, "token_type": "bearer", "detail": "User created"}
     else:
         raise HTTPException(status_code=400, detail="Email already exists")
+    
+
+from email.mime.text import MIMEText
+import smtplib
+
+#recover password
+@router.post("/recover-password", tags=["auth"])
+async def recover_password(email: str):
+    user = session.query(User).filter_by(email=email).first()
+    if user is None:
+        raise HTTPException(status_code=400, detail="Email not found")
+    
+    #send email with new password = random 8 digit number
+    new_password = random.randint(10000000, 99999999)
+
+    #send email with new password
+    msg = MIMEText("Your new password is: " + str(new_password))
+    msg['Subject'] = 'Password recovery from Catan'
+    msg['From'] = 'catangamesinc@gmail.com'
+    msg['To'] = email
+
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login(user='catangamesinc@gmail.com', password= 'otoswozbzqndfrmo')
+    s.sendmail('catangamesinc@gmail.com', email, msg.as_string())
+
+    user.password = generate_password_hash(str(new_password), method='sha256')
+    session.query(User).filter_by(email=email).update({"password": user.password})
+    session.commit()
+
+    return {"detail": "Password changed successfully"}
+
+
