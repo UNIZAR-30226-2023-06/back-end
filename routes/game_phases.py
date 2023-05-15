@@ -1095,6 +1095,7 @@ async def set_time_per_turn(Lobyb_id: int, time: int):
         raise HTTPException(status_code=403, detail="Game has already started")
     
     lob.game.tiempo_turno = time
+    lob.max_tiempo_turno = time
 
     return {"detail": "Time per turn set successfully"}
 
