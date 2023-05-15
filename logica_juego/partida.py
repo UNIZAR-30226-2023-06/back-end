@@ -172,8 +172,6 @@ class Partida:
         #recursos_2 = {0,0,0,0,0}
         #recursos_2[tipo_recurso_2] = cantidad_recurso_2
 
-        if self.fase_turno != TurnPhase.TRADING:
-            raise Exception("No se pueden intercambiar recursos en esta fase del turno")
         if self.jugadores[self.turno].get_id() != id_jugador1:
             raise Exception("No es el turno del jugador")
 
