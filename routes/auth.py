@@ -71,7 +71,7 @@ async def recover_password(email: str):
     new_password = random.randint(10000000, 99999999)
 
     #send email with new password
-    msg = MIMEText("Your new password is: " + str(new_password))
+    msg = MIMEText("Your new password is: " + str(new_password) + ". Please change it as soon as possible.")
     msg['Subject'] = 'Password recovery from Catan'
     msg['From'] = 'catangamesinc@gmail.com'
     msg['To'] = email
