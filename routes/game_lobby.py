@@ -359,6 +359,8 @@ async def set_Player_Ready(token : str = Depends(oauth2_scheme)):
 
     lobby.game.actualizar_initial_turns()
 
+    
+
     # Check if all players are ready
     all_players_ready = True
     for player in lobby.game.jugadores:

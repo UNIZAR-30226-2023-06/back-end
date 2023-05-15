@@ -114,6 +114,9 @@ def buscar_partida(jugador : Jugador):
     if jugador in jugadores_buscando_partida:
         return -2
 
+    for jugador_buscando_partida in jugadores_buscando_partida:
+        if jugador_buscando_partida.id == jugador.id:
+            return -2
 
     # Si no, añadimos el jugador a la lista de jugadores buscando partida.
     # TODO: el valor que se le debe asignar a cada jugador es su ELO

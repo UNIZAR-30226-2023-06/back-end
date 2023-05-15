@@ -315,10 +315,9 @@ async def accept_trade(lobby_id: int, player2_id: int, token: str = Depends(oaut
             player2 = j
             break
 
-    if player2 is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    if lob.game.accept_trade(user_id, player2_id):
+    if lob.game.accept_trade(player2_id, user_id): #? a lo mejor peta
         return {"detail": "trade accepted successfully"}
     else:
         raise HTTPException(status_code=403, detail="Trade not found")
@@ -355,7 +354,7 @@ async def reject_trade(lobby_id: int, player2_id: int, token: str = Depends(oaut
     if player2 is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    if lob.game.reject_trade(user_id, player2_id):
+    if lob.game.reject_trade(player2_id, user_id):
         return {"detail": "trade rejected successfully"}
     else:
         raise HTTPException(status_code=403, detail="Trade not found")
@@ -975,7 +974,7 @@ async def get_game_state(lobby_id: int):
         "die_1" : last_die1,
         "die_2" : last_die2,
 
-        "winner" : lob.game.ganador if lob.game.ganador is not -1 else None,
+        "winner" : lob.game.ganador if lob.game.ganador != -1 else None,
 
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
         "player_turn" : lob.game.jugadores[lob.game.turno].id,
