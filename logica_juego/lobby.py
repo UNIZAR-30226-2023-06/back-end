@@ -1,3 +1,4 @@
+import datetime
 import random
 from logica_juego.constants import TurnPhase
 
@@ -35,6 +36,7 @@ class Lobby:
         self.hay_ladron = True
         self.max_tiempo_turno = 5
         self.board_dist = None
+        self.last_time_modified = datetime.now()
 
     def add_Player(self, player : Jugador):
         if len(self.game.jugadores) < self.max_Players:
