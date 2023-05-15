@@ -1117,6 +1117,7 @@ async def set_max_players(Lobyb_id: int, max_players: int):
         raise HTTPException(status_code=403, detail="Max players must be between 2 and 4")
 
     lob.max_Players = max_players
+    lob.game.num_jugadores = max_players
 
     return {"detail": "Max players set successfully"}
 
