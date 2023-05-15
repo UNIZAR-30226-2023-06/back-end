@@ -1031,6 +1031,7 @@ async def enable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Lobby not found")
 
     lob.game.hay_ladron = True
+    lob.hay_ladron = True
     return {"detail": "Thief enabled"}
 
 #route for disabling the thief
@@ -1056,6 +1057,7 @@ async def disable_thief(Lobyb_id: int, token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=404, detail="Lobby not found")
 
     lob.game.hay_ladron = False
+    lob.hay_ladron = False
     return {"detail": "Thief disabled"}
 
 
@@ -1150,8 +1152,7 @@ async def set_board(Lobyb_id: int, board: str):
         "random" : None
     }
 
-    lob.game.board = Board(boards[board])
-
+    lob.board_dist = boards[board]
 
     return {"detail": "Board set successfully"}
 

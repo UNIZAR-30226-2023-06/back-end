@@ -15,6 +15,7 @@ class Lobby:
     is_full = False
     max_Players = None 
     current_Players = 0
+    board_dist = None
 
     # Partes de configuracion
     hay_ladron = True
@@ -33,6 +34,7 @@ class Lobby:
         
         self.hay_ladron = True
         self.max_tiempo_turno = 5
+        self.board_dist = None
 
     def add_Player(self, player : Jugador):
         if len(self.game.jugadores) < self.max_Players:
@@ -77,7 +79,7 @@ class Lobby:
             player.tiene_bono_caballeros = False
 
         #initialize the board
-        self.game.board = Board(to_assign=None, thief=self.hay_ladron)
+        self.game.board = Board(to_assign=self.board_dist, thief=self.hay_ladron)
         self.game_has_started = True
         self.is_full = True
         self.game.turno = 0
