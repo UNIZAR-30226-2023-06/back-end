@@ -315,7 +315,7 @@ async def accept_trade(lobby_id: int, player2_id: int, token: str = Depends(oaut
         if j.id == player2_id:
             player2 = j
             break
-
+    if player2 is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
     if lob.game.accept_trade(player2_id, user_id): #? a lo mejor peta
