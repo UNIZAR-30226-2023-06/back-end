@@ -36,6 +36,7 @@ class Lobby:
         self.hay_ladron = True
         self.max_tiempo_turno = 5
         self.board_dist = None
+        self.puntos_victoria_ganar = 10
         self.last_time_modified = datetime.datetime.now()
 
     def add_Player(self, player : Jugador):
@@ -86,6 +87,8 @@ class Lobby:
         self.is_full = True
         self.game.turno = 0
         self.game.fase_turno = TurnPhase.INITIAL_TURN1
+        self.game.puntos_victoria_ganar = self.puntos_victoria_ganar
+
         print(self.game.initial_turns)
         
         return 0

@@ -980,10 +980,12 @@ async def get_game_state(lobby_id: int):
         "turn_phase" : game_phase_to_str(lob.game.fase_turno),
         "player_turn" : lob.game.jugadores[lob.game.turno].id,
         "player_turn_name": session.query(User).filter(User.id == lob.game.jugadores[lob.game.turno].id).first().username,
-        "turn_time" : lob.game.tiempo_turno,
+        "turn_time" : lob.max_tiempo_turno,
+        "victory_points_to_win" : lob.game.puntos_victoria_ganar,
 
         "thief_enabled" : lob.game.hay_ladron,
         "thief_position" : lob.game.board.thief_coord,
+        "max_players" : lob.max_Players,
         "board" : lob.game.board,
     }
 
@@ -1079,6 +1081,7 @@ async def set_points_to_win(Lobyb_id: int, points: int):
         raise HTTPException(status_code=403, detail="Game has already started")
     
     lob.game.puntos_victoria_ganar = points
+    lob.puntos_victoria_ganar = points
 
     return {"detail": "Points to win set successfully"}
 
