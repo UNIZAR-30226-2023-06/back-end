@@ -172,8 +172,8 @@ class Partida:
         #recursos_2 = {0,0,0,0,0}
         #recursos_2[tipo_recurso_2] = cantidad_recurso_2
 
-        if self.jugadores[self.turno].get_id() != id_jugador1:
-            raise Exception("No es el turno del jugador")
+        # if self.jugadores[self.turno].get_id() != id_jugador1:
+        #     raise Exception("No es el turno del jugador")
 
         j1 = self.i_jugador(id_jugador1)
         j2 = self.i_jugador(id_jugador2)
