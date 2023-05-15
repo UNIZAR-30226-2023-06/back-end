@@ -21,7 +21,7 @@ class Lobby:
     # Partes de configuracion
     hay_ladron = True
     # max_tiempo_turno = 30 # en segundos
-    max_tiempo_turno = 5 # en segundos
+    max_tiempo_turno = 60 # en segundos
 
     def __init__(self, max_Players : int = 4):
         #id = random 4 digit number
