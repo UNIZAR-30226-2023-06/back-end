@@ -66,3 +66,5 @@ class TradeState(Enum):
     TRADE_OFFERED = 1
     TRADE_ACCEPTED = 2
     TRADE_REJECTED = 3
+
+    
