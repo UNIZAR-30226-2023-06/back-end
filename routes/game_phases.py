@@ -1,3 +1,4 @@
+import datetime
 import os, sys
 
 import jwt
@@ -961,7 +962,7 @@ async def get_game_state(lobby_id: int):
     player1 = get_player_as_json(lob.game.jugadores[1], user1, lob) if len(lob.game.jugadores) > 1 else None
     player2 = get_player_as_json(lob.game.jugadores[2], user2, lob) if len(lob.game.jugadores) > 2 else None
     player3 = get_player_as_json(lob.game.jugadores[3], user3, lob) if len(lob.game.jugadores) > 3 else None
-    
+
     game_state = {
         "player_0" : player0,
         "player_1" : player1,
@@ -985,6 +986,8 @@ async def get_game_state(lobby_id: int):
         "thief_position" : lob.game.board.thief_coord,
         "board" : lob.game.board,
     }
+
+    lob.last_time_modified = datetime.datetime.now()
 
     return game_state
 

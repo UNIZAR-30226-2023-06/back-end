@@ -20,7 +20,7 @@ from routes.game_chat import router as game_chat_router
 from local_settings import JWT_SECRET
 from sqlalchemy.orm import sessionmaker
 
-from logica_juego.matchmaking import init_buscador
+from logica_juego.matchmaking import init_buscador, limpiador
 from logica_juego.matchmaking import jugadores_buscando_partida
 app = FastAPI()
 
@@ -60,3 +60,6 @@ app.include_router(game_chat_router)
 
 thread = threading.Thread(target=init_buscador)
 thread.start()
+
+thread2 = threading.Thread(target=limpiador)
+thread2.start()

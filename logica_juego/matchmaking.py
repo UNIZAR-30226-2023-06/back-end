@@ -1,3 +1,4 @@
+import datetime
 import multiprocessing
 import threading
 import time
@@ -60,43 +61,22 @@ def unirse_a_partida(id_jugador, codigo_partida):
             lobby.add_Player(player)
             return lobby
 
-# Función a la aque se llama cuando el jugador con id=id_jugador quiere
-# abandonar la partida con código=codigo_partida.
-def salirse_de_partida(id_jugador, codigo_partida):
-    # Solo hacemos algo si el jugador que se va es el único que queda en
-    # la partida, haciendo que la partida se quede vacía.
-    # if partidas_en_curso[codigo_partida].get_num_jugadores_activos() <= 1:
-
-    #     # Si la partida no se ha empezado aún, se borra y ya está.
-    #     if not partidas_en_curso[codigo_partida].get_num_jugadores_activos():
-    #         del partidas_en_curso[codigo_partida]
-        
-    #     # Si la partida sí que está en curso, se espera 10 minutos a que por lo
-    #     # menos un jugador vuelva, si eso no ha ocurrido, se borra la partida y
-    #     # el código de la sala queda libre para otro jugadores.
-    #     else:
-    #         # Lanzo el limpiador en paralelo
-    #         thread = multiprocessing.Pool()
-    #         thread.apply_async(limpiador, [codigo_partida])
-    # else:
-    #     partidas_en_curso[codigo_partida].restar_jugador(id_jugador)
-
-    for lobby in Lobbies:
-        if lobby.id == codigo_partida:
-            lobby.remove_Player(id_jugador)
-            if len(lobby.game.jugadores) == 0:
-                limpiador(codigo_partida)
-
 # El limpiador checkea si una partida en concreto ha sido abandonada y la
 # borra si es el caso. Espera 10 minutos antes de hacer el checkeo.
-def limpiador(codigo_partida):
-    time.sleep(10*60)
-    for lobby in Lobbies:
-        if lobby.id == codigo_partida:
-            if len(lobby.game.jugadores) == 0:
-                thread = threading.Thread(target=limpiador, args=(codigo_partida,))
-                thread.start()
-                thread.join() # ? Is this necessary?
+def limpiador():
+    print("Limpiador iniciado")
+    lob: Lobby = None
+    while(True):
+        print("Limpiador checkeando")
+        for lobby in Lobbies:
+                print
+                now = datetime.datetime.now()
+                lob = lobby
+                if lob.last_time_modified - now > datetime.timedelta(minutes=10):
+                    # si la partida lleva 10 minutos sin modificarse, se borra
+                    print("Partida borrada con id: " + lob.id)
+                    Lobbies.remove(lob)
+        time.sleep(60)
 
 ######################## GESTIÓN DE BÚSQUEDA DE PARTIDA ########################
 
