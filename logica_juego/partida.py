@@ -497,6 +497,7 @@ class Partida:
     def check_ganador(self) -> int:
         for j in self.jugadores:
             if j.get_puntos_victoria() >= self.puntos_victoria_ganar:
+                self.repartir_elo()
                 return j.get_id()
         return -1
     
@@ -562,8 +563,13 @@ class Partida:
 
     ########### FUNCIONES SOBRE LA GESTIÓN DEL ELO DE LOS JUGADORES ###########
     
+
     def repartir_elo(self):
-        ranking = {{},{},{},{}}
+        from routes.auth import oauth2_scheme
+        from routes.auth import session
+        ranking = []
+
+        users = session.query(User).filter(User.id.in_([j.get_id() for j in self.jugadores])).all()
 
         jugadores = self.jugadores
 
@@ -571,7 +577,7 @@ class Partida:
         # en puestos que no sean el primero por puntos de victoria)
         for i in range(4):
             max_elo = 0
-            jugadores_a_descartar = {}
+            jugadores_a_descartar = [[], [], [], []]
 
             for j in jugadores:
                 if j.elo > max_elo:
@@ -587,19 +593,40 @@ class Partida:
         
         for j in ranking[0]:
             # Sumo 50 de elo al jugador j
-            j.elo += 50
+            for user in users:
+                if user.id == j.get_id():
+                    user.elo += 50
+                    user.coins += 100
+                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
+                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
         
         for j in ranking[1]:
             # Sumo 25 de elo al jugador j
-            j.elo += 25
+            for user in users:
+                if user.id == j.get_id():
+                    user.elo += 25
+                    user.coins += 50
+                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
+                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
 
         for j in ranking[2]:
             # Resto 25 de elo al jugador j
-            j.elo -= 25
+            for user in users:
+                if user.id == j.get_id():
+                    user.elo -= 25
+                    user.coins += 25
+                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
+                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
+
 
         for j in ranking[3]:
             # Resto 50 de elo al jugador j
-            j.elo -= 50
+            for user in users:
+                if user.id == j.get_id():
+                    user.elo -= 50
+                    user.coins += 10
+                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
+                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
             
     ##########################################################################
 
