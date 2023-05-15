@@ -66,15 +66,20 @@ def unirse_a_partida(id_jugador, codigo_partida):
 def limpiador():
     print("Limpiador iniciado")
     lob: Lobby = None
+    global Lobbies
     while(True):
+        print("lobbies:", Lobbies)
         print("Limpiador checkeando")
         for lobby in Lobbies:
                 print
                 now = datetime.datetime.now()
                 lob = lobby
-                if lob.last_time_modified - now > datetime.timedelta(minutes=10):
+                print("last ",lob.last_time_modified)
+                print("now ",now)
+                print("dif ",now - lob.last_time_modified)
+                if now - lob.last_time_modified > datetime.timedelta(minutes=10):
                     # si la partida lleva 10 minutos sin modificarse, se borra
-                    print("Partida borrada con id: " + lob.id)
+                    print("Partida borrada con id: ", lob.id)
                     Lobbies.remove(lob)
         time.sleep(60)
 
