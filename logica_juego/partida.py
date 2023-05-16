@@ -500,6 +500,7 @@ class Partida:
             if j.get_puntos_victoria() >= self.puntos_victoria_ganar:
                 print("El jugador " + str(j.get_id()) + " ha ganado")
                 self.repartir_elo()
+                self.ganador = j.get_id()
                 return j.get_id()
         return -1
     
