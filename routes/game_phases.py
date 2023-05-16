@@ -527,6 +527,7 @@ async def substract_knight_card(lobby_id: int, token: str = Depends(oauth2_schem
         lob.game.jugadores[lob.game.turno].sub_carta_desarrollo(Cards.KNIGHT)
         lob.game.jugadores[lob.game.turno].caballeros_usados += 1
         lob.game.check_bono_caballeros(lob.game.jugadores[lob.game.turno])
+        lob.game.check_ganador()
         return {"detail": "Knight card substracted successfully"}
     except Exception as e:
         print("ERROR: ", e)
@@ -572,6 +573,7 @@ async def use_invention_card(lobby_id: int, resource1:str, resource2:str, token:
         res1 = resource_str_to_Resource(resource1)
         res2 = resource_str_to_Resource(resource2)
         lob.game.usar_carta_invention_progress(user.id, res1, res2)
+        lob.game.check_ganador()
         return {"detail": "Invention card used successfully"}
     except Exception as e:
         print("ERROR: ", e)
