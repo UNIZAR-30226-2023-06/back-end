@@ -497,6 +497,7 @@ class Partida:
     def check_ganador(self) -> int:
         for j in self.jugadores:
             if j.get_puntos_victoria() >= self.puntos_victoria_ganar:
+                print("El jugador " + str(j.get_id()) + " ha ganado")
                 self.repartir_elo()
                 return j.get_id()
         return -1
@@ -571,63 +572,24 @@ class Partida:
 
         users = session.query(User).filter(User.id.in_([j.get_id() for j in self.jugadores])).all()
 
-        jugadores = self.jugadores
+        jugadores = self.jugadores.copy()
+        jugadores.sort(key=lambda x: x.get_puntos_victoria(), reverse=True)
 
-        # Obtengo el orden en que han acabado los jugadores (puede haber empates
-        # en puestos que no sean el primero por puntos de victoria)
-        for i in range(4):
-            max_elo = 0
-            jugadores_a_descartar = [[], [], [], []]
+        for j in jugadores:
+            ranking.append(j)
 
-            for j in jugadores:
-                if j.elo > max_elo:
-                    max_elo = j.elo
+        k = 0
+        elo_grants = [50,25,-25,-50]
+        for j in ranking:
+            user = session.query(User).filter(User.id == j.get_id()).first()
+            user.elo += elo_grants[k]
+            k += 1
+            user.coins += 20
+            session.query(User).filter(User.id == user.id).update({User.elo: user.elo, User.coins: user.coins})
+            session.commit()
+            print("user id: ", user.id, "user elo: ", user.elo, "user coins: ", user.coins)
 
-            for j in jugadores:
-                if j.elo == max_elo:
-                    ranking[i].append(j)
-                    jugadores_a_descartar.append(j)
-
-            for j in jugadores_a_descartar:
-                jugadores.remove(j)
         
-        for j in ranking[0]:
-            # Sumo 50 de elo al jugador j
-            for user in users:
-                if user.id == j.get_id():
-                    user.elo += 50
-                    user.coins += 100
-                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
-                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
-        
-        for j in ranking[1]:
-            # Sumo 25 de elo al jugador j
-            for user in users:
-                if user.id == j.get_id():
-                    user.elo += 25
-                    user.coins += 50
-                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
-                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
-
-        for j in ranking[2]:
-            # Resto 25 de elo al jugador j
-            for user in users:
-                if user.id == j.get_id():
-                    user.elo -= 25
-                    user.coins += 25
-                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
-                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
-
-
-        for j in ranking[3]:
-            # Resto 50 de elo al jugador j
-            for user in users:
-                if user.id == j.get_id():
-                    user.elo -= 50
-                    user.coins += 10
-                    session.query(User).filter(User.id == user.id).update({User.elo: user.elo})
-                    session.query(User).filter(User.id == user.id).update({User.coins: user.coins})
-            
     ##########################################################################
 
     ####################### FUNCIONES PONER CONSTRUCCIONES ############################

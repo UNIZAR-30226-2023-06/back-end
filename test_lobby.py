@@ -110,17 +110,13 @@ if __name__ == "__main__":
 
     lob.game.fase_turno = TurnPhase.TRADING
     
-    print("ANTES DE INTERCAMBIO")
-    print("Jugador 1: ", lob.game.jugadores[0].mano.arcilla," ", lob.game.jugadores[0].mano.madera)
-    print("Jugador 2: ", lob.game.jugadores[1].mano.arcilla," ", lob.game.jugadores[1].mano.madera)
+    lob.game.jugadores[0].puntos_victoria = 8
+    lob.game.jugadores[1].puntos_victoria = 7
+    lob.game.jugadores[2].puntos_victoria = 10
+    lob.game.jugadores[3].puntos_victoria = 3
 
+    lob.game.check_ganador()
 
-    lob.game.propose_trade(id_sender= 2880, resources_sender= [3,0,0,0,0], id_reciever= 7365, resources_reciever= [0,2,0,0,0])
-    lob.game.reject_trade(2880, 7365)
-
-    print("DESPUES DE INTERCAMBIO")
-    print("Jugador 1: ", lob.game.jugadores[0].mano.arcilla," ", lob.game.jugadores[0].mano.madera)
-    print("Jugador 2: ", lob.game.jugadores[1].mano.arcilla," ", lob.game.jugadores[1].mano.madera)
 
 
     lob.game.board.svg("diavoliko.svg")
