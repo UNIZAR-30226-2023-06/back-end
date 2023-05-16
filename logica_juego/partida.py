@@ -455,6 +455,7 @@ class Partida:
 
             if self.board.place_road(color=player.color, position=coord):
                 self.check_bono_carreteras(self.jugadores[self.i_jugador(id_jugador)])
+                self.check_ganador()
             else:
                 raise Exception("Error: No se ha podido construir la carretera")
 
