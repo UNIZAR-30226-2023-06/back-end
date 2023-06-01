@@ -19,7 +19,7 @@ def testBoard(townCoord, roadCoord, expectedResult, i):
     res = lobby.game.board.longest_path(Color.BLUE)
     if res == expectedResult:
         pass
-        # print("*************** TEST ", i,  " OK***************")
+        # print("*************** TEST ", i,  " OK****************")
 
         # print("**********************************")
     else:
